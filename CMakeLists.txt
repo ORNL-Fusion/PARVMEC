@@ -10,5 +10,6 @@ target_include_directories (vmec PUBLIC $<TARGET_PROPERTY:stell,BINARY_DIR>)
 
 add_executable (xvmec)
 add_dependencies (xvmec vmec)
+target_link_libraries (xvmec vmec)
 
 add_subdirectory (Sources)
