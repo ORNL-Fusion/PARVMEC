@@ -1,16 +1,16 @@
 target_sources(vmec
                PRIVATE
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/add_tension.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getspline.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gety2.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/initspline.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/jacprod.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/set_dual.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/setspline.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/setup_int.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sort_data.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/splinint.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/splints.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/splintx.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vspline.f
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/add_tension.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getspline.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gety2.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/initspline.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/jacprod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/set_dual.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/setspline.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/setup_int.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sort_data.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/splinint.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/splints.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/splintx.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vspline.f>
 )

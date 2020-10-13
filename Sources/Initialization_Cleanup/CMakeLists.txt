@@ -1,24 +1,24 @@
 target_sources(vmec
                PRIVATE
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/close_all_files.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_funct3d.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_ns.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_nunv.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fixaray.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_funct3d.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_ns.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_nunv.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_persistent_mem.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/guess_axis.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/heading.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/init_geometry.f90
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/initialize_radial.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/load_xc_from_wout.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/magnetic_fluxes.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/open_output_files.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profil1d.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profil3d.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profile_functions.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/reset_params.f
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vsetup.f
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/close_all_files.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_funct3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_ns.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_nunv.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fixaray.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_funct3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_ns.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_nunv.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_persistent_mem.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/guess_axis.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/heading.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/init_geometry.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/initialize_radial.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/load_xc_from_wout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/magnetic_fluxes.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/open_output_files.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profil1d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profil3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profile_functions.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/reset_params.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vsetup.f>
 )
