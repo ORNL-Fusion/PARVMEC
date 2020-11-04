@@ -66,8 +66,6 @@ C-----------------------------------------------
 
       INFILEOUT=.TRUE.
 
-      lu => czmn;   lv => crmn
-
       loutput = (IAND(ictrl_flag, output_flag) .ne. 0) !SAL 070719
 
       IF (lfreeb .AND. vlactive .AND. loutput) THEN !SAL070719
@@ -289,8 +287,6 @@ C-----------------------------------------------
       fo_prepare_time = fo_prepare_time + (tfileoff-tfileon)
 
       IF (grank .EQ. 0) THEN
-         CALL fileout(iseq, ictrl_flag, ier_flag, lscreen) 
-         
          IF (lwrite .AND. loutput) THEN
            ALLOCATE(br_out(nrzt), bz_out(nrzt), stat=istat)
            gc = xc
@@ -338,10 +334,10 @@ C-----------------------------------------------
      &                             ictrl_prec2d .ne. 0)
          
                IF (grank.EQ.0) THEN 
-                  WRITE(nthreed,*)
-                  WRITE(nthreed,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
-                  WRITE(nthreed,101)         'LPRECOND    :  ',LPRECOND
-                  WRITE(nthreed,101)         'LV3FITCALL  :  ',LV3FITCALL
+                 WRITE(nthreed,*)
+                 WRITE(nthreed,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
+                 WRITE(nthreed,101)         'LPRECOND    :  ',LPRECOND
+                 WRITE(nthreed,101)         'LV3FITCALL  :  ',LV3FITCALL
                END IF
  101     FORMAT(1x,a,l4)
                END IF
@@ -386,9 +382,9 @@ C-----------------------------------------------
          
          IF (ALLOCATED(tanu))
      &      DEALLOCATE(tanu, tanv, sinper, cosper, sinuv, cosuv, sinu,
-     &                 cosu, sinv, cosv, sinui, cosui, cmns, csign, sinu1,
-     &                 cosu1, sinv1, cosv1, imirr, xmpot, xnpot,
-     &                 stat=istat1)
+     &               cosu, sinv, cosv, sinui, cosui, cmns, csign, sinu1,
+     &               cosu1, sinv1, cosv1, imirr, xmpot, xnpot,
+     &               stat=istat1)
          IF (istat1 .ne. 0) PRINT *, Warning // "#3"
          
          CALL close_all_files
