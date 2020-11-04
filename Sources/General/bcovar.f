@@ -40,9 +40,9 @@
 !-----------------------------------------------
       INTEGER :: l, js, ndim
       REAL(dp) :: r2, volume, curpol_temp
-#ifndef _HBANGLE
+
       REAL(dp) :: arnorm, aznorm, tcon_mul
-#endif
+
       REAL(dp) :: bcastton, bcasttoff
       REAL(dp), POINTER, DIMENSION(:,:) :: luu, luv, lvv, tau
       REAL(dp), DIMENSION(:,:), POINTER :: bsupu, bsubuh, 
@@ -427,7 +427,6 @@
 !        COMPUTE CONSTRAINT FORCE SCALING FACTOR (TCON)
 !        OVERRIDE USER INPUT VALUE HERE
 !
-#ifndef _HBANGLE
          r2 = ns
          tcon0 = MIN(ABS(tcon0), one)                              !!ignore large tcon0 from old-style files
          tcon_mul = tcon0*(1 + r2*(one/60 + r2/(200*120)))
@@ -452,7 +451,6 @@
          IF (lasym) THEN
             tcon = p5*tcon
          END IF
-#endif
       ENDIF
 
       CALL MPI_ALLREDUCE(MPI_IN_PLACE,ier_flag,1,MPI_INTEGER,

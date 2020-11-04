@@ -6,9 +6,6 @@
       USE vmec_params, ONLY: ntmax 
       USE realspace
       USE xstuff
-#ifdef _HBANGLE
-      USE angle_constraints, ONLY: getrz, store_init_array
-#endif
       USE parallel_include_module
       IMPLICIT NONE
 C-----------------------------------------------
@@ -86,11 +83,6 @@ C-----------------------------------------------
 !     SAVE THIS FOR INTERPOLATION
 !
       IF (neqs_old.gt.0 .and. linterp) THEN
-#ifdef _HBANGLE
-         ns = ns_old
-         CALL getrz(xstore)
-         ns = ns1 + 1
-#endif
 #if defined(MPI_OPT)
          pgc(1:neqs_old) = pscalxc(1:neqs_old)*pxstore(1:neqs_old)
          IF (lfreeb) THEN
@@ -122,9 +114,6 @@ C-----------------------------------------------
 !
       IF (linterp) THEN
          CALL interp_par(pxc, pgc, pscalxc, ns, ns_old)
-#ifdef _HBANGLE
-         CALL store_init_array(xc)
-#endif
       END IF
 
 !SPH 012417: move this AFTER interpolation call

@@ -86,13 +86,9 @@
             DO i = 1, ntheta2
                DO k = 1, nzeta
                   tempr(k,js) = armn(k,i,js,mparity)
-#ifndef _HBANGLE
      &                        + xmpq(m,1)*arcon(k,i,js,mparity)
-#endif
                   tempz(k,js) = azmn(k,i,js,mparity)
-#ifndef _HBANGLE
      &                        + xmpq(m,1)*azcon(k,i,js,mparity)
-#endif
                   work1(1,k,js) = work1(1,k,js)
      &                          + tempr(k,js)*cosmui(i,m)
      &                          + brmn(k,i,js,mparity)*sinmumi(i,m)
@@ -301,13 +297,9 @@
             DO i = 1, ntheta2
                DO k = 1, nzeta
                   temp1(k,js) = armn(k,i,js,mparity)
-#ifndef _HBANGLE
      &                        + xmpq(m,1)*arcon(k,i,js,mparity)
-#endif
                   temp3(k,js) = azmn(k,i,js,mparity)
-#ifndef _HBANGLE
      &                        + xmpq(m,1)*azcon(k,i,js,mparity)
-#endif
                   work1(3,k,js) = work1(3,k,js)
      &                          + temp1(k,js)*sinmui(i,m)
      &                          + brmn(k,i,js,mparity)*cosmumi(i,m)

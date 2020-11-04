@@ -6,9 +6,6 @@
       USE vspline, ONLY: sknots, pknots, hstark, hthom
       USE realspace
       USE xstuff
-#ifdef _HBANGLE
-      USE angle_constraints, ONLY: store_init_array
-#endif
       USE parallel_include_module
       IMPLICIT NONE
 !-----------------------------------------------
@@ -172,11 +169,5 @@
             END DO
          END DO
       END DO
-
-#ifdef _HBANGLE
-      IF (.NOT.linterp) THEN
-         CALL store_init_array(xc)
-      END IF
-#endif
 
       END SUBROUTINE profil3d_par

@@ -37,17 +37,6 @@
       REAL(dp) :: tredon, tredoff
 !-----------------------------------------------
       CALL second0 (treson)
-
-#ifdef _HBANGLE
-!FREE-BDY RFP MAY NEED THIS TO IMPROVE CONVERGENCE (SPH 022514)
-      IF (lfreeb .AND. lrfp) THEN
-         fac = 0
-         IF (ictrl_prec2d .EQ. 0) THEN
-            fac = 1.E-1_dp
-         END IF
-         gcz(ns,0,m0,:) = fac*gcz(ns,0,m0,:)
-      END IF
-#else
 !
 !     SYMMETRIC PERTURBATIONS (BASED ON POLAR RELATIONS):
 !        Rss(n) = Zcs(n), n != 0
@@ -77,7 +66,6 @@
          gcr(0,m0,ns,:) = fac*gcr(0,m0,ns,:)
          gcz(0,m0,ns,:) = fac*gcz(0,m0,ns,:)
       END IF
-#endif
 
 !     PRECONDITIONER MUST BE CALCULATED USING RAW (UNPRECONDITIONED) FORCES
       IF (ictrl_prec2d .GE. 2 .OR. ictrl_prec2d .EQ. -1) RETURN

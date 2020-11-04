@@ -16,9 +16,6 @@
       USE vforces
       USE precon2d, ONLY: ictrl_prec2d
       USE timer_sub
-#ifdef _HBANGLE
-      USE angle_constraints, ONLY: free_multipliers, getrz
-#endif
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -292,9 +289,6 @@ C-----------------------------------------------
          IF (lwrite .AND. loutput) THEN
            ALLOCATE(br_out(nrzt), bz_out(nrzt), stat=istat)
            gc = xc
-#ifdef _HBANGLE
-           CALL getrz(gc)
-#endif
            CALL eqfor(br_out, bz_out, clmn, blmn, rcon(1,1),
      &                gc, ier_flag)
          END IF
@@ -374,9 +368,6 @@ C-----------------------------------------------
      &                sinmui, sinmumi, cosnv, sinnv, cosnvn, sinnvn,
      &                cosmui3, cosmumi3, cos01, sin01, stat=istat1)
          IF (istat1 .ne. 0) PRINT *, Warning // "#1"
-#ifdef _HBANGLE
-         CALL free_multipliers
-#endif   
          
          IF (ALLOCATED(xm)) DEALLOCATE (xm, xn, ixm, xm_nyq, xn_nyq, 
      &      jmin3, mscale, nscale, uminus, stat=istat1)

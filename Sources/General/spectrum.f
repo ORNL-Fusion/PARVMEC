@@ -25,7 +25,7 @@ C-----------------------------------------------
 !     R-(at zcc) = .5(rsc - zcc), TO REQUIRED rsc, zcc FORMS
 !
       nsmin=MAX(2,tlglob); nsmax=MIN(t1rglob,ns)
-#ifndef _HBANGLE
+
       IF (lthreed) THEN
          CALL convert_sym_par(rmn(:,m1,:,rss), zmn(:,m1,:,zcs),
      &                        nsmin, nsmax)
@@ -34,7 +34,7 @@ C-----------------------------------------------
          CALL convert_asym_par(rmn(:,m1,:,rsc), zmn(:,m1,:,zcc),
      &                         nsmin, nsmax)
       END IF
-#endif
+
       dnumer(nsmin:nsmax) = zero
       denom(nsmin:nsmax) = zero
       DO ntype = 1,ntmax

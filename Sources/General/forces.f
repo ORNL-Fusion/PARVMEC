@@ -195,7 +195,6 @@ C-----------------------------------------------
 !
 !     COMPUTE CONSTRAINT FORCE KERNELS
 !
-#ifndef _HBANGLE
       DO l = nsmin, nsmax
          prcon(:,l,0) = (prcon(:,l,0)-prcon0(:,l))*pgcon(:,l)
          pzcon(:,l,0) = (pzcon(:,l,0)-pzcon0(:,l))*pgcon(:,l)
@@ -208,7 +207,7 @@ C-----------------------------------------------
          prcon(:,l,1) = prcon(:,l,0) * psqrts(:,l)
          pzcon(:,l,1) = pzcon(:,l,0) * psqrts(:,l)
       END DO
-#endif
+
       CALL second0 (tforoff)
       timer(tfor) = timer(tfor) + (tforoff - tforon)
       forces_time = timer(tfor)

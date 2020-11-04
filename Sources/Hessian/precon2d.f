@@ -434,11 +434,8 @@ C-----------------------------------------------
 !
       m_2d=0
       n_2d=0
-#ifdef _HBANGLE
-      ntype_2d = zsc + ntmax
-#else
       ntype_2d = rcc
-#endif
+
 !     APPLY JOG
       hj = eps * MAX(ABS(r01(ns)), ABS(z01(ns)))
       IF (nranks .GT. 1) THEN

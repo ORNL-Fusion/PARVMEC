@@ -4,9 +4,6 @@
       USE vmec_main
       USE realspace
       USE xstuff
-#ifdef _HBANGLE
-      USE angle_constraints, ONLY: getrz
-#endif
       USE parallel_include_module
       USE parallel_vmec_module, ONLY: CopyLastNtype
       USE vmec_params, ONLY: ntmax
@@ -21,18 +18,10 @@ C-----------------------------------------------
 C   L o c a l   P a r a m e t e r s
 C-----------------------------------------------
       CHARACTER(LEN=*), PARAMETER :: 
-#ifdef _HBANGLE
-     1   iter_line = "  ITER    FSQRHO   FSQ(m=0)    FSQL   ",
-     1   iter_lines= "  ITER  FSQRHO   FSQ(m=0)    FSQL   ",
-     2   fsq_line  = "  fsqrho   fsq(m=0)    fsql      DELT    ",
-     2   fsq_lines = "  fsqrho   fsq(m=0)    fsql      DELT    ",
-     4   raxis_line = " RAX(v=0) ",
-#else
      1   iter_line = "  ITER    FSQR      FSQZ      FSQL   ",
      2   fsq_line  = "   fsqr      fsqz      fsql      DELT    ",
      3   iter_lines = iter_line, fsq_lines = fsq_line,
      4   raxis_line = "RAX(v=0) ",
-#endif
      3   delt_line = "    DELT  ",        !J.Geiger 20101118
      5   zaxis_line = "  ZAX(v=0)      "
 C-----------------------------------------------
@@ -57,9 +46,6 @@ C-----------------------------------------------
       specw(1) = one
 
       CALL CopyLastNtype(pxstore, pgc)
-#ifdef _HBANGLE
-      CALL getrz(gc)
-#endif 
 
       CALL spectrum_par (pgc(:irzloff), pgc(1+irzloff:2*irzloff))
       CALL Gather1XArray(vp)

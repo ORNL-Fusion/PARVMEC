@@ -27,9 +27,6 @@
 #else
       USE vacmod, ONLY: potvac, mnpd, xmpot, xnpot       !added for diagno, J.Geiger
 #endif
-#ifdef _HBANGLE
-      USE angle_constraints, ONLY: getrz
-#endif
 !undef NETCDF IF TXT DESIRED
 #ifdef NETCDF      
       USE ezcdf
@@ -759,9 +756,6 @@
       ALLOCATE (xfinal(neqs), stat=js)
       IF (js .NE. 0) STOP 'Allocation error for xfinal in WROUT!'
       xfinal = xc
-#ifdef _HBANGLE
-      CALL getrz(xfinal)
-#else
 !
 !     MUST CONVERT m=1 MODES... FROM INTERNAL TO PHYSICAL FORM
 !     Extrapolation of m=0 Lambda (cs) modes, which are not evolved at j=1, done in CONVERT
@@ -773,7 +767,6 @@
       IF (lasym)   CALL convert_asym_par (xfinal(1+mns*(rsc-1)+lk), 
      1                                xfinal(1+irzloff+mns*(zcc-1)+lk),
      2                                1, ns)
-#endif
 !
 !     CONVERT TO rmnc, zmns, lmns, etc EXTERNAL representation (without internal mscale, nscale)
 !     IF B^v ~ phip + lamu, MUST DIVIDE BY phipf(js) below to maintain old-style format
