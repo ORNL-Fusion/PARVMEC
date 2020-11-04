@@ -765,10 +765,12 @@
 !     Extrapolation of m=0 Lambda (cs) modes, which are not evolved at j=1, done in CONVERT
 !
       lk = ns*ntor1
-      IF (lthreed) CALL convert_sym  (xfinal(1+mns*(rss-1)+lk), 
-     1                                xfinal(1+irzloff+mns*(zcs-1)+lk))
-      IF (lasym)   CALL convert_asym (xfinal(1+mns*(rsc-1)+lk), 
-     1                                xfinal(1+irzloff+mns*(zcc-1)+lk))
+      IF (lthreed) CALL convert_sym_par  (xfinal(1+mns*(rss-1)+lk), 
+     1                                xfinal(1+irzloff+mns*(zcs-1)+lk),
+     2                                1, ns)
+      IF (lasym)   CALL convert_asym_par (xfinal(1+mns*(rsc-1)+lk), 
+     1                                xfinal(1+irzloff+mns*(zcc-1)+lk),
+     2                                1, ns)
 #endif
 !
 !     CONVERT TO rmnc, zmns, lmns, etc EXTERNAL representation (without internal mscale, nscale)

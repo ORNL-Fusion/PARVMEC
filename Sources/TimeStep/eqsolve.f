@@ -66,14 +66,9 @@ C-----------------------------------------------
 !
       IF (irst .EQ. 2) THEN
 
-         IF (PARVMEC) THEN
-            CALL ZeroLastNType(pxc)
-            CALL profil3d_par(pxc(1), pxc(1+irzloff), lreset_internal,
-     &                        .FALSE.)
-         ELSE
-            xc = 0
-            CALL profil3d(xc(1),xc(1+irzloff),lreset_internal,.FALSE.)
-         END IF
+         CALL ZeroLastNType(pxc)
+         CALL profil3d_par(pxc(1), pxc(1+irzloff), lreset_internal,
+     &                     .FALSE.)
 
          irst = 1
          IF (liter_flag) CALL restart_iter(delt0r)
@@ -105,11 +100,7 @@ C-----------------------------------------------
    50 FORMAT(' INITIAL JACOBIAN CHANGED SIGN!')
    51 FORMAT(' TRYING TO IMPROVE INITIAL MAGNETIC AXIS GUESS')
 
-            IF (PARVMEC) THEN
-               CALL guess_axis_par (pr1, pz1, pru0, pzu0, lscreen)
-            ELSE
-               CALL guess_axis (r1, z1, ru0, zu0)
-            ENDIF
+            CALL guess_axis_par (pr1, pz1, pru0, pzu0, lscreen)
 
             lreset_internal = .true.
             ijacob = 1
@@ -179,11 +170,6 @@ C-----------------------------------------------
 ! JDH 2012-06-20 ^^^ iterc is a cumulative iteration counter. Used in V3FIT.
 !   Never reset to 1
 
-! JDH 2010-08-03: Call to vmec_history_store moved here from evolve.f
-!  Stores fsq values and other, for later post-processing
-         IF (.not.PARVMEC) THEN
-            CALL vmec_history_store(delt0r)
-         END IF
          CALL flush(6)
 !
 !       STORE FSQ FOR PLOTTING. EVENTUALLY, STORE FOR EACH RADIAL MESH

@@ -43,7 +43,6 @@ MODULE parallel_vmec_module
     INTEGER, ALLOCATABLE, DIMENSION (:) :: nsrcounts, nsdisp
     INTEGER, PRIVATE :: mmax, nmax, tmax
 
-    LOGICAL :: PARVMEC=.FALSE.
     LOGICAL :: LV3FITCALL=.FALSE.
     LOGICAL :: LIFFREEB=.FALSE.
     LOGICAL :: LPRECOND=.FALSE.
@@ -85,14 +84,6 @@ CONTAINS
   !--------------------------------------------------------------------------
     SUBROUTINE MyEnvVariables
     
-    PARVMEC=.TRUE.
-    envvar='PARVMEC'
-    CALL GETENV(envvar,envval)
-    IF (envval.EQ.'FALSE'.OR.envval.EQ.'false' &
-      .OR.envval.EQ.'F'.OR.envval.EQ.'f') THEN
-      PARVMEC=.FALSE.
-    END IF
-
     LV3FITCALL=.FALSE.
     envvar='LV3FITCALL'
     CALL GETENV(envvar,envval)
@@ -174,7 +165,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
              IF (FIRSTPASS) THEN
                 CALL SetOutputFile(rank,nranks,'parvmecinfo')
                 WRITE(TOFU,*)"============================================================"
-                WRITE(TOFU,*) 'PARVMEC = ',PARVMEC
                 WRITE(TOFU,*) "> available processor count:", gnranks
                 WRITE(TOFU,*) '> global rank:', grank
                 WRITE(TOFU,*) '> nzeta:      ', par_nzeta
@@ -564,7 +554,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     IF (grank.EQ.0) THEN 
        WRITE(*,*)
        WRITE(*,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
-       WRITE(*,100)         'PARVMEC     :  ',PARVMEC
        WRITE(*,100)         'LPRECOND    :  ',LPRECOND
        WRITE(*,100)         'LV3FITCALL  :  ',LV3FITCALL
     END IF

@@ -4,7 +4,6 @@
         USE vmec_input, ONLY:lfreeb
         USE mpi_inc
 
-        USE parallel_vmec_module, ONLY: PARVMEC
         USE parallel_vmec_module, ONLY: LV3FITCALL
         USE parallel_vmec_module, ONLY: LPRECOND
         USE parallel_vmec_module, ONLY: TOFU
@@ -241,68 +240,35 @@ CONTAINS
           DOUBLE PRECISION :: mt(nranks)
           LOGICAL :: LMINMAXFILE=.FALSE.
 
-          IF (PARVMEC) THEN
 #if defined(MPI_OPT)
-            ind(1,1) = total_time; ind(2,1) = DBLE(rank)
-            CALL MPI_Reduce(ind,outd,1,MPI_2DOUBLE_PRECISION,MPI_MINLOC,0,NS_COMM,MPI_ERR)
-            IF(grank.EQ.0) THEN
-              minvalue = outd(1,1); minrank = outd(2,1)
-            END IF
-            CALL MPI_Reduce(ind,outd,1,MPI_2DOUBLE_PRECISION,MPI_MAXLOC,0,NS_COMM,MPI_ERR)
-            IF(grank.EQ.0) THEN
-              maxvalue = outd(1,1); maxrank = outd(2,1)
-            END IF
-            CALL MPI_Bcast(minvalue,1,MPI_DOUBLE_PRECISION,0,NS_COMM,MPI_ERR)
-            CALL MPI_Bcast(maxvalue,1,MPI_DOUBLE_PRECISION,0,NS_COMM,MPI_ERR)
-            CALL MPI_Bcast(minrank,1,MPI_INTEGER,0,NS_COMM,MPI_ERR)
-            CALL MPI_Bcast(maxrank,1,MPI_INTEGER,0,NS_COMM,MPI_ERR)
-            
-            IF (.FALSE..AND.ABS(maxvalue-minvalue).GE.0.0) THEN
-              LMINMAXFILE=.TRUE.
-              IF (grank.EQ.0) THEN
-                WRITE(*,*)
-                WRITE(*,*)'---------------------------------------------------'
-                WRITE(*,*) 'Min and max runtimes exceed tolerance....'
-                WRITE(*,'(A12,F15.6,A12,I6)')'Max. time: ',maxvalue,'Rank :',maxrank
-                WRITE(*,'(A12,F15.6,A12,I6)')'Min. time: ',minvalue,'Rank :',minrank
-                WRITE(*,*)'---------------------------------------------------'
-                WRITE(*,*)
-              END IF
-            END IF
-#endif
-          ELSE
-            totzsps_time = s_totzsps_time
-            totzspa_time = s_totzspa_time
-            jacobian_time = s_jacobian_time
-            bcovar_time = s_bcovar_time
-            alias_time = s_alias_time
-            forces_time = s_forces_time
-            tomnsps_time = s_tomnsps_time
-            tomnspa_time = s_tomnspa_time
-            symrzl_time = s_symrzl_time
-            symforces_time = s_symforces_time
-            residue_time = s_residue_time
-            tridslv_time = s_tridslv_time
-            scalfor_time = s_scalfor_time
-            gmres_time = s_gmres_time
-            guess_axis_time = s_guess_axis_time
-            vacuum_time = s_vacuum_time
-            precal_time = s_precal_time
-            surface_time = s_surface_time
-            bextern_time = s_bextern_time
-            scalpot_time = s_scalpot_time
-            solver_time = s_solver_time
-            analyt_time = s_analyt_time
-            tolicu_time = s_tolicu_time
-            belicu_time = s_belicu_time
-            becoil_time = s_becoil_time
-            greenf_time = s_greenf_time
-            fourp_time = s_fourp_time
-            fouri_time = s_fouri_time
-            maxvalue=total_time; minvalue=total_time
+          ind(1,1) = total_time; ind(2,1) = DBLE(rank)
+          CALL MPI_Reduce(ind,outd,1,MPI_2DOUBLE_PRECISION,MPI_MINLOC,0,NS_COMM,MPI_ERR)
+          IF(grank.EQ.0) THEN
+            minvalue = outd(1,1); minrank = outd(2,1)
           END IF
-
-          IF (PARVMEC.AND.LMINMAXFILE) THEN
+          CALL MPI_Reduce(ind,outd,1,MPI_2DOUBLE_PRECISION,MPI_MAXLOC,0,NS_COMM,MPI_ERR)
+          IF(grank.EQ.0) THEN
+            maxvalue = outd(1,1); maxrank = outd(2,1)
+          END IF
+          CALL MPI_Bcast(minvalue,1,MPI_DOUBLE_PRECISION,0,NS_COMM,MPI_ERR)
+          CALL MPI_Bcast(maxvalue,1,MPI_DOUBLE_PRECISION,0,NS_COMM,MPI_ERR)
+          CALL MPI_Bcast(minrank,1,MPI_INTEGER,0,NS_COMM,MPI_ERR)
+          CALL MPI_Bcast(maxrank,1,MPI_INTEGER,0,NS_COMM,MPI_ERR)
+          
+          IF (.FALSE..AND.ABS(maxvalue-minvalue).GE.0.0) THEN
+            LMINMAXFILE=.TRUE.
+            IF (grank.EQ.0) THEN
+              WRITE(*,*)
+              WRITE(*,*)'---------------------------------------------------'
+              WRITE(*,*) 'Min and max runtimes exceed tolerance....'
+              WRITE(*,'(A12,F15.6,A12,I6)')'Max. time: ',maxvalue,'Rank :',maxrank
+              WRITE(*,'(A12,F15.6,A12,I6)')'Min. time: ',minvalue,'Rank :',minrank
+              WRITE(*,*)'---------------------------------------------------'
+              WRITE(*,*)
+            END IF
+          END IF
+#endif
+          IF (LMINMAXFILE) THEN
             IF(grank.EQ.minrank) THEN
               CALL WriteTimes('min-timings.txt')
             END IF
@@ -332,11 +298,7 @@ CONTAINS
           OPEN(UNIT=TFILE, FILE=fname, STATUS="REPLACE", ACTION="WRITE",&
             &FORM="FORMATTED",POSITION="APPEND", IOSTAT=istat)
 
-          IF (PARVMEC) THEN
-            WRITE(TFILE,*) '====================== PARALLEL TIMINGS ====================' 
-          ELSE
-            WRITE(TFILE,*) '======================= SERIAL TIMINGS =====================' 
-          END IF
+          WRITE(TFILE,*) '====================== PARALLEL TIMINGS ====================' 
 
           WRITE(TFILE,'(A20,A4,F15.6)') 'total', ': ', total_time
           WRITE(TFILE,'(A20,A4,I15)') 'rank', ': ', rank
@@ -410,19 +372,17 @@ CONTAINS
           WRITE(TFILE,'(A20,A4,F15.6)') '-- tridslv', ': ', tridslv_time
           WRITE(TFILE,*) 
           WRITE(TFILE,*) '============================================================' 
-          IF (PARVMEC) THEN
-            WRITE(TFILE,*) 
-            WRITE(TFILE,'(A20,A4,F15.6)') 'allgather', ': ', allgather_time
-            WRITE(TFILE,'(A20,A4,F15.6)') 'allreduce', ': ', allreduce_time
-            WRITE(TFILE,'(A20,A4,F15.6)') 'broadcast', ': ', broadcast_time
-            WRITE(TFILE,'(A20,A4,F15.6)') 'sendrecv ', ': ', sendrecv_time
-            WRITE(TFILE,*) 
-            WRITE(TFILE,'(A20,A4,F15.6)') 'Fill_blocks    ', ': ', fill_blocks_time
-            WRITE(TFILE,'(A20,A4,F15.6)') 'Compute blocks ', ': ', compute_blocks_time
-            WRITE(TFILE,'(A20,A4,F15.6)') 'Forward solve  ', ': ', bcyclic_forwardsolve_time
-            WRITE(TFILE,'(A20,A4,F15.6)') 'Backward solve ', ': ', bcyclic_backwardsolve_time
-            WRITE(TFILE,*) '============================================================' 
-          END IF
+          WRITE(TFILE,*) 
+          WRITE(TFILE,'(A20,A4,F15.6)') 'allgather', ': ', allgather_time
+          WRITE(TFILE,'(A20,A4,F15.6)') 'allreduce', ': ', allreduce_time
+          WRITE(TFILE,'(A20,A4,F15.6)') 'broadcast', ': ', broadcast_time
+          WRITE(TFILE,'(A20,A4,F15.6)') 'sendrecv ', ': ', sendrecv_time
+          WRITE(TFILE,*) 
+          WRITE(TFILE,'(A20,A4,F15.6)') 'Fill_blocks    ', ': ', fill_blocks_time
+          WRITE(TFILE,'(A20,A4,F15.6)') 'Compute blocks ', ': ', compute_blocks_time
+          WRITE(TFILE,'(A20,A4,F15.6)') 'Forward solve  ', ': ', bcyclic_forwardsolve_time
+          WRITE(TFILE,'(A20,A4,F15.6)') 'Backward solve ', ': ', bcyclic_backwardsolve_time
+          WRITE(TFILE,*) '============================================================' 
           CALL FLUSH(TFILE)
           CLOSE(TFILE)
 

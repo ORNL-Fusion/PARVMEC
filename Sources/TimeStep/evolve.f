@@ -85,11 +85,7 @@ C-----------------------------------------------
 !           OF PRECONDITIONING BLOCKS IN V3FIT, FOR EXAMPLE
          IF (lfirst .OR. l_comp_prec2D) THEN
             IF (l_v3fit) WRITE(*,*) 'VMEC Evolve:compute_blocks'
-            IF (PARVMEC) THEN
-               CALL compute_blocks_par (pxc,pxcdot,pgc)
-            ELSE
-               CALL compute_blocks (xc,xcdot,gc)
-            END IF
+            CALL compute_blocks_par (pxc,pxcdot,pgc)
          END IF
          IF(l_v3fit) WRITE(*,*) 'VMEC Evolve:prec2d_On iter2 =', iter2
          l_comp_prec2D = .FALSE.
@@ -97,13 +93,8 @@ C-----------------------------------------------
          time_step = 0.50_dp
          iter1 = iter2-1; fsq = fsqr1 + fsqz1 + fsql1
 
-         IF (PARVMEC) THEN
-            CALL CopyLastNtype(pxstore, pxc)
-            CALL ZeroLastNType(pxcdot)
-         ELSE
-            xc = xstore
-            xcdot = 0
-         END IF
+         CALL CopyLastNtype(pxstore, pxc)
+         CALL ZeroLastNType(pxcdot)
       END IF
 
 !
@@ -113,11 +104,7 @@ C-----------------------------------------------
 !
       CALL second0(f3dt1)
       f3d_num(NS_RESLTN) = f3d_num(NS_RESLTN)+1
-      IF (PARVMEC) THEN
-         CALL funct3d_par(lscreen, ier_flag)
-      ELSE
-         CALL funct3d(lscreen, ier_flag)
-      END IF
+      CALL funct3d_par(lscreen, ier_flag)
       CALL second0(f3dt2)
       f3d_time(NS_RESLTN) = f3d_time(NS_RESLTN) + (f3dt2 - f3dt1)
       funct3d_time = funct3d_time + (f3dt2 - f3dt1)
@@ -143,24 +130,11 @@ C-----------------------------------------------
 
 !SPH:042117: MOVE TIME STEP CONTROL HERE (FROM END OF EQSOLVE) TO AVOID
 !STORING A POSSIBLE irst=2 STATE
-      CALL TimeStepControl(ier_flag, PARVMEC)
+      CALL TimeStepControl(ier_flag)
 
       IF (lqmr) THEN
-         IF (PARVMEC) THEN
-            CALL gmres_fun_par(ier_flag, itype_precon - 1, lscreen)
-            IF (.NOT.lfreeb) CALL CompareEdgeValues(pxc, pxsave)
-         ELSE
-            CALL gmres_fun(ier_flag, itype_precon-1)
-            IF (.NOT.lfreeb) THEN
-               DO lcount = ns, 2*irzloff, ns
-                  IF (xsave(lcount) .NE. xc(lcount)) THEN
-                     PRINT *, ' xsave = ',xsave(lcount),' != xc = ',
-     &                        xc(lcount),' for lcount = ',lcount
-                  END IF
-               END DO
-            END IF
-         END IF
-
+         CALL gmres_fun_par(ier_flag, itype_precon - 1, lscreen)
+         IF (.NOT.lfreeb) CALL CompareEdgeValues(pxc, pxsave)
          RETURN
       END IF
 
@@ -204,15 +178,10 @@ C-----------------------------------------------
 
 !
 
-      IF (PARVMEC) THEN
-         IF (lactive) THEN
-            CALL SaxpbyLastNtype(fac*time_step, pgc, fac*b1, pxcdot,
-     &                           pxcdot)
-            CALL SaxpbyLastNtype(time_step, pxcdot, one, pxc, pxc)
-         END IF
-      ELSE
-         xcdot = fac*(b1*xcdot + time_step*gc)
-         xc    = xc + time_step*xcdot
+      IF (lactive) THEN
+         CALL SaxpbyLastNtype(fac*time_step, pgc, fac*b1, pxcdot,
+     &                        pxcdot)
+         CALL SaxpbyLastNtype(time_step, pxcdot, one, pxc, pxc)
       END IF
 
       CALL second0(tevoff)
@@ -221,7 +190,7 @@ C-----------------------------------------------
       END SUBROUTINE evolve
 
 
-      SUBROUTINE TimeStepControl(ier_flag, PARVMEC)
+      SUBROUTINE TimeStepControl(ier_flag)
       USE vmec_main, ONLY: res0, res1, fsq, fsqr, fsqz, fsql,
      &                     irst, iter1, iter2, delt0r, dp
       USE vmec_params, ONLY: ns4
@@ -237,7 +206,6 @@ C-----------------------------------------------
       REAL(dp), PARAMETER :: fact = 1.E4_dp
       REAL(dp) :: fsq0
       INTEGER  :: ier_flag
-      LOGICAL, INTENT(IN) :: PARVMEC
 
       fsq0 = fsqr+fsqz+fsql
       IF (iter2.EQ.iter1 .OR. res0.EQ.-1) THEN
@@ -270,11 +238,7 @@ C-----------------------------------------------
       IF (irst .NE. 1) THEN
          CALL restart_iter(delt0r)
          iter1 = iter2
-         IF (PARVMEC) THEN
-            CALL funct3d_par(.FALSE., ier_flag)
-         ELSE
-            CALL funct3d(.FALSE., ier_flag)
-         END IF
+         CALL funct3d_par(.FALSE., ier_flag)
          IF (irst .NE. 1 .and. irst .NE. 4) THEN
             STOP 'Logic error in TimeStepControl!'
          END IF

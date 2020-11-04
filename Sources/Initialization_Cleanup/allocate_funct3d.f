@@ -102,7 +102,7 @@ C-----------------------------------------------
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ndim  = 1+nrzt
       ndim2 = 2*ndim
-      CALL free_mem_funct3d
+      ! CALL free_mem_funct3d ! already done by call to free_mem_funct3d_par
 
       ALLOCATE (armn(ndim2), azmn(ndim2), brmn(ndim2), bzmn(ndim2),
      &          crmn(ndim2), czmn(ndim2), blmn(ndim2), clmn(ndim2),

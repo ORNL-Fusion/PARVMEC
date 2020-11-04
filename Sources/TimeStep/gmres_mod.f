@@ -178,13 +178,14 @@ C-----------------------------------------------
 !
 !     CHOOSE TYPE OF SOLVER
 !
-      IF (itype == 2) THEN
-         CALL gmresr_fun (ier_flag)
-         RETURN
-      ELSE IF (itype == 3) THEN
-         CALL qmr_fun
-         RETURN
-      END IF
+c       ! these pull in (serial) funct3d via matvec --> comment out for now
+c       IF (itype == 2) THEN
+c          CALL gmresr_fun (ier_flag)
+c          RETURN
+c       ELSE IF (itype == 3) THEN
+c          CALL qmr_fun
+c          RETURN
+c       END IF
 
 
       IF (lfirst) THEN

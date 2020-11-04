@@ -35,16 +35,14 @@ C-----------------------------------------------
 !
 !     Save old xc, scalxc for possible interpolation or IF iterations restarted on same mesh...
 !
-      IF (PARVMEC) THEN 
-         IF (neqs_old.GT.0 .AND. ALLOCATED(pscalxc) .AND. linterp) THEN
-            ALLOCATE(pxc_old(neqs_old),pscalxc_old(neqs_old),
-     &               stat=istat1)
-            IF (istat1.NE.0) THEN
-               STOP 'allocation error #1 in allocate_ns'
-            ENDIF
-            pxc_old(:neqs_old) = pxc(:neqs_old)
-            pscalxc_old(:neqs_old) = pscalxc(:neqs_old)
-         END IF
+      IF (neqs_old.GT.0 .AND. ALLOCATED(pscalxc) .AND. linterp) THEN
+         ALLOCATE(pxc_old(neqs_old),pscalxc_old(neqs_old),
+     &            stat=istat1)
+         IF (istat1.NE.0) THEN
+            STOP 'allocation error #1 in allocate_ns'
+         ENDIF
+         pxc_old(:neqs_old) = pxc(:neqs_old)
+         pscalxc_old(:neqs_old) = pscalxc(:neqs_old)
       END IF
 
       IF (neqs_old .GT. 0 .AND. ALLOCATED(scalxc) .AND. linterp) THEN
@@ -60,10 +58,7 @@ C-----------------------------------------------
 !     ALLOCATES MEMORY FOR NS-DEPENDENT ARRAYS
 !     FIRST BE SURE TO FREE MEMORY PREVIOUSLY ALLOCATED
 !
-      IF (PARVMEC) THEN 
-        CALL free_mem_ns_par (.true.)
-      END IF
-      CALL free_mem_ns (.true.)
+      CALL free_mem_ns_par (.true.)
 
       ALLOCATE (phip(ndim), chip(ndim), shalf(ndim), sqrts(ndim), 
      1          wint(ndim), stat=istat1)
@@ -72,16 +67,14 @@ C-----------------------------------------------
       END IF
       phip=0; chip=0; shalf=0; sqrts=0; wint=0
 
-      IF(PARVMEC) THEN
-         ALLOCATE(pshalf(nznt,ns),stat=istat1)
-         ALLOCATE(pwint(nznt,ns),stat=istat1)
-         ALLOCATE(pwint_ns(nznt),stat=istat1)
-         ALLOCATE(ireflect_par(nzeta),stat=istat1)
-         ALLOCATE(pchip(nznt,ns),stat=istat1)
-         ALLOCATE(pphip(nznt,ns),stat=istat1)
-         ALLOCATE(psqrts(nznt,ns),stat=istat1)
-         ALLOCATE(pfaclam(0:ntor,0:mpol1,1:ns,ntmax),stat=istat1)
-      END IF
+      ALLOCATE(pshalf(nznt,ns),stat=istat1)
+      ALLOCATE(pwint(nznt,ns),stat=istat1)
+      ALLOCATE(pwint_ns(nznt),stat=istat1)
+      ALLOCATE(ireflect_par(nzeta),stat=istat1)
+      ALLOCATE(pchip(nznt,ns),stat=istat1)
+      ALLOCATE(pphip(nznt,ns),stat=istat1)
+      ALLOCATE(psqrts(nznt,ns),stat=istat1)
+      ALLOCATE(pfaclam(0:ntor,0:mpol1,1:ns,ntmax),stat=istat1)
 
       ALLOCATE(ireflect(ns*nzeta), stat=istat1)
       IF (istat1.ne.0) THEN
@@ -130,27 +123,25 @@ C-----------------------------------------------
          STOP 'allocation error #8 in allocate_ns'
       END IF
 
-      IF(PARVMEC) THEN
-         ALLOCATE(pgc(neqs), pxcdot(neqs), pxsave(neqs),
-     &            pxstore(neqs), pcol_scale(neqs), stat=istat1)
-         pxstore = zero
+      ALLOCATE(pgc(neqs), pxcdot(neqs), pxsave(neqs),
+     &         pxstore(neqs), pcol_scale(neqs), stat=istat1)
+      pxstore = zero
+      IF (istat1 .NE. 0) THEN
+         STOP 'allocation error #9 in allocate_ns'
+      END IF
+
+      IF (.not.ALLOCATED(pxc)) THEN
+         ALLOCATE (pxc(neqs), pscalxc(neqs), stat=istat1)
          IF (istat1 .NE. 0) THEN
-            STOP 'allocation error #9 in allocate_ns'
+            STOP 'allocation error #10 in allocate_ns'
          END IF
+         pxc(:neqs) = zero
+      END IF
 
-         IF (.not.ALLOCATED(pxc)) THEN
-            ALLOCATE (pxc(neqs), pscalxc(neqs), stat=istat1)
-            IF (istat1 .NE. 0) THEN
-               STOP 'allocation error #10 in allocate_ns'
-            END IF
-            pxc(:neqs) = zero
-         END IF
-
-         IF (ALLOCATED(pxc_old)) THEN
-            pxstore(1:neqs_old) = pxc_old(1:neqs_old)
-            pscalxc(1:neqs_old) = pscalxc_old(1:neqs_old)
-            DEALLOCATE (pxc_old, pscalxc_old)
-         END IF
+      IF (ALLOCATED(pxc_old)) THEN
+         pxstore(1:neqs_old) = pxc_old(1:neqs_old)
+         pscalxc(1:neqs_old) = pscalxc_old(1:neqs_old)
+         DEALLOCATE (pxc_old, pscalxc_old)
       END IF
 
       ALLOCATE(gc(neqs), xcdot(neqs), xsave(neqs),
@@ -177,10 +168,6 @@ C-----------------------------------------------
 !
 !     Allocate nrzt-dependent arrays (persistent) for funct3d
 !
-      IF (PARVMEC) THEN
-         CALL allocate_funct3d_par
-      ELSE
-         CALL allocate_funct3d
-      END IF
+      CALL allocate_funct3d_par
 
       END SUBROUTINE allocate_ns

@@ -11,7 +11,12 @@ C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       LOGICAL, INTENT(in) :: lreset
-
+C-----------------------------------------------
+C   L o c a l   V a r i a b l e s
+C-----------------------------------------------
+      INTEGER :: istat1 = 0, istat2 = 0, istat3 = 0, istat4 = 0,
+     1           istat5 = 0, istat6 = 0, istat7 = 0, istat8 = 0,
+     2           istat9 = 0, istat10 = 0
 C-----------------------------------------------
       IF (ALLOCATED(pshalf))  DEALLOCATE(pshalf)
       IF (ALLOCATED(psqrts))  DEALLOCATE(psqrts)
@@ -30,28 +35,7 @@ C-----------------------------------------------
       IF (ALLOCATED(pgc))        DEALLOCATE (pgc)
       IF (ALLOCATED(pcol_scale)) DEALLOCATE(pcol_scale)
 
-      END SUBROUTINE free_mem_ns_par
-
-      SUBROUTINE free_mem_ns(lreset)
-      USE vmec_main
-      USE realspace
-      USE vforces
-      USE xstuff
-      USE csplinx
-      USE fbal
-
-      IMPLICIT NONE
-C-----------------------------------------------
-C   D u m m y   A r g u m e n t s
-C-----------------------------------------------
-      LOGICAL, INTENT(in) :: lreset
-C-----------------------------------------------
-C   L o c a l   V a r i a b l e s
-C-----------------------------------------------
-      INTEGER :: istat1 = 0, istat2 = 0, istat3 = 0, istat4 = 0,
-     1           istat5 = 0, istat6 = 0, istat7 = 0, istat8 = 0,
-     2           istat9 = 0, istat10 = 0
-C-----------------------------------------------
+      ! former free_mem_ns starts here
 
       IF (ALLOCATED(phip)) THEN
          DEALLOCATE(phip, chip, shalf, sqrts, wint, stat=istat1)
@@ -101,4 +85,4 @@ C-----------------------------------------------
           PRINT *,' istat7 = ',istat7,' istat8 = ',istat8
        END IF
 
-      END SUBROUTINE free_mem_ns
+      END SUBROUTINE free_mem_ns_par

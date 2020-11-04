@@ -76,14 +76,14 @@
 #endif
       END IF
       IF (lrfp) THEN
-         IF (nsmin.EQ.1) iotaf(1)  = one/(c1p5/iotas(2) - p5/iotas(3))
-         IF (nsmax.EQ.ns) iotaf(ns)=one/(c1p5/iotas(ns)-p5/iotas(ns-1))
+         IF (nsmin.EQ.2) iotaf(1)  = one/(c1p5/iotas(2) - p5/iotas(3))
+         IF (nsmax.EQ.ns-1) iotaf(ns)=one/(c1p5/iotas(ns)-p5/iotas(ns-1))
          DO js = MAX(2,t1lglob), MIN(ns-1,t1rglob)
             iotaf(js) = 2.0_dp/(one/iotas(js) + one/iotas(js+1))
          END DO
       ELSE
-        IF (nsmin.EQ.1) iotaf(1)  = c1p5*iotas(2) - p5*iotas(3)
-        IF (nsmax.EQ.ns) iotaf(ns)=c1p5*iotas(ns) - p5*iotas(ns-1)
+        IF (nsmin.EQ.2) iotaf(1)  = c1p5*iotas(2) - p5*iotas(3)
+        IF (nsmax.EQ.ns-1) iotaf(ns)=c1p5*iotas(ns) - p5*iotas(ns-1)
         DO js = MAX(2,t1lglob), MIN(ns-1,trglob)
           iotaf(js) = p5*(iotas(js) + iotas(js+1))
         END DO

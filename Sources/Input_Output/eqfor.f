@@ -183,7 +183,8 @@ C-----------------------------------------------
 !	WRITE (36, 201) (i, phi1(i), chi1(i), iotas(i), i=1, ns)
 !201   FORMAT (i4, 1p,3e14.6)
 
-      CALL calc_fbal(bsubu, bsubv)
+      ! jons: this is already handled by funct3d_par->bcovar_par->calc_fbal_par
+      ! CALL calc_fbal(bsubu, bsubv)
 
       bucof(1) = 0
       bvcof(1) = c1p5*bvco(2) - p5*bvco(3)

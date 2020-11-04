@@ -62,7 +62,7 @@ C-----------------------------------------------
 !       rmnc,rmns,zmns,zmnc:     Surface Fourier coefficients (m,n) of R,Z
 !       xm,xn:     m, n values corresponding to rc,zs array
 !       bsqvac:    B**2/2 at the vacuum INTERFACE
-!       plascur:   net toroidal current
+!       plascur:   net toroidal current (in MA/mu_0)
 !       rbtor  :   net (effective) poloidal current (loop integrated R*Btor)
 !       mnmax:     number of R, Z modes in Fourier series of R,Z
 !       ivac_skip: regulates whether full (=0) or incremental (>0)

@@ -89,54 +89,37 @@ C-----------------------------------------------
          CALL getrz(xstore)
          ns = ns1 + 1
 #endif
-         IF (PARVMEC) THEN
 #if defined(MPI_OPT)
-            pgc(1:neqs_old) = pscalxc(1:neqs_old)*pxstore(1:neqs_old)
-            IF (lfreeb) THEN
-               CALL MPI_Bcast(rbsq, SIZE(rbsq), MPI_REAL8,
-     &                        0, NS_COMM, MPI_ERR)
-            END IF
-#endif
-         ELSE
-            gc(1:neqs_old) = scalxc(1:neqs_old)*xstore(1:neqs_old)
+         pgc(1:neqs_old) = pscalxc(1:neqs_old)*pxstore(1:neqs_old)
+         IF (lfreeb) THEN
+            CALL MPI_Bcast(rbsq, SIZE(rbsq), MPI_REAL8,
+     &                     0, NS_COMM, MPI_ERR)
          END IF
+#endif
       END IF
 
 !
 !     COMPUTE INITIAL R, Z AND MAGNETIC FLUX PROFILES
 !
 
-      IF (PARVMEC) THEN
-         CALL profil1d_par(pxc, pxcdot, lreset_internal)
-      ELSE
-         CALL profil1d(xc, xcdot, lreset_internal)
-      END IF
+      CALL profil1d_par(pxc, pxcdot, lreset_internal)
+
       IF (PRESENT(reset_file_name)) THEN
          IF (LEN_TRIM(reset_file_name) .ne. 0) THEN
             CALL load_xc_from_wout(xc(1), xc(1+irzloff),
      &                             xc(1+2*irzloff), lreset_internal,
      &                             ntor, mpol1, ns, reset_file_name)
-            IF (PARVMEC) THEN
-               CALL Serial2Parallel4X(xc,pxc)
-            END IF
+            CALL Serial2Parallel4X(xc,pxc)
          END IF
       END IF
 
-      IF (PARVMEC) THEN
-         CALL profil3d_par(pxc(1), pxc(1+irzloff), lreset_internal,
-     &                     linterp)
-      ELSE
-         CALL profil3d(xc(1), xc(1+irzloff), lreset_internal, linterp)
-      END IF
+      CALL profil3d_par(pxc(1), pxc(1+irzloff), lreset_internal,
+     &                  linterp)
 !
 !     INTERPOLATE FROM COARSE (ns_old) TO NEXT FINER (ns) RADIAL GRID
 !
       IF (linterp) THEN
-         IF(PARVMEC) THEN
-            CALL interp_par(pxc, pgc, pscalxc, ns, ns_old)
-         ELSE
-            CALL interp(xc, gc, scalxc, ns, ns_old)
-         END IF
+         CALL interp_par(pxc, pgc, pscalxc, ns, ns_old)
 #ifdef _HBANGLE
          CALL store_init_array(xc)
 #endif

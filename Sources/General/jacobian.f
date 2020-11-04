@@ -26,7 +26,8 @@ C-----------------------------------------------
 C-----------------------------------------------
       CALL second0(tjacon)
 
-      nsmin=MAX(2,tlglob); nsmax=t1rglob;
+      !nsmin=MAX(2,tlglob); nsmax=t1rglob;
+      nsmin=tlglob; nsmax=t1rglob; ! jons
       dphids = p25
       irst = 1
 

@@ -292,7 +292,7 @@ C-----------------------------------------------
          END IF
 
          CALL second0(tiniton)
-         IF (PARVMEC .AND. NS_RESLTN .GE. 1) THEN
+         IF (NS_RESLTN .GE. 1) THEN
             IF (lactive) THEN
                CALL Gather4XArray(pscalxc)
                CALL Gather4XArray(pxc)
@@ -364,13 +364,8 @@ C-----------------------------------------------
          CALL second0(gridtoff)
          grid_time(grid_id) = gridtoff - gridton
          IF (lfreeb) THEN
-            IF (PARVMEC) THEN
-               vgrid_time(grid_id) = vacuum_time - old_vacuum_time
-               old_vacuum_time = vacuum_time
-            ELSE
-               vgrid_time(grid_id) = s_vacuum_time - old_vacuum_time
-               old_vacuum_time = s_vacuum_time
-            END IF
+            vgrid_time(grid_id) = vacuum_time - old_vacuum_time
+            old_vacuum_time = vacuum_time
          END IF
          grid_id = grid_id + 1
       END DO
@@ -394,11 +389,7 @@ C-----------------------------------------------
          PRINT *, 'runvmec: Running some more iterations',
      &            ' -> Skipping call to fileout!'
       ELSE IF (ier_flag .NE. more_iter_flag) THEN
-         IF (PARVMEC) THEN
-            CALL fileout_par(iseq_count, ictrl_flag, ier_flag, lscreen)
-         ELSE
-            CALL fileout(iseq_count, ictrl_flag, ier_flag, lscreen)
-         END IF
+         CALL fileout_par(iseq_count, ictrl_flag, ier_flag, lscreen)
       END IF
 
       IF(LV3FITCALL) CALL FinalizeRunVmec(RUNVMEC_COMM_WORLD)
