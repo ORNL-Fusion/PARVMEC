@@ -393,6 +393,12 @@ C-----------------------------------------------
       ELSE IF (ier_flag .NE. more_iter_flag) THEN
          CALL fileout_par(iseq_count, ictrl_flag, ier_flag, lscreen)
       END IF
+      
+      ! jons: moved here from end of fileout_par
+      CALL free_persistent_mem
+      CALL free_mem_funct3d_par
+      CALL free_mem_ns_par(.false.)
+      CALL free_mem_nunv
 
       IF(LV3FITCALL) CALL FinalizeRunVmec(RUNVMEC_COMM_WORLD)
       CALL second0(rvtoff)

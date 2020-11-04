@@ -392,12 +392,6 @@ C-----------------------------------------------
          CALL close_all_files
       ENDIF
 
-      CALL free_persistent_mem
-
-      CALL free_mem_funct3d_par
-      CALL free_mem_ns_par(.false.)
-      CALL free_mem_nunv
-      
       !CALL MPI_Barrier(NS_COMM, MPI_ERR) !SAL 070719
       CALL second0(tfileoff)
       fileout_time = fileout_time + (tfileoff-tfileon)
