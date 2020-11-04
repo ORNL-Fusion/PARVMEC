@@ -4,7 +4,6 @@
       USE parallel_include_module
       USE vmec_main
       USE vmec_params, ONLY: mscale, nscale, ntmax, rss, zcs, rsc, zcc
-      USE totzsp_mod, ONLY:  convert_sym, convert_asym
       USE totzsp_mod, ONLY:  convert_sym_par, convert_asym_par
 
       IMPLICIT NONE

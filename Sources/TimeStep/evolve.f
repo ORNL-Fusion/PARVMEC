@@ -6,7 +6,7 @@
      &                       norm_term_flag
       USE xstuff
       USE precon2d, ONLY: ictrl_prec2d, l_comp_prec2D, 
-     &                    compute_blocks_par, compute_blocks
+     &                    compute_blocks_par
       USE parallel_include_module
       USE parallel_vmec_module, ONLY: ZeroLastNType, CopyLastNtype, 
      &                                SaxpbyLastNtype, CompareEdgeValues
