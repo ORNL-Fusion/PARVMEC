@@ -1,3 +1,5 @@
+!> \file symforce.f
+
       SUBROUTINE symforce_par(ars, brs, crs, azs, bzs, czs, bls, cls,
      &                        rcs, zcs, ara, bra, cra, aza, bza, cza,
      &                        bla, cla, rca, zca)

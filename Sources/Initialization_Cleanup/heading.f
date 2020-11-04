@@ -1,3 +1,5 @@
+!> \file heading.f
+
       SUBROUTINE heading(extension, time_slice, iseq_count, lmac,
      1                   lscreen, lwrite)
       USE vmec_main, ONLY: rprec

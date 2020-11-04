@@ -1,3 +1,5 @@
+!> \file read_indata.f
+
       SUBROUTINE read_indata(in_file, iunit, ier_flag)
       USE vmec_main
       USE vmec_input, ONLY: bloat, ncurr

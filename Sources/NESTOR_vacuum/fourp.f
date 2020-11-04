@@ -1,3 +1,5 @@
+!> \file fourp.f
+
       SUBROUTINE fourp (grpmn, grp, istore, istart, iend, ndim)
       USE vacmod
       USE parallel_include_module

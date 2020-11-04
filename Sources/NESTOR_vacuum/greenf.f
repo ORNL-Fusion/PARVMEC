@@ -1,3 +1,5 @@
+!> \file greenf.f
+
       SUBROUTINE greenf (delgr, delgrp, ip)
       USE vacmod
       USE vparams, ONLY: one

@@ -1,3 +1,5 @@
+!> \file allocate_funct3d.f
+
       SUBROUTINE allocate_funct3d_par
       USE vmec_main
       USE realspace

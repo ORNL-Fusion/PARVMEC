@@ -1,3 +1,5 @@
+!> \file add_tension.f
+
       SUBROUTINE add_tension(amat, wten, hx, tens, tensv, fpoly, 
      1   n, nb, ioff, nmat)
       USE vspline

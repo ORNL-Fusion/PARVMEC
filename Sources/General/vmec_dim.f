@@ -1,3 +1,5 @@
+!> \file vmec_dim.f
+
       MODULE vmec_dim
       IMPLICIT NONE
 C-----------------------------------------------

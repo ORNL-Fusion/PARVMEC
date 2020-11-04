@@ -1,3 +1,5 @@
+!> \file aspectratio.f
+
       FUNCTION aspectratio()
       USE vmec_main
       USE realspace

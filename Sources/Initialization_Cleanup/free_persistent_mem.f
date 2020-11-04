@@ -1,3 +1,5 @@
+!> \file free_persistent_mem.f
+
       SUBROUTINE free_persistent_mem
       USE vmec_main
       USE xstuff

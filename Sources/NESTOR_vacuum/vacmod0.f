@@ -1,3 +1,5 @@
+!> \file vacmod0.f
+
       MODULE vacmod0
       IMPLICIT NONE
 !-----------------------------------------------

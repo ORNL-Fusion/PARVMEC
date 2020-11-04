@@ -1,3 +1,5 @@
+!> \file gety2.f
+
       SUBROUTINE gety2(y, y2, h, nots, nb)
       USE vspline
       IMPLICIT NONE

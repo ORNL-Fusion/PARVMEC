@@ -1,3 +1,5 @@
+!> \file tomnsp_mod.f
+
       MODULE tomnsp_mod
       USE timer_sub
       IMPLICIT NONE

@@ -1,3 +1,5 @@
+!> \file initialize_radial.f
+
       SUBROUTINE initialize_radial(nsval, ns_old, delt0,
      1                             lscreen, reset_file_name)
       USE vmec_main

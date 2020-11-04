@@ -1,3 +1,5 @@
+!> \file gmres_mod.f
+
       MODULE gmres_mod
       USE vmec_main, ONLY: dp, rprec, neqs, ns, nthreed, 
      1                     one, fsqr, fsqz, fsql

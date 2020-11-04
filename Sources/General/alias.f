@@ -1,3 +1,5 @@
+!> \file alias.f
+
       SUBROUTINE alias_par(gcons, ztemp, gcs, gsc, gcc, gss)
       USE vmec_main
       USE realspace, ONLY:ireflect_par, psqrts

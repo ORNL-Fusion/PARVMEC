@@ -1,3 +1,5 @@
+!> \file getbrho.f
+
       SUBROUTINE getbsubs (bsubsmn, frho, bsupu, bsupv, mmax, 
      1                     nmax, info)
       USE stel_kinds

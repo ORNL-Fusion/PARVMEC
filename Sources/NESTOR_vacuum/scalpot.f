@@ -1,3 +1,5 @@
+!> \file scalpot.f
+
       SUBROUTINE scalpot(bvec, amatrix, ivacskip)
       USE vacmod
       USE parallel_include_module

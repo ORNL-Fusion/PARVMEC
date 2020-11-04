@@ -1,3 +1,5 @@
+!> \file analysum.f
+
       SUBROUTINE analysum (grpmn, bvec, sl, tl, m, n, l, ivacskip, 
      1                     ndim)
       USE vacmod

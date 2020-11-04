@@ -1,3 +1,5 @@
+!> \file vmec_params.f
+
       MODULE vmec_params
       USE stel_kinds, ONLY: rprec, dp
       USE vparams, ONLY: mpold

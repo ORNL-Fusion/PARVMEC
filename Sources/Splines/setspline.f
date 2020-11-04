@@ -1,3 +1,5 @@
+!> \file setspline.f
+
       SUBROUTINE setspline(x,weight,y,h,yfit,y2,wten,tens,nots,nb)
       USE vspline
       USE vparams, ONLY: zero

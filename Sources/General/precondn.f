@@ -1,3 +1,5 @@
+!> \file precondn.f
+
       ! SKS-RANGE: All OUT arrays computed correctly between
       ! [tlglob, trglob] 
       SUBROUTINE precondn_par(lu1, bsq, gsqrt, r12, xs, xu12, xue, xuo,

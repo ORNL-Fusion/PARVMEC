@@ -1,3 +1,5 @@
+!> \file timer_sub.f
+
       MODULE timer_sub
       USE stel_kinds, ONLY: dp
       USE parallel_include_module

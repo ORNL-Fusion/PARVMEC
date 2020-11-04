@@ -1,3 +1,5 @@
+!> \file symrzl.f
+
       SUBROUTINE symrzl_par(r1s, rus, rvs, z1s, zus, zvs, lus, lvs,
      1    rcons, zcons, r1a, rua, rva, z1a, zua, zva, lua, lva, rcona,
      2    zcona)

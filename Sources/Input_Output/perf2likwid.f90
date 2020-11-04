@@ -1,3 +1,5 @@
+!> \file perf2likwid.f90
+
 ! perflib wrapper for likwid marker-API calls
 ! see http://code.google.com/p/likwid/wiki/LikwidPerfCtr#NEW:_Using_the_marker_API_with_Fortran_90
 

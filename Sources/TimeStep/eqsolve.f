@@ -1,3 +1,5 @@
+!> \file eqsolve.f
+
       SUBROUTINE eqsolve(ier_flag, lscreen)
       USE vmec_main
       USE vmec_params, ONLY: ntmax, ns4, jac75_flag, norm_term_flag,

@@ -1,3 +1,5 @@
+!> \file write_dcon.f
+
       SUBROUTINE write_dcon (rzl_array)
       USE vmec_main, fpsi=>bvcof
       USE vmec_params, ONLY: ntmax, rcc, rsc, zsc, zcc, mscale, nscale

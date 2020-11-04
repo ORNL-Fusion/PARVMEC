@@ -1,3 +1,5 @@
+!> \file precal.f
+
       SUBROUTINE precal (wint)
       USE vparams, ONLY: zero, one, epstan
       USE vacmod

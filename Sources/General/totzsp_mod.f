@@ -1,3 +1,5 @@
+!> \file totzsp_mod.f
+
       MODULE totzsp_mod
       USE vmec_main
       USE timer_sub

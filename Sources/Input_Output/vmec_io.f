@@ -1,3 +1,5 @@
+!> \file vmec_io.f
+
       MODULE vmec_io
       USE stel_kinds
       IMPLICIT NONE

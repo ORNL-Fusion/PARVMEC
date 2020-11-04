@@ -1,3 +1,5 @@
+!> \file freeb_data.f
+
       SUBROUTINE freeb_data (rmnc, zmns, rmns, zmnc, bmodmn, bmodmn1)
       USE vmec_main
       USE vacmod

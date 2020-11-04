@@ -1,3 +1,5 @@
+!> \file residue.f90
+
       SUBROUTINE residue_par (gcr, gcz, gcl)
       USE vmec_main, p5 => cp5
       USE vmec_params, ONLY: rss, zcs, rsc, zcc,                               &

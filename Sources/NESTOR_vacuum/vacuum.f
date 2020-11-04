@@ -1,3 +1,5 @@
+!> \file vacuum.f
+
       SUBROUTINE vacuum_par (rmnc, rmns, zmns, zmnc, xm, xn, 
      &                       plascur, rbtor, wint, ns, ivac_skip,
      &                       ivac, mnmax, ier_flag, lscreen)

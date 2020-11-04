@@ -1,3 +1,5 @@
+!> \file initspline.f
+
       SUBROUTINE initspline(amat, splnot, h, weight, nots)
       USE vspline
       IMPLICIT NONE

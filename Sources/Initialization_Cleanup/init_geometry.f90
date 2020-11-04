@@ -1,3 +1,5 @@
+!> \file init_geometry.f90
+
       MODULE INIT_GEOMETRY
 
       LOGICAL     :: lflip

@@ -1,3 +1,5 @@
+!> \file getspline.f
+
       SUBROUTINE getspline(amat, splnots, hk, delse, hs, indexs, isort,
      1   ndata0, nots)
       USE vsvd0

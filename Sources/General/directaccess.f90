@@ -1,3 +1,5 @@
+!> \file directaccess.f90
+
       MODULE DirectAccess
       USE safe_open_mod
       USE stel_kinds, ONLY: dp

@@ -1,3 +1,5 @@
+!> \file TestWout.f
+
       SUBROUTINE TestWout(rzl_array, br, bz, bsupu, bsupv)
       USE stel_kinds, ONLY: rprec, dp
       USE stel_constants, ONLY: twopi

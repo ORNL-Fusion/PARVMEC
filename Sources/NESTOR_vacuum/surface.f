@@ -1,3 +1,5 @@
+!> \file surface.f
+
       SUBROUTINE surface(rc, rs, zs, zc, xm, xn, mnmax)
       USE vacmod
       USE parallel_include_module

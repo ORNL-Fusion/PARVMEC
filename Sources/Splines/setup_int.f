@@ -1,3 +1,5 @@
+!> \file setup_int.f
+
       SUBROUTINE setup_int(xknots,smesh,hx,w,w1,u,u1,nk,nots,nmesh)
       USE stel_kinds
       USE vparams, ONLY: epstan

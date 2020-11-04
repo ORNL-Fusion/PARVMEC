@@ -1,3 +1,5 @@
+!> \file dump_output.f
+
       MODULE dump_output
       USE vmec_main
       USE realspace

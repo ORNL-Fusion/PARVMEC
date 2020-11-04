@@ -1,3 +1,5 @@
+!> \file interp.f
+
       SUBROUTINE interp_par(xnew, xold, scalxc, nsnew, nsold)
       USE vmec_main, ONLY: dp, rprec, mnsize
       USE vmec_params, ONLY: ntmax

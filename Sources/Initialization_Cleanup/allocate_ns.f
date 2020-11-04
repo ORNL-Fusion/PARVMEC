@@ -1,3 +1,5 @@
+!> \file allocate_ns.f
+
       SUBROUTINE allocate_ns (linterp, neqs_old)
       USE vmec_main
       USE vmec_params, ONLY: ntmax

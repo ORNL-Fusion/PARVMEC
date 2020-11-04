@@ -1,3 +1,5 @@
+!> \file splints.f
+
       FUNCTION splints (x)
       USE vspline
       USE vmec_input, ONLY: isnodes

@@ -1,3 +1,5 @@
+!> \file runvmec.f
+
       SUBROUTINE runvmec(ictrl_array, input_file0, 
      &                   lscreen, COMM_WORLD, reset_file_name)
       USE vmec_main

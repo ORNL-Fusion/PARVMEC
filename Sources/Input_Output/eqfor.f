@@ -1,3 +1,5 @@
+!> \file eqfor.f
+
       SUBROUTINE eqfor(br, bz, bsubu, bsubv, tau, rzl_array, ier_flag)
       USE vmec_main
       USE vmec_params

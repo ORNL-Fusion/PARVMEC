@@ -1,3 +1,5 @@
+!> \file free_mem_funct3d.f
+
       SUBROUTINE free_mem_funct3d_par
       USE vmec_main
       USE realspace

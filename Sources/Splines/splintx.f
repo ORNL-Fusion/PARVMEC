@@ -1,3 +1,5 @@
+!> \file splintx.f
+
       FUNCTION splintx(x)
       USE vparams
       USE vsvd0

@@ -1,3 +1,5 @@
+!> \file csplinx.f
+
       MODULE csplinx
       USE stel_kinds
       IMPLICIT NONE

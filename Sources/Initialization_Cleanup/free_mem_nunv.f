@@ -1,3 +1,5 @@
+!> \file free_mem_nunv.f
+
       SUBROUTINE free_mem_nunv
       USE vmec_main
       USE vacmod

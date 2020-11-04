@@ -1,3 +1,5 @@
+!> \file free_mem_ns.f
+
       SUBROUTINE free_mem_ns_par(lreset)
       USE vmec_main
       USE realspace

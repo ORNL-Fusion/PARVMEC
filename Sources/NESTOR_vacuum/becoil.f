@@ -1,3 +1,5 @@
+!> \file becoil.f
+
       SUBROUTINE becoil (rad, zee, br, bp, bz, brvac, bpvac, bzvac,            &
      &                   lscreen)
       USE vparams, ONLY: nthreed

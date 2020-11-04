@@ -1,3 +1,5 @@
+!> \file open_output_files.f
+
       SUBROUTINE open_output_files (extension, iseq, lmac, lscreen,
      1           lfirst, lwrite)
       USE safe_open_mod

@@ -1,3 +1,5 @@
+!> \file getfsq.f
+
       SUBROUTINE getfsq_par(gcr, gcz, gnormr, gnormz, gnorm, medge)
       USE vmec_main, ONLY: rprec, ns, ns1, mnsize
       USE vmec_params, ONLY: ntmax

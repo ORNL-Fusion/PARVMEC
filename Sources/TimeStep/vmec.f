@@ -1,3 +1,5 @@
+!> \file vmec.f
+
       PROGRAM vmec
       USE vmec_input
       USE vmec_seq

@@ -1,3 +1,5 @@
+!> \file fsym_fft.f
+
       SUBROUTINE fext_fft (bout, bs_s, bs_a)
       USE vmec_main
       IMPLICIT NONE

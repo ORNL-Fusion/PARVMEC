@@ -1,3 +1,5 @@
+!> \file angle_constraints.f90
+
       MODULE angle_constraints
       USE vmec_main, ONLY: ns, mpol, ntor, dp, mpol1, lthreed, lasym
       USE vmec_params, ONLY: signgs, ntmax, rcc, rss, zsc, zcs, rsc, rcs, zss, zcc

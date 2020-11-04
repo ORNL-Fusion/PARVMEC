@@ -1,3 +1,5 @@
+!> \file vacmod.f
+
       MODULE vacmod
       USE vacmod0
       USE vac_persistent

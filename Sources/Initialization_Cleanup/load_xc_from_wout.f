@@ -1,3 +1,5 @@
+!> \file load_xc_from_wout.f
+
       SUBROUTINE load_xc_from_wout(rmn, zmn, lmn, lreset, 
      1    ntor_in, mpol1_in, ns_in, reset_file)
       USE read_wout_mod, ONLY: rmnc, zmns, lmns, rmns, zmnc, lmnc,

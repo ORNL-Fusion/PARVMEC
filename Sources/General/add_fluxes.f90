@@ -1,3 +1,5 @@
+!> \file add_fluxes.f90
+
       SUBROUTINE add_fluxes_par(overg, bsupu, bsupv, lcurrent)
       USE vmec_main
       USE realspace, ONLY: pwint, pguu, pguv, pchip, pphip

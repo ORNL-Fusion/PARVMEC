@@ -1,3 +1,5 @@
+!> \file vsetup.f
+
       SUBROUTINE vsetup (iseq_count)
       USE vmec_main
       USE vacmod

@@ -1,3 +1,5 @@
+!> \file scalfor.f
+
       SUBROUTINE scalfor_par(gcx, axm, bxm, axd, bxd, cx, iflag)
       USE vmec_main
       USE vmec_params

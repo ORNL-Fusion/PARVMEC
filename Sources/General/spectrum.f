@@ -1,3 +1,5 @@
+!> \file spectrum.f
+
       SUBROUTINE spectrum_par(rmn, zmn)
       USE parallel_include_module
       USE vmec_main

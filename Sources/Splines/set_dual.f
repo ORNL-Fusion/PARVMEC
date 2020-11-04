@@ -1,3 +1,5 @@
+!> \file set_dual.f
+
       SUBROUTINE set_dual(data1, hi, yi, yi2, hp, yp, yp2, wten, alsq,
      1   niota, npres, nots)
       USE vspline

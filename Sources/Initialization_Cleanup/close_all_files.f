@@ -1,3 +1,5 @@
+!> \file close_all_files.f
+
       SUBROUTINE close_all_files
       USE vparams, ONLY: nmac, nthreed
       IMPLICIT NONE

@@ -1,3 +1,5 @@
+!> \file reset_params.f
+
       SUBROUTINE reset_params
       USE precon2d, ONLY: ictrl_prec2d
       USE vmec_main, ONLY: iequi, ivac, ftolv, fsqr, fsqz, fsq, dp,

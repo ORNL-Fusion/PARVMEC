@@ -1,3 +1,5 @@
+!> \file realspace.f
+
       MODULE realspace
       USE stel_kinds, ONLY: dp
       IMPLICIT NONE

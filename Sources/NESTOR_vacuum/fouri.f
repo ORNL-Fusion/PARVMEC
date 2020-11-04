@@ -1,3 +1,5 @@
+!> \file fouri.f
+
       SUBROUTINE fouri (grpmn, gsource, amatrix, amatsq, bvec, 
      &                  bvecNS, ndim)
       USE vacmod

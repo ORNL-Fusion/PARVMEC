@@ -1,3 +1,5 @@
+!> \file analyt.f
+
       SUBROUTINE analyt (grpmn, bvec, ivacskip, ndim)
       USE vacmod
       USE parallel_include_module

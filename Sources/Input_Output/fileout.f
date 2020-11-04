@@ -1,3 +1,5 @@
+!> \file fileout.f
+
       SUBROUTINE fileout_par(iseq, ictrl_flag, ier_flag, lscreen)
       USE vmec_main
       USE parallel_include_module
