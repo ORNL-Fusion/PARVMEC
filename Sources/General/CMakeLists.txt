@@ -2,7 +2,6 @@ target_sources(vmec
                PRIVATE
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/add_fluxes.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/alias.f>
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/angle_constraints.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/aspectratio.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bcovar.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/blocktridiagonalsolver_bst.f90>
