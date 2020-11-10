@@ -36,11 +36,8 @@ C-----------------------------------------------
 C-----------------------------------------------
       IF(grank .GE. nranks) RETURN
 
-#ifdef _ANIMEC
-      betav = (2*wper + wpar)/(3*wb)
-#else
       betav = wp/wb
-#endif
+
       w = w0*twopi*twopi
       den = zero
       specw(1) = one
@@ -56,7 +53,6 @@ C-----------------------------------------------
       avm = 0.5_dp*avm/den
       IF (ivac .GE. 1) THEN
 !SPH CHANGE (MOVE OUT OF FUNCT3D)
-#if defined(MPI_OPT)
         ACTIVE1: IF (lactive) THEN
         CALL second0(tbroadon)
         ALLOCATE(bcastbuf(3*nznt+1))
@@ -80,7 +76,6 @@ C-----------------------------------------------
         IF (den .NE. zero) delbsq =
      1   SUM(dbsq(:nznt)*pwint(:,2))/den
         END IF ACTIVE1
-#endif
       END IF
 
       IF (i0.EQ.1 .AND. lfreeb) THEN

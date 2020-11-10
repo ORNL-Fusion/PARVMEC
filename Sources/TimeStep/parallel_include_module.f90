@@ -240,7 +240,6 @@ CONTAINS
           DOUBLE PRECISION :: mt(nranks)
           LOGICAL :: LMINMAXFILE=.FALSE.
 
-#if defined(MPI_OPT)
           ind(1,1) = total_time; ind(2,1) = DBLE(rank)
           CALL MPI_Reduce(ind,outd,1,MPI_2DOUBLE_PRECISION,MPI_MINLOC,0,NS_COMM,MPI_ERR)
           IF(grank.EQ.0) THEN
@@ -267,7 +266,7 @@ CONTAINS
               WRITE(*,*)
             END IF
           END IF
-#endif
+
           IF (LMINMAXFILE) THEN
             IF(grank.EQ.minrank) THEN
               CALL WriteTimes('min-timings.txt')

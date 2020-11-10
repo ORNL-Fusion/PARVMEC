@@ -184,22 +184,6 @@
       END DO
 
 !
-!     COMPUTE IOTA EVOLUTION EQUATION [STORED IN LMNSC(0,0) COMPONENT]
-!
-!SPH071017
-#if defined(CHI_FORCE)
-      IF (ictrl_prec2d .NE. 0 .AND. ncurr .EQ. 1) THEN
-         ni = n0 + ioff
-         mj = m0 + joff
-         t1 = r0scale
-         nsmin = MAX(2,tlglob)
-         nsmax = trglob
-         DO js = nsmin, nsmax
-            flsc(ni, mj, js) = -t1*(buco(js) - icurv(js))
-         END DO
-      END IF
-#endif
-!
 !     MAKE R,Z(m=1,n=0) SATISFY AVERAGE FORCE BALANCE EXACTLY
 !     NOTE: for m=1, FR ~ Z1*(f0 + f2), FZ ~ R1*(f0 - f2), WHERE
 !     f0 is the m=0 component of frho, f2 is m=2 component.

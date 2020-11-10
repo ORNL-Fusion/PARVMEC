@@ -363,23 +363,15 @@ C-----------------------------------------------
       PROC0: IF (lwrite) THEN
          WRITE (nthreed,100)
      &   ns_array(multi_ns_grid),ntheta1,nzeta,mpol,ntor,nfp,
-#ifdef _ANIMEC
-     &   gamma,spres_ped,phiedge,curtor,bcrit,lRFP
-#else
-     &   gamma,spres_ped,phiedge,curtor,lRFP
-#endif
+     &   gamma,spres_ped,phiedge,curtor
  100  FORMAT(/,' COMPUTATION PARAMETERS: (u = theta, v = zeta)'/,
      &  1x,45('-'),/,
      &  '     ns     nu     nv     mu     mv',/,
      &  5i7,//,' CONFIGURATION PARAMETERS:',/,1x,39('-'),/,
      &  '    nfp      gamma      spres_ped    phiedge(wb)'
-#ifdef _ANIMEC
-     &  '     curtor(A)      BCrit(T)        lRFP',
-     &  /,i7,1p,e11.3,2e15.3,2e14.3,L12/)
-#else
-     &  '     curtor(A)        lRFP',
-     &  /,i7,1p,e11.3,2e15.3,e14.3,L12/)
-#endif
+     &  '     curtor(A)',
+     &  /,i7,1p,e11.3,2e15.3,e14.3/)
+
          WRITE (nthreed,110) ncurr,niter_array(multi_ns_grid),
      &   ns_array(1),nstep,nvacskip,
      &   ftol_array(multi_ns_grid),tcon0,lasym,lforbal,lmove_axis,
@@ -452,11 +444,8 @@ C-----------------------------------------------
          END SELECT
 
          IF (ncurr.eq.0) THEN
-            IF (lRFP) THEN
-               WRITE (nthreed,142)
-            ELSE
-               WRITE (nthreed,140)
-            END IF
+            WRITE (nthreed,140)
+
 !  Print out ai array          
 !          WRITE(nthreed,135)(ai(i-1),i=1, SIZE(ai))
             WRITE(nthreed,143) TRIM(piota_type)
@@ -495,8 +484,6 @@ C-----------------------------------------------
 
  140  FORMAT(/' IOTA PROFILE COEFFICIENTS',
      &       ' (EXPANSION IN NORMALIZED RADIUS):',/,1x,35('-'))
- 142  FORMAT(/' SAFETY-FACTOR (q) PROFILE COEFFICIENTS ai',
-     &       ' (EXPANSION IN NORMALIZED RADIUS):',/,1x,35('-'))
  143  FORMAT(' PIOTA parameterization type is ''', a,'''')
  145  FORMAT(/' TOROIDAL CURRENT DENSITY (*V'') COEFFICIENTS',
      &       ' ac (EXPANSION IN NORMALIZED RADIUS):')
@@ -508,21 +495,6 @@ C-----------------------------------------------
          WRITE(nthreed,135)(aphi(i),i=1,n)
  150  FORMAT(/' NORMALIZED TOROIDAL FLUX COEFFICIENTS aphi',
      &       ' (EXPANSION IN S):',/,1x,35('-'))
-#ifdef _ANIMEC
-         IF (ANY(ah .ne. zero)) THEN
-            WRITE(nthreed,160)
-            n = NonZeroLen(ah,SIZE(ah))
-            WRITE(nthreed,135)(ah(i-1),i=1, n)
-            WRITE(nthreed,165)
-            n = NonZeroLen(at,SIZE(at))
-            WRITE(nthreed,135)(at(i-1),i=1, n)
-         END IF
-
- 160  FORMAT(' HOT PARTICLE PRESSURE COEFFICIENTS ah',
-     &       ' (EXPANSION IN TOROIDAL FLUX):',/,1x,35('-'))
- 165  FORMAT(' HOT PARTICLE TPERP/T|| COEFFICIENTS at',
-     &       ' (EXPANSION IN TOROIDAL FLUX):',/,1x,35('-'))
-#endif
 
 !  Fourier Boundary Coefficients
          WRITE(nthreed,180)

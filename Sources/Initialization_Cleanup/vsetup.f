@@ -20,7 +20,6 @@ C-----------------------------------------------
 !     m=1 constraint (=t: apply correct, polar constraint; =f, apply approx. constraint)
       lconm1 = .true.
 !      lconm1 = .false.
-!	IF (lrfp) lconm1 = .false.    !SPH102109 converges better
 
 !     2d preconditioner
       nfcn = 0

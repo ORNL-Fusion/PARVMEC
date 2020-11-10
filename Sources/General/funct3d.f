@@ -159,13 +159,11 @@ C-----------------------------------------------
       CALL MPI_BCast( ier_flag, 1, MPI_INTEGER, 0, 
      &                RUNVMEC_COMM_WORLD, MPI_ERR) !SAL 070719
 
-#if defined(MPI_OPT)
       bbuf(1)=irst; bbuf(2)=iequi; bbuf(3)=ivac; bbuf(4)=iter2
       CALL MPI_BCast(bbuf,4,MPI_INTEGER,0,RUNVMEC_COMM_WORLD,MPI_ERR)
       irst=bbuf(1); iequi=bbuf(2); ivac=bbuf(3); iter2=bbuf(4)
       CALL MPI_BCast(lfreeb,1,MPI_LOGICAL,0,RUNVMEC_COMM_WORLD,MPI_ERR)
       IF (ier_flag .ne. norm_term_flag) RETURN !SAL 070719
-#endif
 
       IF (irst.EQ.2 .AND. iequi.EQ.0) THEN
          CALL ZEROLASTNTYPE(pgc)
@@ -241,7 +239,6 @@ C-----------------------------------------------
                raxis_nestor(1:nzeta) = pr1(1:nzeta,1,0)
                zaxis_nestor(1:nzeta) = pz1(1:nzeta,1,0)
 
-#if defined(MPI_OPT)
                ALLOCATE (bcastbuf(2*nzeta))
                bcastbuf(1:nzeta) = raxis_nestor(1:nzeta)
                bcastbuf(nzeta+1:2*nzeta) = zaxis_nestor(1:nzeta)
@@ -253,10 +250,8 @@ C-----------------------------------------------
                raxis_nestor(1:nzeta) = bcastbuf(1:nzeta)
                zaxis_nestor(1:nzeta) = bcastbuf(nzeta+1:2*nzeta)
                DEALLOCATE (bcastbuf)
-#endif
             END IF
 
-#if defined(MPI_OPT)
             ALLOCATE (bcastbuf(2))
             bcastbuf(1)=rbtor
             bcastbuf(2)=ctor
@@ -278,7 +273,6 @@ C-----------------------------------------------
             rbtor=bcastbuf(1)
             ctor=bcastbuf(2)
             DEALLOCATE (bcastbuf)
-#endif
 
             IF (vlactive) THEN
                IF (ictrl_prec2d .NE. 3 .OR.
@@ -293,10 +287,8 @@ C-----------------------------------------------
             END IF
 
             IF (vnranks .LT. nranks) THEN
-#if defined(MPI_OPT)
                CALL MPI_Bcast(bsqvac,SIZE(bsqvac),MPI_REAL8,0,
      &                        NS_COMM,MPI_ERR)
-#endif
             END IF
 
             IF (ier_flag .NE. 0) THEN
@@ -335,16 +327,12 @@ C-----------------------------------------------
                IF (vlactive) THEN
                   bsqsav(:nznt,1) = pbzmn_o(:,ns)
                   bsqsav(:nznt,2) = bsqvac(:nznt)
-#if defined(MPI_OPT)
                   CALL MPI_Bcast(bsqsav(:,1),nznt,MPI_REAL8,
      &                           nranks-1,NS_COMM,MPI_ERR)
-#endif
                END IF
             ELSE IF (ictrl_prec2d .NE. 3) THEN
-#if defined(MPI_OPT)
                CALL MPI_Bcast(bsqsav(:,1),nznt,MPI_REAL8,
      &                        0,NS_COMM,MPI_ERR)
-#endif
             END IF
 
             CALL second0 (tvacoff)
@@ -379,7 +367,6 @@ C-----------------------------------------------
 
 !     SYMMETRIZE FORCES (in u-v space)
 !
-
          IF (lasym) THEN
             CALL symforce_par (parmn, pbrmn, pcrmn, pazmn, pbzmn,
      &                         pczmn, pblmn, pclmn, prcon, pzcon, pr1,
@@ -390,7 +377,6 @@ C-----------------------------------------------
 !
 !     FOURIER-TRANSFORM MHD FORCES TO (M,N)-SPACE
 !
-
          CALL tomnsps_par (pgc, parmn, pbrmn, pcrmn, pazmn, pbzmn,
      &                     pczmn, pblmn, pclmn, prcon, pzcon)
 

@@ -121,15 +121,6 @@ C-----------------------------------------------
       ru0=0; zu0=0; rcon0=0; zcon=0; guu=0; guv=0; gvv=0
       sigma_an=1
 
-#ifdef _ANIMEC
-      ALLOCATE(pperp(nrzt), ppar(nrzt), onembc(nrzt),
-     &         pp1(nrzt), pp2(nrzt), pp3(nrzt), stat=istat1)
-      IF (istat1.ne.0) THEN
-         STOP 'allocation error #1A in allocate_funct3d'
-      END IF
-      pperp=0; ppar=0; onembc=0; pp1=0; pp2=0; pp3=0
-#endif
-
       IF (lfreeb) THEN
          ALLOCATE (brv(nznt), bphiv(nznt), bzv(nznt), bsqvac(nznt),
      &             bsqvac0(nznt), bsubu_sur(nuv3), bsubv_sur(nuv3),                !MRC    10-15-15

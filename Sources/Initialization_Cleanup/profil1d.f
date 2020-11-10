@@ -3,7 +3,6 @@
       SUBROUTINE profil1d_par(xc, xcdot, lreset)
       USE vmec_main
       USE vmec_params, ONLY: signgs, lamscale, rcc, pdamp
-      USE vmec_input, ONLY: lRFP
       USE vspline
       USE init_geometry, ONLY: lflip
       USE vmec_input, ONLY: nzeta
@@ -36,9 +35,6 @@ C   E x t e r n a l   F u n c t i o n s
 C-----------------------------------------------
       REAL(dp), EXTERNAL :: pcurr, pmass, piota, torflux,
      1    torflux_deriv, polflux, polflux_deriv
-#ifdef _ANIMEC
-     2  , photp, ptrat
-#endif
 C-----------------------------------------------
 !
 !                INDEX OF LOCAL VARIABLES
@@ -63,9 +59,6 @@ C-----------------------------------------------
 !     INTERNAL UNITS BY MULTIPLICATION BY mu0 = 4*pi*10**-7
 !
 
-      IF (ncurr.EQ.1 .AND. lRFP) THEN
-         STOP 'ncurr=1 inconsistent with lRFP=T!'
-      END IF
       torflux_edge = signgs*phiedge/twopi
       si = torflux(one)
       IF (si .ne. zero) THEN
@@ -87,9 +80,6 @@ C-----------------------------------------------
       DO i = nsmin, nsmax
          si = hs*(i - c1p5)
          tf = MIN(one, torflux(si))
-         IF (lRFP) THEN
-            tf = si
-         END IF
          phips(i) = torflux_edge*torflux_deriv(si)
          chips(i) = torflux_edge*polflux_deriv(si)
          iotas(i) = piota(tf)
@@ -115,9 +105,6 @@ C-----------------------------------------------
       DO i = nsmin, nsmax
          si = hs*(i - 1)
          tf = MIN(one, torflux(si))
-         IF (lRFP) THEN
-            tf = si
-         END IF
          iotaf(i) = piota(tf)
          phipf(i) = torflux_edge*torflux_deriv(si)
          chipf(i) = torflux_edge*polflux_deriv(si)
@@ -150,24 +137,15 @@ C-----------------------------------------------
 !         NORMALIZE mass so dV/dPHI (or dV/dPSI) in pressure to mass relation
 !         See line 195 of bcovar: pres(2:ns) = mass(2:ns)/vp(2:ns)**gamma
 
-            IF (lRFP) THEN
-               tf=si
-               vpnorm = polflux_edge*polflux_deriv(si)
-            ELSE
-               tf = MIN(one, torflux(si))
-               vpnorm = torflux_edge*torflux_deriv(si)
-            END IF
+            tf = MIN(one, torflux(si))
+            vpnorm = torflux_edge*torflux_deriv(si)
+
             IF (si .gt. spres_ped) THEN
                pedge = pmass(spres_ped)
             ELSE
                pedge = pmass(tf)
             END IF
             mass(i) = pedge*(ABS(vpnorm)*r00)**gamma
-#ifdef _ANIMEC
-!         ANISOTROPIC PRESSURE, Tper/T|| RATIOS
-            phot(i) = photp(tf)
-            tpotb(i) = ptrat(tf)
-#endif
          END DO
 
       ELSE
@@ -185,10 +163,6 @@ C-----------------------------------------------
       pres(nsmin:nsmax) = 0
       xcdot(:,:,nsmin:nsmax,:) = 0
 
-#ifdef _ANIMEC
-      medge  = pmass(one)*(ABS(phips(ns))*r00)**gamma
-      phedg  = photp(one)
-#endif
       nsmin = MAX(1, t1lglob - 1)
       nsmax = MIN(t1rglob + 1,ns)
       DO i = nsmin, nsmax
@@ -211,7 +185,6 @@ C-----------------------------------------------
             sp(i)=one/psqrts(1,i)
          END IF
       END DO
-
 
       sm(1) = 0
       sp(0) = 0

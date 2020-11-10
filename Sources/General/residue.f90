@@ -58,15 +58,6 @@
          CALL constrain_m1_par(gcr(:,m1,:,rsc), gcz(:,m1,:,zcc))
       END IF
 
-      IF (lfreeb .AND. lrfp) THEN
-         fac = 0
-         IF (ictrl_prec2d .EQ. 0) THEN
-            fac = 1.E-1_dp
-         END IF
-         gcr(0,m0,ns,:) = fac*gcr(0,m0,ns,:)
-         gcz(0,m0,ns,:) = fac*gcz(0,m0,ns,:)
-      END IF
-
 !     PRECONDITIONER MUST BE CALCULATED USING RAW (UNPRECONDITIONED) FORCES
       IF (ictrl_prec2d .GE. 2 .OR. ictrl_prec2d .EQ. -1) RETURN
 
@@ -149,7 +140,6 @@
          fsql1 = hs*ftotal
 
          CALL PadSides(pgc)  
-
       ENDIF
 
       CALL second0 (tresoff)

@@ -3,7 +3,7 @@
       FUNCTION torflux_deriv (x)
       USE stel_kinds
       USE vmec_main, ONLY: zero
-      USE vmec_input, ONLY: lRFP, tf => aphi
+      USE vmec_input, ONLY: tf => aphi
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
@@ -14,25 +14,17 @@ C-----------------------------------------------
 C-----------------------------------------------
 !     x: radial flux variable (=TOROIDAL FLUX ONLY IF APHI=1)
 
-      IF (lRFP) THEN
-!        RFP/TOKAMAK
-         IF (piota(x) .eq. zero) STOP 'piota(x) = 0!'
-         torflux_deriv = polflux_deriv(x)/piota(x)
-
-      ELSE
-!        TOKAMAK/STELLARATOR (default is tf(1) = 1)
-         torflux_deriv = 0
-         DO i = UBOUND(tf,1), LBOUND(tf,1), -1
-            torflux_deriv = x*torflux_deriv + i*tf(i)
-         END DO
-!        torflux_deriv = 1
-      END IF
+!     TOKAMAK/STELLARATOR (default is tf(1) = 1)
+      torflux_deriv = 0
+      DO i = UBOUND(tf,1), LBOUND(tf,1), -1
+         torflux_deriv = x*torflux_deriv + i*tf(i)
+      END DO
+!     torflux_deriv = 1
 
       END FUNCTION torflux_deriv
 
       FUNCTION polflux_deriv (x)
       USE stel_kinds
-      USE vmec_input, ONLY: lRFP
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
@@ -43,18 +35,12 @@ C-----------------------------------------------
 !     x: radial flux variable (=TOROIDAL FLUX ONLY IF APHI=1)
 !     polflux_deriv == d(chi)/dx = iota(TF(x)) * torflux_deriv(x)
 
-      IF (lRFP) THEN
-!        RFP/TOKAMAK
-         polflux_deriv = 1
-
-      ELSE
-!        TOKAMAK/STELLARATOR: dchi/ds = iota * dphi/ds
-!        piota is assumed to be a function of the TF(x) on input
-         tf = torflux(x)
-         tf = MIN(tf, 1.0_dp)
-         polflux_deriv = piota(tf)*torflux_deriv(x)
-!        polflux_deriv = piota(x)*torflux_deriv(x)
-      END IF
+!     TOKAMAK/STELLARATOR: dchi/ds = iota * dphi/ds
+!     piota is assumed to be a function of the TF(x) on input
+      tf = torflux(x)
+      tf = MIN(tf, 1.0_dp)
+      polflux_deriv = piota(tf)*torflux_deriv(x)
+!     polflux_deriv = piota(x)*torflux_deriv(x)
 
       END FUNCTION polflux_deriv
 

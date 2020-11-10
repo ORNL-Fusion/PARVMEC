@@ -314,14 +314,8 @@ C-----------------------------------------------
          ncount = 0
          IF (iseq .GT. 1) THEN
             reset_file_name =
-#ifdef NETCDF
      &         'wout_' // TRIM(extension(index_seq-1)) // ".nc"
-#else
-     &         'wout.' // TRIM(extension(index_seq-1))
-            WRITE (*,*) 'WARNING: Text based wout files are no ' \\
-     &                  'longer maintained and may be removed in ' \\
-     &                  'the future.'
-#endif
+
          END IF
 !    
 !     SET UP A "REVERSE-COMMUNICATION" LOOP FOR RUNNING VMEC
@@ -368,9 +362,7 @@ C-----------------------------------------------
                   CALL runvmec(ictrl, extension(1), lscreen, RVC_COMM,
      &                         reset_file_name)
                ELSE                                                ! else-branch contains original code.
-#if defined(MPI_OPT)
                   CALL MPI_Barrier(RVC_COMM, MPI_ERR)
-#endif
 
                   ictrl(1) = output_flag + cleanup_flag            !Output, cleanup  ! o-lines
                   ictrl(2) = 0                                     ! o-lines

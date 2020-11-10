@@ -9,10 +9,6 @@
       REAL(dp), DIMENSION(:,:), ALLOCATABLE ::
      1   r1, ru, rv, zu, zv, rcon, zcon
       REAL(dp), DIMENSION(:,:), ALLOCATABLE, TARGET :: z1
-#ifdef _ANIMEC
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: 
-     1   pperp, ppar, onembc, pp1, pp2, pp3
-#endif
       REAL(dp), DIMENSION(:), ALLOCATABLE :: guu, guv, gvv, sigma_an,
      1   ru0, zu0, gcon, rcon0, zcon0, phip, chip, shalf, sqrts, wint
       REAL(dp), DIMENSION(:,:), ALLOCATABLE, TARGET ::

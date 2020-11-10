@@ -2,9 +2,6 @@
 
       SUBROUTINE jxbforce(bsupu, bsupv, bsubu, bsubv, bsubs, bsubsu,
      1   bsubsv, gsqrt, bsq, itheta, izeta, brho, sigma_an, ier_flag 
-#ifdef _ANIMEC
-     2  ,pp1, pp2, ppar, onembc
-#endif
      3                   )
       USE safe_open_mod
       USE vmec_main
@@ -12,13 +9,7 @@
      1                       successful_term_flag
       USE realspace,   ONLY: shalf, wint, guu, guv, gvv, r1, ru, rv,
      1                       zu   , zv  , phip
-#ifdef _ANIMEC
-     2                      ,pp3 
-      USE fbal, ONLY: bimax_ppargrad
-#endif
-#ifdef NETCDF
       USE ezcdf
-#endif
       USE xstuff, ONLY: xc 
       USE parallel_include_module
       IMPLICIT NONE
@@ -27,17 +18,11 @@
 !-----------------------------------------------
       REAL(rprec), DIMENSION(ns,nznt), INTENT(in) ::
      1  bsupu, bsupv, bsq, gsqrt, sigma_an
-#ifdef _ANIMEC
-     2 ,ppar, onembc
-#endif
       REAL(rprec), DIMENSION(ns,nznt,0:1), TARGET, INTENT(inout) ::
      1  bsubu, bsubv
       REAL(rprec), DIMENSION(ns,nznt), INTENT(inout), TARGET :: bsubs
       REAL(rprec), DIMENSION(ns,nznt), INTENT(out) ::
      1  itheta, brho, izeta
-#ifdef _ANIMEC
-     1 ,pp1, pp2
-#endif
       REAL(rprec), DIMENSION(ns,nznt,0:1) :: bsubsu, bsubsv
       INTEGER, INTENT(in) :: ier_flag
 !-----------------------------------------------
@@ -84,7 +69,6 @@
       CHARACTER(LEN=100) :: legend(13)
       LOGICAL :: lprint_flag
 !-----------------------------------------------
-#ifdef NETCDF
       CHARACTER(LEN=*), PARAMETER ::
      1  vn_legend = 'legend',
      1  vn_radial_surfaces = 'radial_surfaces',
@@ -113,21 +97,14 @@
      1  vn_bsubv = 'bsubv',
      1  vn_bsubs = 'bsubs'
 !-----------------------------------------------
-#endif
       lprint_flag = (ier_flag.eq.successful_term_flag)
       IF (lprint_flag) THEN
-#ifdef NETCDF
       jxbout_file = 'jxbout_'//TRIM(input_extension)//'.nc'
 
       CALL cdf_open(njxbout,jxbout_file,'w',injxbout)
-#else
-      jxbout_file = 'jxbout.'//TRIM(input_extension)//'.txt'
-      CALL safe_open(njxbout, injxbout, jxbout_file, 'replace',
-     1    'formatted')
-#endif
-#if !defined(_ANIMEC)
+
       IF (ANY(sigma_an .NE. one)) STOP 'SIGMA_AN != 1'
-#endif
+
       IF (injxbout .ne. 0) THEN
          PRINT *,' Error opening JXBOUT file in jxbforce'
          RETURN
@@ -163,17 +140,6 @@
      1  " volume radial coordinate)"
       legend(13)= " <KSUP{U,V}> = Int_u Int_v [KSUP{U,V}]/dV/ds"
 
-#if !defined(NETCDF)
-      WRITE (njxbout,5) (ns1-1)/ns_skip, ntheta3/nu_skip, nzeta/nv_skip,
-     1    mpol, ntor, phiedge
- 5    FORMAT(/,' Radial surfaces = ',i3, ' Poloidal grid points = ',i3,
-     1         ' Toroidal grid points = ',i3,/,
-     2         ' Poloidal modes = ',i3,' Toroidal modes = ', i3,
-     3         ' Toroidal Flux  = ',1pe12.3)
-      WRITE (njxbout, 6) (legend(j), j=1,13)
- 6    FORMAT(/,100('-'),/,' LEGEND:',/,100('-'),/,
-     1  2(3(a,/),/),5(a,/),/,2(a,/),100('-'),//)
-#endif
       ENDIF
 
       nznt1 = nzeta*ntheta2
@@ -360,11 +326,6 @@
 !     EXTEND bsubsu, bsubsv TO NTHETA3 MESH
       IF (lasym) CALL fsym_invfft (bsubsu, bsubsv)
 
-#ifdef _ANIMEC
-      CALL bimax_ppargrad(pp1, pp2, gsqrt, ppar, onembc, pres, 
-     1                    phot,tpotb)
-#endif
-
 !     SKIPS Bsubs Correction - uses Bsubs from metric elements
       IF (.not.lbsubs) GOTO 1500          
 
@@ -385,11 +346,6 @@
      1   ( bsupu1(:)*(bsubu(js+1,:,0) - bsubu(js,:,0))
      2   + bsupv1(:)*(bsubv(js+1,:,0) - bsubv(js,:,0)))
      3   + (pres(js+1) - pres(js))*ohs*jxb(:)
-#ifdef _ANIMEC
-!WAC Last two lines of brho contain hot particle parallel pressure gradients
-     4   + ohs*((pres(js+1)*phot(js+1) - pres(js)*phot(js)) * pp2(js,:)
-     5   +      (tpotb(js+1)           - tpotb(js)      ) * pp1(js,:))
-#endif
 !
 !     SUBTRACT FLUX-SURFACE AVERAGE FORCE BALANCE FROM brho, OTHERWISE
 !     LOCAL FORCE BALANCE EQUATION B dot grad(Bs) = brho CAN'T BE SOLVED
@@ -562,7 +518,6 @@
 !     Note: Multiply currents, pressure by 1/mu0 to get in mks units!
 !           TWOPI*TWOPI factor incorporated in vp (thru ovp factor below), so V' = (2pi)**2*vp
 !
-#ifdef NETCDF
       ALLOCATE(
      1     bsubs3(ns,nzeta,ntheta3), bsubv3(ns,nzeta,ntheta3), 
      2     bsubu3(ns,nzeta,ntheta3), jxb_gradp(ns,nzeta,ntheta3), 
@@ -576,7 +531,6 @@
       jcrossb=0 ; bsupv3=0; bsupu3=0; jsups3=0
       jsupv3=0; jsupu3=0; phin=0; phin(ns)=1
       jdotb_sqrtg=0; sqrtg3=0 
-#endif
  
       ALLOCATE (pprime(nznt), pprim(ns),stat=j)
       pprim=0
@@ -591,32 +545,16 @@
      1                  (bsq(js+1,:)- pres(js+1))
      2                + sigma_an(js,:)*gsqrt(js,:)    *
      3                  (bsq(js,:) - pres(js))
-#ifdef _ANIMEC
-         sqgb2(:nznt) = sigma_an(js+1,:nznt)*gsqrt(js+1,:nznt)
-     1                * bsq(js+1,:nznt)
-     2                + sigma_an(js  ,:nznt)*gsqrt(js  ,:nznt)
-     3                * bsq(js  ,:nznt)
-#elif defined _FLOW
-!         sqgb2(:nznt) = sigma_an(js+1,:nznt)*gsqrt(js+1,:nznt)
-!     1                * (bsq(js+1,:nznt)-prot(js+1,:nznt))
-!     2                + sigma_an(js  ,:nznt)*gsqrt(js  ,:nznt)
-!     3                * (bsq(js  ,:nznt)-prot(js  ,:nznt))
-#else
          sqgb2(:nznt) = sigma_an(js+1,:nznt)*gsqrt(js+1,:nznt)
      1                * (bsq(js+1,:nznt)-pres(js+1))
      2                + sigma_an(js  ,:nznt)*gsqrt(js  ,:nznt)
      3                * (bsq(js  ,:nznt)-pres(js  ))
-#endif
+
 !        TAKE THIS OUT: MAY BE POORLY CONVERGED AT THIS POINT....
 !         IF (ANY(sqgb2(:nznt)*signgs .le. zero)) 
 !     1       STOP ' SQGB2 <= 0 in JXBFORCE'
          pprime(:) = ohs*(pres(js+1)-pres(js))/mu0              !dp/ds here
-#ifdef _ANIMEC
-!WAC  Last two lines of 'pprime' contain the hot particle parallel pressure
-     1 + ohs*((pres(js+1)*phot(js+1) - pres(js)*phot(js))*pp2(js,:nznt) 
-     2 +      (tpotb(js+1)           - tpotb(js)      )  *pp1(js,:nznt))
-     3  / mu0
-#endif
+
          kperpu(:nznt) = p5*(bsubv(js+1,:nznt,0) + bsubv(js,:nznt,0))*
      1                       pprime(:)/sqgb2
          kperpv(:nznt) =-p5*(bsubu(js+1,:nznt,0) + bsubu(js,:nznt,0))*
@@ -665,7 +603,6 @@
      1            SUM(kp2(:nznt)*wint(2:nrzt:ns)*sqrtg(:nznt))
 
          IF (MOD(js,ns_skip) .eq. 0 .and. lprint_flag) THEN
-#ifdef NETCDF
             phin(js) = phi(js)/phi(ns)
             DO lz = 1, nzeta
                toroidal_angle(lz)=REAL(360*(lz-1),rprec)/nzeta
@@ -687,26 +624,6 @@ C                 lu (js,lz,lt ) =  lt
                   bsubs3(js,lz,lt) = bsubs(js,lk)
                END DO
             END DO
-#else
-            WRITE (njxbout, 200) phi(js), avforce(js), jdotb(js),
-     1         bdotgradv(js), pprime(1), one/ovp, 
-     2         (twopi**2)*tjnorm*SUM(itheta(js,:)*wint(js:nrzt:ns)),
-     3         (twopi**2)*tjnorm*SUM(izeta (js,:)*wint(js:nrzt:ns)),
-     4         amaxfor(js), aminfor(js)
-            WRITE (njxbout, 90)
-            DO lz = 1, nzeta, nv_skip
-               WRITE (njxbout, 100) REAL(360*(lz-1),rprec)/nzeta, lz
-               DO lt = 1, ntheta3, nu_skip
-                  lk = lz + nzeta*(lt - 1)
-                  WRITE (njxbout, 110) lt, tjnorm*itheta(js,lk),
-     1              tjnorm*izeta(js,lk), ovp*(bsubuv(js,lk) -
-     2              bsubvu(js,lk))/mu0, bsupu1(lk), bsupv1(lk),
-     3              sqrtg(lk)*ovp, jxb(lk), jxb(lk) - pprime(lk),
-     4              ovp*bdotk(js,lk), bsubu(js,lk,0),
-     5              bsubv(js,lk,0), bsubs(js,lk)
-               END DO
-            END DO
-#endif
          ENDIF
       END DO
 
@@ -723,7 +640,7 @@ C                 lu (js,lz,lt ) =  lt
       pprim(ns) = 2*pprim(ns-1) - pprim(ns-2)
 
       IF (lprint_flag) THEN
-#ifdef NETCDF
+
       CALL cdf_define(njxbout,vn_legend,legend)
       CALL cdf_define(njxbout,vn_mpol,mpol)
       CALL cdf_define(njxbout,vn_ntor,ntor)
@@ -786,24 +703,6 @@ C                 lu (js,lz,lt ) =  lt
      1     bsubs3, bsubv3, bsubu3, jxb_gradp, jcrossb, bsupv3, 
      2     bsupu3, jsups3, jsupv3, jsupu3, jdotb_sqrtg, phin, 
      3     toroidal_angle, sqrtg3, stat=j)
-
-#else
-      CLOSE (njxbout)
-
-   90 FORMAT(/"   LU      JSUPU      JSUPV      JSUPS      BSUPU",
-     1   "      BSUPV   SQRT(g')     J X B   J X B - p'     J * B",
-     2   "      BSUBU      BSUBV      BSUBS   "/)
-  100 FORMAT( " TOROIDAL ANGLE (PER PERIOD) = ", f8.3," DEGREES",
-     1        " (PLANE #", i3,")")
-  110 FORMAT(i5,1p,12e11.3)
-  200 FORMAT(/" TOROIDAL FLUX =  ",1p,e12.3,3x,"<J X B - p'> = ",
-     1   e12.3,3x,"<J DOT B> = ",e12.3,3x,
-     2   "<B DOT GRAD(V)> = ",e12.3,/,
-     2   " dp/d(VOL) [p'] = ",e12.3,3x,'d(VOL)/ds    = ',e12.3,3x,
-     2   "<JSUPU>   = ",e12.3,3x,"<JSUPV>         = ",e12.3,/,
-     3   " MAXIMUM FORCE DEVIATIONS (RELATIVE TO p'): ",sp,0p,f7.2,"%",
-     4     3x,f7.2,"%")
-#endif
 
       END IF
       

@@ -49,7 +49,6 @@ C-----------------------------------------------
       CALL second0(tguesson)
       ns12 = (ns + 1)/2
 
-#if defined(MPI_OPT)
       IF (nranks.GT.1) THEN
          bcastrank = -1
          IF (ns.EQ.nranks) THEN
@@ -129,7 +128,6 @@ C-----------------------------------------------
          z1(:,1,1,0) = tmp(nzeta + 1:2*nzeta)
          DEALLOCATE(tmp)
       END IF
-#endif
 
       planes: DO iv = 1, nzeta
          IF (.not.lasym .and. iv .gt. nzeta/2 + 1) THEN
@@ -221,14 +219,12 @@ C-----------------------------------------------
       END DO planes
 
 !Distribute to all processors, not just NS_COMM
-#if defined(MPI_OPT)
       tmp2(:,1) = rcom
       tmp2(:,2) = zcom
       CALL MPI_BCast(tmp2, 2*nzeta, MPI_REAL8, 0,
      1               RUNVMEC_COMM_WORLD, MPI_ERR)
       rcom = tmp2(:,1)
       zcom = tmp2(:,2)
-#endif
 !
 !     FOURIER TRANSFORM RCOM, ZCOM
 !

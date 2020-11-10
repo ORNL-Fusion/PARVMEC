@@ -100,20 +100,6 @@
          lmncs(:,m0+joff,1) = lmncs(:,m0+joff,2)
       END IF
 
-!
-!     EVOLVE CHIPS BY FORCES IN TOMNSPS WHEN NCURR=1, ICTRL_PREC2D != 0
-!
-!SPH071017
-#if defined(CHI_FORCE)
-      IF (ncurr .EQ. 1) THEN
-         IF (ictrl_prec2d .EQ. 2) THEN
-            lmnsc(n0+ioff,m0+joff,nsmin:nsmax) = chips(nsmin:nsmax)
-         ELSE IF (ictrl_prec2d .NE. 0) THEN
-            chips(nsmin:nsmax) = lmnsc(n0+ioff,m0+joff,nsmin:nsmax)  
-         END IF
-      END IF
-#endif
-     
       ALLOCATE (work1(nzeta,12,nsmin:nsmax), stat=i)
       IF (i .ne. 0) THEN
          STOP 'Allocation error in VMEC2000 totzsps'
@@ -339,7 +325,6 @@ C-----------------------------------------------
 !
 !     INITIALIZATION BLOCK
 !
-
       IF (jlam(m0) .gt. 1) THEN
          lmncc(:,m0+joff,1) = lmncc(:,m0+joff,2)
       END IF

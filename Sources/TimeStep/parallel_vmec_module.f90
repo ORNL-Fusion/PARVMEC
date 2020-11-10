@@ -16,9 +16,7 @@ MODULE parallel_vmec_module
     INTEGER :: tlglob, trglob, t1lglob, t1rglob
     INTEGER :: nuvmin, nuvmax, nuv3min, nuv3max
     INTEGER :: MPI_ERR
-#if defined(MPI_OPT)
     INTEGER :: MPI_STAT(MPI_STATUS_SIZE)
-#endif
     INTEGER :: RUNVMEC_COMM_WORLD
     INTEGER :: NS_COMM
     INTEGER :: VAC_COMM
@@ -101,11 +99,9 @@ CONTAINS
   !--------------------------------------------------------------------------
     SUBROUTINE InitializeParallel
     
-#if defined(MPI_OPT)
        CALL MPI_Init(MPI_ERR)
        CALL MPI_Comm_rank(MPI_COMM_WORLD,grank,MPI_ERR)
        CALL MPI_Comm_size(MPI_COMM_WORLD,gnranks,MPI_ERR)
-#endif
 
     END SUBROUTINE InitializeParallel
   !--------------------------------------------------------------------------
@@ -117,11 +113,9 @@ CONTAINS
 
 !    NS_RESLTN = 0  ! SAL 070619
     LIFFREEB = LVALUE
-#if defined(MPI_OPT)
     CALL MPI_Comm_dup(INCOMM,RUNVMEC_COMM_WORLD,MPI_ERR)
     CALL MPI_Comm_rank(RUNVMEC_COMM_WORLD,grank,MPI_ERR)
     CALL MPI_Comm_size(RUNVMEC_COMM_WORLD,gnranks,MPI_ERR)
-#endif
     END SUBROUTINE InitRunVmec
   !--------------------------------------------------------------------------
 
@@ -206,7 +200,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     ELSE
        color=0
     END IF
-#if defined(MPI_OPT)
+
     CALL MPI_Comm_split(RUNVMEC_COMM_WORLD, color, grank, NS_COMM,             &
                         MPI_ERR)
 
@@ -222,7 +216,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
        rank    = 0
        lactive = .FALSE.
     END IF
-#endif
     END SUBROUTINE SetSurfaceCommunicator
   !------------------------------------------------
 
@@ -233,7 +226,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     SUBROUTINE SetSurfacePartitions
     
     INTEGER :: mypart, local_err
-#if defined(MPI_OPT)
+
     IF (par_ns.LT.nranks) THEN
        IF(grank.EQ.0) print *,"NS is less than NRANKS. Aborting!"
        CALL STOPMPI(5645)
@@ -272,7 +265,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
        END IF
        CALL MPI_Abort(NS_COMM,local_err,MPI_ERR)
     END IF
-#endif
+
     END SUBROUTINE SetSurfacePartitions
   !------------------------------------------------
 
@@ -383,7 +376,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     SUBROUTINE FinalizeSurfaceComm(INCOMM)
 
     INTEGER, INTENT(INOUT)  :: INCOMM
-#if defined(MPI_OPT)
+
     CALL MPI_Comm_free(INCOMM, MPI_ERR)
     lactive = .FALSE.
     IF (ALLOCATED(ntblkrcounts)) DEALLOCATE(ntblkrcounts)
@@ -392,7 +385,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     IF (ALLOCATED(blkdisp))      DEALLOCATE(blkdisp)
     IF (ALLOCATED(nsrcounts))    DEALLOCATE(nsrcounts)
     IF (ALLOCATED(nsdisp))       DEALLOCATE(nsdisp)
-#endif
     END SUBROUTINE FinalizeSurfaceComm
   !--------------------------------------------------------------------------
 
@@ -400,7 +392,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     SUBROUTINE FinalizeRunVmec(INCOMM)
     
     INTEGER, INTENT(INOUT)  :: INCOMM
-#if defined(MPI_OPT)
     CALL MPI_Comm_free(INCOMM, MPI_ERR)
     IF(LIFFREEB) CALL MPI_Comm_free(VAC_COMM,MPI_ERR)
     INCOMM=0
@@ -415,7 +406,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     last_ns = -1
     NS_RESLTN=0
     vlactive = .FALSE.
-#endif
+
     END SUBROUTINE FinalizeRunVmec
   !--------------------------------------------------------------------------
 
@@ -432,7 +423,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
     par_nuv3 = nuv3
     par_nuv = nuv 
-#if defined(MPI_OPT)
+
     num_active = MIN(gnranks, par_nuv3)
 
     IF(grank .LT. num_active) THEN
@@ -453,10 +444,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
       vrank   = 0
       vlactive=.FALSE.
     END IF
-#else
-    nuv3min = 1
-    nuv3max = nuv3
-#endif
+
     END SUBROUTINE SetVacuumCommunicator
   !------------------------------------------------
 
@@ -559,9 +547,9 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     END IF
  100  FORMAT(1x,a,l4)
 
-#if defined(MPI_OPT)
+
     CALL MPI_Finalize(istat)
-#endif
+
     END SUBROUTINE FinalizeParallel
   !------------------------------------------------
 
@@ -599,9 +587,8 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     
     INTEGER, INTENT(IN) :: code
 
-#if defined(MPI_OPT)
     CALL MPI_Barrier(MPI_COMM_WORLD, MPI_ERR)
-#endif
+
     WRITE(*,*) 'Stopping program with code:', code
     STOP
     END SUBROUTINE STOPMPI
@@ -890,7 +877,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     DO i = 2, nranks
        disps(i) = disps(i - 1) + counts(i - 1)
     END DO
-#if defined(MPI_OPT)
+
     sendbuf(0:par_ntor,0:par_mpol1,1:numjs,1:3*par_ntmax) =                    &
        arr(0:par_ntor,0:par_mpol1,tlglob:trglob,1:3*par_ntmax)
     CALL MPI_Allgatherv(sendbuf, numjs*blksize, MPI_REAL8, recvbuf,            &
@@ -901,7 +888,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
           RESHAPE(recvbuf(disps(i)+1:disps(i)+counts(i)),                      &
                   (/par_ntor+1,par_mpol1+1,numjs,3*par_ntmax/))
     END DO
-#endif
+
     DEALLOCATE(sendbuf, recvbuf)
     DEALLOCATE(counts, disps)
     CALL second0(allgvtoff)
@@ -940,10 +927,10 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     DO i = 2, nranks
        disps(i) = disps(i - 1) + counts(i - 1)
     END DO
-#if defined(MPI_OPT)
+
     CALL MPI_Allgatherv(MPI_IN_PLACE, numjs*blksize, MPI_REAL8, arr,           &
                         counts, disps, MPI_REAL8, NS_COMM, MPI_ERR)
-#endif
+
     DEALLOCATE(counts, disps)
     CALL second0(allgvtoff)
     allgather_time = allgather_time + (allgvtoff-allgvton)
@@ -979,10 +966,10 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
         disps(i) = disps(i - 1) + counts(i - 1)
     END DO
 
-#if defined(MPI_OPT)
+
     CALL MPI_Allgatherv(MPI_IN_PLACE, numjs*blksize, MPI_REAL8, arr,           &
                         counts, disps, MPI_REAL8, NS_COMM, MPI_ERR)
-#endif
+
     DEALLOCATE(counts, disps)
     CALL second0(allgvtoff)
     allgather_time = allgather_time + (allgvtoff-allgvton)
@@ -1016,10 +1003,10 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
       disps(i)= disps(i - 1) +counts(i - 1)
     END DO
 
-#if defined(MPI_OPT)
+
     CALL MPI_Allgatherv(MPI_IN_PLACE, numjs, MPI_REAL8, arr, counts,           &
                         disps, MPI_REAL8, NS_COMM, MPI_ERR)
-#endif
+
     DEALLOCATE(counts, disps)
     CALL second0(allgvtoff)
     allgather_time = allgather_time + (allgvtoff - allgvton)
@@ -1228,7 +1215,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
     CALL second0(ton)
 
-#if defined(MPI_OPT)
     left = rank - 1;  IF(rank.EQ.0) left = MPI_PROC_NULL
     right = rank + 1; IF(rank.EQ.nranks-1) right = MPI_PROC_NULL
     CALL MPI_Sendrecv(arr(:,tlglob,:), ntmaxblocksize, MPI_REAL8,              &
@@ -1237,7 +1223,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     CALL MPI_Sendrecv(arr(:,trglob,:),ntmaxblocksize,MPI_REAL8,                &
                       right, tag1, arr(:,t1lglob,:), ntmaxblocksize,MPI_REAL8, &
                       left, tag1, NS_COMM, MPI_STAT,MPI_ERR)
-#endif
 
     CALL second0(toff)
     sendrecv_time = sendrecv_time + (toff - ton)
@@ -1255,7 +1240,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
     CALL second0(ton)
 
-#if defined(MPI_OPT)
     left=rank-1;  IF(rank.EQ.0) left = MPI_PROC_NULL
     right=rank+1; IF(rank.EQ.nranks - 1) right = MPI_PROC_NULL
 
@@ -1264,7 +1248,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
                           arr(t1rglob), 1, MPI_REAL8, right, tag1, NS_COMM,    &
                           MPI_STAT, MPI_ERR)
     END IF
-#endif
 
     CALL second0(toff)
     sendrecv_time = sendrecv_time + (toff - ton)

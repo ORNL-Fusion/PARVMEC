@@ -54,7 +54,7 @@ C-----------------------------------------------
 !     FORM FOR OUTPUT (COEFFICIENTS OF COS(mu-nv), SIN(mu-nv) WITHOUT mscale,nscale norms)
 !
       js = ns
-#if defined(MPI_OPT)
+
       bufsize = (ntor+1)*(mpol1+1)*3*ntmax
       ALLOCATE(bcastbuf(bufsize))
       mn=0
@@ -86,7 +86,6 @@ C-----------------------------------------------
          END DO
       END DO
       DEALLOCATE(bcastbuf)
-#endif
 
       rmncc = rcc
       rmnss = rss

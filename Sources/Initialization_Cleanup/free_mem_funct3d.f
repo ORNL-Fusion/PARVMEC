@@ -39,16 +39,6 @@ C-----------------------------------------------
          STOP 'deallocation error#1 in funct3d'
       END IF
 
-#ifdef _ANIMEC
-      IF (ALLOCATED(pperp)) THEN
-         DEALLOCATE (pperp, ppar, onembc, pp1, pp2, pp3,
-     &               stat=istat1)
-      END IF
-      IF (istat1 .ne. 0) THEN
-         STOP 'deallocation error#1A in funct3d'
-      END IF
-#endif
-
       IF (ALLOCATED(brv)) THEN
          DEALLOCATE(brv, bphiv, bzv, bsqvac,
      &              bsubu_sur, bsubv_sur,

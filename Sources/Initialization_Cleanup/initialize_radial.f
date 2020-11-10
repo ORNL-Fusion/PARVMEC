@@ -83,13 +83,11 @@ C-----------------------------------------------
 !     SAVE THIS FOR INTERPOLATION
 !
       IF (neqs_old.gt.0 .and. linterp) THEN
-#if defined(MPI_OPT)
          pgc(1:neqs_old) = pscalxc(1:neqs_old)*pxstore(1:neqs_old)
          IF (lfreeb) THEN
             CALL MPI_Bcast(rbsq, SIZE(rbsq), MPI_REAL8,
      &                     0, NS_COMM, MPI_ERR)
          END IF
-#endif
       END IF
 
 !

@@ -55,9 +55,6 @@ C-----------------------------------------------
       IF (ALLOCATED(iotaf)) THEN
          DEALLOCATE(iotaf, mass, phi, presf, jcuru, jcurv, jdotb, buco,
      &              bvco, bucof, bvcof, chi,
-#ifdef _ANIMEC
-     &              phot, pmap, pppr, papr, tpotb, pd,
-#endif
      &              bdotgradv, equif, specw, tcon, psi, yellip, yinden,
      &              ytrian, yshift, ygeo, overr, faclam, iotas, phips,
      &              chips, pres, vp, beta_vol, jperp2, jpar2, bdotb,

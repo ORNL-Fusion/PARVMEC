@@ -46,7 +46,7 @@
       REAL(dp) :: bcastton, bcasttoff
       REAL(dp), POINTER, DIMENSION(:,:) :: luu, luv, lvv, tau
       REAL(dp), DIMENSION(:,:), POINTER :: bsupu, bsubuh, 
-     &                                      bsupv, bsubvh, r12sq
+     &                                     bsupv, bsubvh, r12sq
       LOGICAL :: lctor
       INTEGER :: i, j, k, nsmin, nsmax, istat
       REAL(dp) :: wblocal(ns), wbtotal
@@ -203,11 +203,7 @@
 !
 
 !     COMPUTE (IF NEEDED) AND ADD CHIP TO BSUPU
-#if defined(CHI_FORCE)
-      CALL add_fluxes_par(phipog, bsupu, bsupv, ictrl_prec2d.EQ.0)
-#else
       CALL add_fluxes_par(phipog, bsupu, bsupv, .TRUE.)
-#endif
 
 !
 !     COMPUTE LAMBDA FORCE KERNELS (COVARIANT B COMPONENT bsubu,v) ON RADIAL HALF-MESH

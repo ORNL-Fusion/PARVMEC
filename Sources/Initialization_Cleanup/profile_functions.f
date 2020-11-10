@@ -557,9 +557,6 @@
 !    nice_quadratic    quadratic with rerranged coefficients.
 !    line_segment      Linearly interpolated line segments
 !    power_series      Power Series (Default)
-!  lRFP             logical - Reversed Field Pinch
-!    True -  ai parameterization specifies q-profile (= 1 / iota)
-!    False - ai parameterization is for iota-profile
 
 !    Local Variables
 !  i                integer counter
@@ -570,7 +567,7 @@
 
       USE stel_kinds
       USE stel_constants, ONLY: zero, one, pi
-      USE vmec_input, ONLY: ai, piota_type, ai_aux_s, ai_aux_f, lRFP
+      USE vmec_input, ONLY: ai, piota_type, ai_aux_s, ai_aux_f
       USE line_segment
       IMPLICIT NONE
 ! ai assumed to be dimensioned (0:n), with n >= 20 
@@ -680,15 +677,6 @@
             piota_type = 'power_series'
          END IF
       END SELECT
-
-      IF (lRFP) THEN
-!     RFP/TOKAMAK: ai are coefficients of q_safety, NOT iota
-         IF (piota .ne. zero) THEN
-            piota = one / piota
-         ELSE 
-            piota = HUGE(piota)
-         END IF
-      END IF
 
       END FUNCTION piota
 

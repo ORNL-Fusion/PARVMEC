@@ -303,10 +303,6 @@ C-----------------------------------------------
          IF (loutput .AND. ASSOCIATED(bzmn_o)) THEN
             CALL wrout(bzmn_o, azmn_o, clmn, blmn, crmn_o, czmn_e,
      &                 crmn_e, xsave, gc, loc_ier_flag, lwrite
-#ifdef _ANIMEC
-     &                 ,brmn_o, sigma_an, ppar, pperp, onembc, pp1, pp2,
-     &                 pp3
-#endif    
      &                )
          
             IF (ntor .EQ. 0) THEN
@@ -333,7 +329,6 @@ C-----------------------------------------------
                  WRITE(nthreed,*)
                  WRITE(nthreed,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
                  WRITE(nthreed,101)         'LPRECOND    :  ',LPRECOND
-                 WRITE(nthreed,101)         'LV3FITCALL  :  ',LV3FITCALL
                END IF
  101     FORMAT(1x,a,l4)
                END IF
