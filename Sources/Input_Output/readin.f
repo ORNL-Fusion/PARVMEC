@@ -45,10 +45,10 @@ C-----------------------------------------------
 !       STACKING ORDER DEPENDS ON LASYM AND LTHREED. EACH COMPONENT XCC, XSS, XSC, XCS
 !       HAS SIZE = mns. (PHIFAC, MSE TAKE UP 1 INDEX EACH AT END OF ARRAY)
 !
-!         LTHREED=F,      LTHREED=F,      LTHREED=T,      LTHREED=T 
+!         LTHREED=F,      LTHREED=F,      LTHREED=T,      LTHREED=T,
 !         LASYM=F         LASYM=T         LASYM=F         LASYM=T
 !
-!          rmncc           rmncc           rmncc           rmncc           
+!          rmncc           rmncc           rmncc           rmncc
 !          zmnsc           rmnsc           rmnss           rmnss
 !          lmnsc           zmnsc           zmnsc           rmnsc
 !                          zmncc           zmncs           rmncs
@@ -270,7 +270,7 @@ C-----------------------------------------------
       END IF
 
 !
-!     READ IN COMMENTS DEMARKED BY "!"
+!     READ IN COMMENTS DEMARKED BY "!" and transfer to threed1
 !  
       REWIND (iunit, iostat=iexit)
       IF (lWrite) THEN

@@ -1,6 +1,7 @@
 !> \file vmec.f
 
       PROGRAM vmec
+
       USE vmec_input
       USE vmec_seq
       USE safe_open_mod
@@ -256,10 +257,9 @@ C-----------------------------------------------
             DO ncount = 1, nseqmax
                nseq_select(ncount) = ncount
             END DO
+            
             CALL second0(ton)
-
             CALL read_namelist (iunit, isnml, 'vseq')
-
             CALL second0(toff)
             read_namelist_time = read_namelist_time + (toff - ton)
 !
@@ -268,11 +268,10 @@ C-----------------------------------------------
             IF (isnml .eq. 0) THEN
                IF (nseq .gt. nseqmax) STOP 'NSEQ>NSEQMAX'
                log_file = 'log.'//seq_ext
+               
                CALL second0(ton)
-
                CALL safe_open(nlog, iread, log_file, 'replace',
      &                        'formatted')
-
                CALL second0(toff)
                safe_open_time = safe_open_time + (toff - ton)
 
@@ -439,8 +438,10 @@ C-----------------------------------------------
 
       CALL second0(totaltoff)
       total_time = total_time + (totaltoff - totalton)
+      
       toff = totaltoff
       IF (.NOT.LV3FITCALL .AND. lactive) CALL WriteTimes('timings.txt')
+      
       CALL FinalizeParallel
 
       END PROGRAM vmec
