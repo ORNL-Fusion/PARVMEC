@@ -32,25 +32,22 @@
 !     IF ncurr == 1, AND ictrl_prec2d != 0, COMPUTE FORCE IN TOMNSP TO UPDATE chips
 !
 
-      IF (.NOT.lcurrent .OR. ncurr.EQ.0) GOTO 100
+      IF (lcurrent .and. ncurr.ne.0) then
+         nsmin=MAX(2,t1lglob); nsmax=t1rglob
+         DO js = nsmin, nsmax
+           top = icurv(js)
+           bot = 0
+           DO j=1,nznt
+             top = top - pwint(j,js)*(pguu(j,js)*bsupu(j,js) &
+               + pguv(j,js)*bsupv(j,js))
+             bot = bot + pwint(j,js)*overg(j,js)*pguu(j,js)
+           END DO
+           IF (bot.ne.zero) chips(js) = top/bot
+           IF (phips(js).ne.zero)  iotas(js) = chips(js)/phips(js)
+         END DO
+      end if
 
       nsmin=MAX(2,t1lglob); nsmax=t1rglob
-      DO js = nsmin, nsmax
-        top = icurv(js)
-        bot = 0
-        DO j=1,nznt
-          top = top - pwint(j,js)*(pguu(j,js)*bsupu(j,js) &
-            + pguv(j,js)*bsupv(j,js))
-          bot = bot + pwint(j,js)*overg(j,js)*pguu(j,js)
-        END DO
-        IF (bot.ne.zero) chips(js) = top/bot
-        IF (phips(js).ne.zero)  iotas(js) = chips(js)/phips(js)
-      END DO
-
- 100  CONTINUE
-
-      nsmin=MAX(2,t1lglob); nsmax=t1rglob
-!     CHANGE THIS FOR lRFP = T  (solve for phips?)
       IF (ncurr .EQ. 0) THEN
          chips(nsmin:nsmax) = iotas(nsmin:nsmax)*phips(nsmin:nsmax)
       ELSE IF (.NOT.lcurrent) THEN
@@ -73,23 +70,14 @@
 
 !     Do not compute iota too near origin
       IF(trglob_arr(1).LE.2) THEN
-#if defined(MPI_OPT)
         CALL MPI_Bcast(iotas(3),1,MPI_REAL8,1,NS_COMM,MPI_ERR)
-#endif
       END IF
-      IF (lrfp) THEN
-         IF (nsmin.EQ.2) iotaf(1)  = one/(c1p5/iotas(2) - p5/iotas(3))
-         IF (nsmax.EQ.ns-1) iotaf(ns)=one/(c1p5/iotas(ns)-p5/iotas(ns-1))
-         DO js = MAX(2,t1lglob), MIN(ns-1,t1rglob)
-            iotaf(js) = 2.0_dp/(one/iotas(js) + one/iotas(js+1))
-         END DO
-      ELSE
-        IF (nsmin.EQ.2) iotaf(1)  = c1p5*iotas(2) - p5*iotas(3)
-        IF (nsmax.EQ.ns-1) iotaf(ns)=c1p5*iotas(ns) - p5*iotas(ns-1)
-        DO js = MAX(2,t1lglob), MIN(ns-1,trglob)
-          iotaf(js) = p5*(iotas(js) + iotas(js+1))
-        END DO
-      END IF
+
+      IF (nsmin.EQ.2) iotaf(1)  = c1p5*iotas(2) - p5*iotas(3)
+      IF (nsmax.EQ.ns-1) iotaf(ns)=c1p5*iotas(ns) - p5*iotas(ns-1)
+      DO js = MAX(2,t1lglob), MIN(ns-1,trglob)
+        iotaf(js) = p5*(iotas(js) + iotas(js+1))
+      END DO
 
       nsmin=MAX(1,t1lglob); nsmax=MIN(ns,t1rglob)
       bsupu(:,nsmin:nsmax) = bsupu(:,nsmin:nsmax)+pchip(:,nsmin:nsmax)*overg(:,nsmin:nsmax)
