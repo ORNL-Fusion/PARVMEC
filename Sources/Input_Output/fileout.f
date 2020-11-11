@@ -38,6 +38,7 @@ C-----------------------------------------------
       CHARACTER(LEN=*), PARAMETER, DIMENSION(0:14) :: werror = (/
      &   'EXECUTION TERMINATED NORMALLY                            ', ! norm_term_flag
      &   'INITIAL JACOBIAN CHANGED SIGN (IMPROVE INITIAL GUESS)    ', ! bad_jacobian_flag
+     &   'FORCE RESIDUALS EXCEED FTOL: MORE ITERATIONS REQUIRED    ', ! more_iter_flag
      &   'VMEC INDATA ERROR: NCURR.ne.1 but BLOAT.ne.1.            ', !
      &   'MORE THAN 75 JACOBIAN ITERATIONS (DECREASE DELT)         ', ! jac75_flag
      &   'ERROR READING INPUT FILE OR NAMELIST                     ', ! input_error_flag
@@ -322,7 +323,7 @@ C-----------------------------------------------
                IF (.not. lterm) GOTO 1000
                WRITE (nthreed, 10) TRIM(input_extension), ijacob
                IF (rank.EQ.0) THEN
-                  CALL write_times(nthreed, lscreen, lfreeb, lrecon,
+                  CALL write_times(nthreed, lscreen, lfreeb,
      &                             ictrl_prec2d .ne. 0)
 
                IF (grank.EQ.0) THEN

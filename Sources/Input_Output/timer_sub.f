@@ -7,7 +7,7 @@
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER, PARAMETER :: tsum = 0, tvac = 1, tread = 2, twout= 3, 
+      INTEGER, PARAMETER :: tsum = 0, tvac = 1, tread = 2, twout= 3,
      &                      teqf = 4, tfun = 5, trecon= 6, tfft = 7,
      &                      tffi = 8, tfor = 9, tbcov =10, tres = 11,
      &                      tprec2d = 12, tvac_2d = 13, tfun_2d = 14,
@@ -17,7 +17,7 @@ C-----------------------------------------------
      &                      tallg=5, tfouri=6, tgreenf=7, tfourp=8,
      &                      tallr=9, tanal=10, tasum=11, tasum2=12,
      &                      tallgv=13, tanar=14
-                            
+
       REAL(dp) :: treadon, treadoff, tfunon, tfunoff,
      &            treconon, treconoff, tffton, tfftoff,
      &            tbcovon, tbcovoff, tvacon, tvacoff,
@@ -29,11 +29,11 @@ C-----------------------------------------------
       REAL(dp), DIMENSION(15) :: timer_vac=0
 
       CONTAINS
-      
-      SUBROUTINE write_times (nthreed, lscreen, lfreeb, lrecon, lprec2d)
+
+      SUBROUTINE write_times (nthreed, lscreen, lfreeb, lprec2d)
       IMPLICIT NONE
       INTEGER, INTENT(in) :: nthreed
-      LOGICAL, INTENT(in) :: lscreen, lfreeb, lrecon, lprec2d
+      LOGICAL, INTENT(in) :: lscreen, lfreeb, lprec2d
       INTEGER             :: i, nform
       CHARACTER(LEN=*), DIMENSION(0:16), PARAMETER :: form =
      &    (/ 'TOTAL COMPUTATIONAL TIME (SEC) ',
@@ -55,7 +55,7 @@ C-----------------------------------------------
      &       'TIME TO INPUT/OUTPUT           '
      &     /)
 
-      timer_tsum = timer(tsum) + timer(twout) + timer(teqf) 
+      timer_tsum = timer(tsum) + timer(twout) + timer(teqf)
       timer_tfun = timer(tfun)
       timer_io   = timer(tread) + timer(twout)
 
@@ -70,10 +70,9 @@ C-----------------------------------------------
      &         form(tfft) , timer(tfft), form(tffi)  ,timer(tffi),
      &         form(tfor) , timer(tfor), form(tres), timer(tres),
      &         form(teqf) ,timer(teqf)
-         IF (lrecon) WRITE (nform, 20) form(trecon),timer(trecon)
          IF (lfreeb) THEN
             WRITE (nform, 20) form(tvac) ,timer(tvac)
-            WRITE (nform, 24) timer_vac(tsurf), timer_vac(tbext), 
+            WRITE (nform, 24) timer_vac(tsurf), timer_vac(tbext),
      &      timer_vac(tscal), timer_vac(tanal), timer_vac(tasum),
      &      timer_vac(tasum2), timer_vac(tanar), timer_vac(tgreenf),
      &      timer_vac(tfourp), timer_vac(tallr), timer_vac(tallg),
@@ -104,5 +103,5 @@ C-----------------------------------------------
      &       /,10x, 'VACUUM SOLVER     ',7x,f12.2)
 
       END SUBROUTINE write_times
-    
+
       END MODULE timer_sub
