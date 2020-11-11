@@ -136,7 +136,7 @@ C-----------------------------------------------
          SUBROUTINE runvmec(ictrl_array, input_file0,
      &                      lscreen, reset_file_name)
          IMPLICIT NONE
-         INTEGER, INTENT(inout), TARGET :: ictrl_array(5)
+         INTEGER, INTENT(inout), TARGET :: ictrl_array(4)
          LOGICAL, INTENT(in) :: lscreen
          CHARACTER(LEN=*), INTENT(in) :: input_file0
          CHARACTER(LEN=*), OPTIONAL :: reset_file_name
