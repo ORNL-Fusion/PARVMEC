@@ -10,7 +10,6 @@
       USE vmec_persistent
       USE vparams, p5 => cp5, two => c2p0
       USE vac_persistent
-      USE vspline
       USE xstuff
       USE vmec_io
       USE realspace, ONLY: phip, chip, gsqrta=>z1, z1=>z1

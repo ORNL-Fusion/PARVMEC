@@ -170,8 +170,8 @@
 
 
       SUBROUTINE TimeStepControl(ier_flag)
-      USE vmec_main, ONLY: res0, res1, fsq, fsqr, fsqz, fsql,
-     &                     irst, iter1, iter2, delt0r, dp
+      USE vmec_main, ONLY: res1, fsq, fsqr, fsqz, fsql,
+     &                     irst, iter1, iter2, delt, dp
       USE vmec_params, ONLY: ns4
       USE vparams, ONLY: c1pm2
       USE vmec_input, ONLY: nstep
@@ -187,34 +187,32 @@
       INTEGER  :: ier_flag
 
       fsq0 = fsqr+fsqz+fsql
-      IF (iter2.EQ.iter1 .OR. res0.EQ.-1) THEN
-         res0 = fsq
+      IF (iter2.EQ.iter1) THEN
          res1 = fsq0
-         CALL restart_iter(delt0r)
+         CALL restart_iter(delt)
       END IF
 
-      res0 = MIN(res0,fsq)
       res1 = MIN(res1,fsq0)
 
 ! Store current state (irst=1)
-      IF (fsq.LE.res0 .AND. fsq0.LE.res1 .AND. irst.EQ.1) THEN
-         CALL restart_iter(delt0r)
+      IF (fsq0.LE.res1 .AND. irst.EQ.1) THEN
+         CALL restart_iter(delt)
 
       ELSE IF (ictrl_prec2d .NE. 0) THEN
-         CALL restart_iter(delt0r)
+         CALL restart_iter(delt)
          RETURN
 
       ELSE IF ((iter2-iter1) .GT. 10) THEN
 
 ! Residuals are growing in time, reduce time step
-         IF (fsq.GT.fact*res0 .OR. fsq0.GT.fact*res1) THEN
+         IF (fsq0.GT.fact*res1) THEN
             irst = 3
          END IF
       END IF
 
 !     Retrieve previous good state
       IF (irst .NE. 1) THEN
-         CALL restart_iter(delt0r)
+         CALL restart_iter(delt)
          iter1 = iter2
          CALL funct3d_par(.FALSE., ier_flag)
          IF (irst .NE. 1 .and. irst .NE. 4) THEN

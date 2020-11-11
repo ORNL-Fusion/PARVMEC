@@ -8,7 +8,6 @@
      1   gsqrt => azmn_o, bsq => bzmn_o, izeta => azmn_e,
      2   brho => bzmn_e, bphi => czmn_o, curtheta => brmn_e
       USE vacmod
-      USE vspline
       USE csplinx
       USE vmec_io
       USE mgrid_mod

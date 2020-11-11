@@ -142,7 +142,6 @@ C-----------------------------------------------
 
       IF (IAND(ictrl_flag, reset_jacdt_flag) .NE. 0) THEN
          ijacob = 0
-         delt0r = delt
       END IF
 
       IF (IAND(ictrl_flag, readin_flag) .NE. 0) THEN

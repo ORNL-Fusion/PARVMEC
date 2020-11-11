@@ -73,7 +73,7 @@ C-----------------------------------------------
      &                     .FALSE.)
 
          irst = 1
-         IF (liter_flag) CALL restart_iter(delt0r)
+         IF (liter_flag) CALL restart_iter(delt)
       END IF
 
       liter_flag = .true.
@@ -86,7 +86,7 @@ C-----------------------------------------------
 !
 !     ADVANCE FOURIER AMPLITUDES OF R, Z, AND LAMBDA
 !
-         CALL evolve (delt0r, ier_flag, liter_flag, lscreen)
+         CALL evolve (delt, ier_flag, liter_flag, lscreen)
 
          IF (ijacob .eq. 0     .and.
      &       (ier_flag .eq. bad_jacobian_flag .or.
@@ -121,16 +121,16 @@ C-----------------------------------------------
 !
          IF (ijacob .eq. 25) THEN
             irst = 2
-            CALL restart_iter(delt0r)
-!            delt0r = p98*delt   !changed in restart
-            IF (lscreen) PRINT 120, delt0r
+            CALL restart_iter(delt)
+!            delt = p98*delt   !changed in restart
+            IF (lscreen) PRINT 120, delt
             irst = 1
             GOTO 1000
          ELSE IF (ijacob .eq. 50) THEN
             irst = 2
-            CALL restart_iter(delt0r)
-!            delt0r = p96*delt
-            IF (lscreen) PRINT 120, delt0r
+            CALL restart_iter(delt)
+!            delt = p96*delt
+            IF (lscreen) PRINT 120, delt
             irst = 1
             GOTO 1000
          ELSE IF (ijacob .ge. 75) THEN
@@ -161,7 +161,7 @@ C-----------------------------------------------
          IF (MOD(iter2,nstep) .eq. 0 .or.
      &       iter2            .eq. 1 .or.
      &       .not.liter_flag) THEN
-            CALL printout(iter2, delt0r, w0, lscreen)
+            CALL printout(iter2, delt, w0, lscreen)
          END IF
          iter2 = iter2 + 1
          iterc = iterc + 1

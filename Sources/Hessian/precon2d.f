@@ -321,7 +321,7 @@ C-----------------------------------------------
       END SUBROUTINE compute_blocks_par
 
       SUBROUTINE sweep3_blocks_par(xc, xcdot, gc)
-      USE vmec_main, ONLY: ncurr, r01, z01, lthreed, chips, delt0r
+      USE vmec_main, ONLY: ncurr, r01, z01, lthreed, chips, delt
       USE blocktridiagonalsolver, ONLY: Initialize, SetBlockRowCol
       USE blocktridiagonalsolver, ONLY: WriteBlocks
       USE parallel_vmec_module, ONLY: MPI_STAT
@@ -417,7 +417,7 @@ C-----------------------------------------------
       CALL PadSides(gc)
       CALL PadSides(xcdot)
 
-      CALL restart_iter(delt0r)
+      CALL restart_iter(delt)
       gc_save(:,:,nsmin:nsmax,:) = gc(:,:,nsmin:nsmax,:)
       ictrl_prec2d = 3                 !Signals funct3d that preconditioner is being computed
 
