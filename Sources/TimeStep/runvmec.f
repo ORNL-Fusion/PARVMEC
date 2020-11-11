@@ -96,7 +96,7 @@ C-----------------------------------------------
 !                  on exit, contains last value of ns_array index used
 C-----------------------------------------------
       INTERFACE
-         SUBROUTINE initialize_radial(nsval, ns_old, delt0,
+         SUBROUTINE initialize_radial(nsval, ns_old,
      &                                lscreen, reset_file_name)
          USE vmec_main
          IMPLICIT NONE
@@ -104,7 +104,6 @@ C-----------------------------------------------
          INTEGER, INTENT(inout) :: ns_old
          CHARACTER(LEN=*), OPTIONAL :: reset_file_name
          LOGICAL, INTENT(in) :: lscreen
-         REAL(rprec), INTENT(out) :: delt0
          END SUBROUTINE initialize_radial
       END INTERFACE
 

@@ -256,8 +256,6 @@ C-----------------------------------------------
       CALL read_indata(input_file, iunit, ier_flag)
       IF (ier_flag .NE. norm_term_flag) RETURN
 
-      IF (tensi2 .EQ. zero ) tensi2 = tensi
-
 !
 !     Open output files here, print out heading to threed1 file
 !
