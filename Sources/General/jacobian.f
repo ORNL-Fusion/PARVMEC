@@ -6,7 +6,7 @@
       USE vmec_params, ONLY: meven, modd
       USE realspace
       USE vmec_dim, ONLY: ns, ntheta3
-      USE vforces, pr12 => parmn_o, pzu12 => parmn_e, pru12 => pazmn_e, 
+      USE vforces, pr12 => parmn_o, pzu12 => parmn_e, pru12 => pazmn_e,
      &             prs => pbzmn_e, pzs => pbrmn_e, ptau => pazmn_o
       USE parallel_include_module
 
@@ -28,8 +28,8 @@ C-----------------------------------------------
 C-----------------------------------------------
       CALL second0(tjacon)
 
-      !nsmin=MAX(2,tlglob); nsmax=t1rglob;
-      nsmin=tlglob; nsmax=t1rglob; ! jons
+      nsmin=MAX(2,tlglob); nsmax=t1rglob;
+      !nsmin=tlglob; nsmax=t1rglob; ! jons; this fixes some issues in threed1, but leads to segfault for solovev2 input at ns=64 multigrid step
       dphids = p25
       irst = 1
 
