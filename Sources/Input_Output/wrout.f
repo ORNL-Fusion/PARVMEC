@@ -606,8 +606,6 @@
       END IF
 
 ! 1D Arrays
-      IF (nbsets .gt. 0) CALL cdf_write(nwout,vn_nbfld,nbfld(1:nbsets))
-
       CALL cdf_write(nwout, vn_pmod, xm)
       CALL cdf_write(nwout, vn_tmod, xn)
       CALL cdf_write(nwout, vn_pmod_nyq, xm_nyq0)
@@ -684,7 +682,8 @@
             WHERE (MOD(NINT(xm),2) .eq. 0)
                lmnc(:,js) = p5*(lmnc(:,js) + lmnc(:,js-1))
             ELSEWHERE
-               lmnc(:,js) = p5*(sm(js)*lmnc(:,js) + sp(js-1)*lmnc(:,js-1))
+               lmnc(:,js) = p5*(sm(js)*lmnc(:,js)
+     &                      + sp(js-1)*lmnc(:,js-1))
             END WHERE
          END DO
 
