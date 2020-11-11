@@ -49,7 +49,7 @@ C-----------------------------------------------
 !        phiedge  value of real toroidal flux at plasma edge (s=1)
 !        phips    toroidal flux (same as phip), one-dimensional array
 !        chips    poloidal flux (same as chip), one-dimensional array
-!        presf    pressure profile on full-grid, mass/phip**gamma
+!        presf    pressure profile on full-grid, mass/phip**adiabatic
 !        spres_ped value of s beyond which pressure profile is flat (pedestal)
 
 !
@@ -70,7 +70,7 @@ C-----------------------------------------------
          polflux_edge = polflux_edge/si
       END IF
       r00 = rmn_bdy(0,0,rcc)
-      
+
       phips(1) = 0
       chips(1) = 0
       icurv(1) = 0
@@ -119,7 +119,7 @@ C-----------------------------------------------
       IF (ABS(pedge) .gt. ABS(EPSILON(pedge)*curtor)) THEN
          Itor = signgs*currv/(twopi*pedge)
       END IF
-      
+
       nsmin = MAX(2, t1lglob)
       nsmax = t1rglob
       icurv(nsmin:nsmax) = Itor*icurv(nsmin:nsmax)
@@ -135,7 +135,7 @@ C-----------------------------------------------
             si = hs*(i - c1p5)
 
 !         NORMALIZE mass so dV/dPHI (or dV/dPSI) in pressure to mass relation
-!         See line 195 of bcovar: pres(2:ns) = mass(2:ns)/vp(2:ns)**gamma
+!         See line 195 of bcovar: pres(2:ns) = mass(2:ns)/vp(2:ns)**adiabatic
 
             tf = MIN(one, torflux(si))
             vpnorm = torflux_edge*torflux_deriv(si)
@@ -145,7 +145,7 @@ C-----------------------------------------------
             ELSE
                pedge = pmass(tf)
             END IF
-            mass(i) = pedge*(ABS(vpnorm)*r00)**gamma
+            mass(i) = pedge*(ABS(vpnorm)*r00)**adiabatic
          END DO
 
       ELSE
@@ -190,7 +190,7 @@ C-----------------------------------------------
       sp(0) = 0
       sp(1) = sm(2)
 
-      IF (lreset) THEN      
+      IF (lreset) THEN
          xc(:,:,t1lglob:t1rglob,:) = 0
       END IF
 

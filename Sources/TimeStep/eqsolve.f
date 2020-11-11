@@ -114,7 +114,7 @@ C-----------------------------------------------
          END IF
 
          ! total plasma energy
-         w0 = wb + wp/(gamma - one)
+         w0 = wb + wp/(adiabatic - one)
 
 !
 !     ADDITIONAL STOPPING CRITERION (set liter_flag to FALSE)

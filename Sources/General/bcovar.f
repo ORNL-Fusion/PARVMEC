@@ -26,7 +26,7 @@
 !   D u m m y   A r g u m e n t s
 !-----------------------------------------------
       REAL(dp), DIMENSION(nznt,ns,0:1), INTENT(INOUT) :: lu, lv
-      REAL(dp), DIMENSION((1+ntor)*(1+mpol1),1:ns,1:2*ntmax), 
+      REAL(dp), DIMENSION((1+ntor)*(1+mpol1),1:ns,1:2*ntmax),
      &   INTENT(IN) :: tpxc
       INTEGER, INTENT(inout) :: ier_flag
 !-----------------------------------------------
@@ -45,7 +45,7 @@
 
       REAL(dp) :: bcastton, bcasttoff
       REAL(dp), POINTER, DIMENSION(:,:) :: luu, luv, lvv, tau
-      REAL(dp), DIMENSION(:,:), POINTER :: bsupu, bsubuh, 
+      REAL(dp), DIMENSION(:,:), POINTER :: bsupu, bsubuh,
      &                                     bsupv, bsubvh, r12sq
       LOGICAL :: lctor
       INTEGER :: i, j, k, nsmin, nsmax, istat
@@ -62,7 +62,7 @@
 !     POINTER ALIAS ASSIGNMENTS
 
       tau => pextra1(:,:,1)
-      luu => pextra2(:,:,1)  
+      luu => pextra2(:,:,1)
       luv => pextra3(:,:,1)
       lvv => pextra4(:,:,1)
 
@@ -79,7 +79,7 @@
       nsmin=t1lglob; nsmax=t1rglob
       pguu(:,nsmin:nsmax) = 0
       pguv(:,nsmin:nsmax) = 0
-      pgvv(:,nsmin:nsmax) = 0  
+      pgvv(:,nsmin:nsmax) = 0
 
 !
 !     COMPUTE METRIC ELEMENTS GIJ ON HALF MESH
@@ -147,7 +147,7 @@
 
 !CATCH THIS AFTER WHERE LINE BELOW phipog = 0
       nsmin = MAX(2,tlglob); nsmax = t1rglob
-      WHERE (gsqrt(:,nsmin:nsmax) .ne. zero) 
+      WHERE (gsqrt(:,nsmin:nsmax) .ne. zero)
          phipog(:,nsmin:nsmax) = one/gsqrt(:,nsmin:nsmax)
       END WHERE
       phipog(:,1) = 0
@@ -196,9 +196,9 @@
 
 !
 !     UPDATE IOTA EITHER OF TWO WAYS:
-!     1)  FOR ictrl_prec2d = 0, SOLVE THE LINEAR ALGEBRAIC EQUATION <Bsubu> = icurv 
+!     1)  FOR ictrl_prec2d = 0, SOLVE THE LINEAR ALGEBRAIC EQUATION <Bsubu> = icurv
 !         FOR iotas (after testing, this is preferred way)
-!     2)  FOR ictrl_prec2d > 0, EVOLVE IOTAS IN TIME, USING Force-iota  = <Bsubu> - icurv. 
+!     2)  FOR ictrl_prec2d > 0, EVOLVE IOTAS IN TIME, USING Force-iota  = <Bsubu> - icurv.
 !         IOTAS IS "STORED" AT LOCATION LAMBDA-SC(0,0) IN XC-ARRAY
 !
 
@@ -227,7 +227,7 @@
 
       nsmin = MAX(2,tlglob)
       nsmax = MIN(ns,t1rglob)
-      pres(nsmin:nsmax) = mass(nsmin:nsmax)/vp(nsmin:nsmax)**gamma
+      pres(nsmin:nsmax) = mass(nsmin:nsmax)/vp(nsmin:nsmax)**adiabatic
       pres(1)=0
 
       IF (ictrl_prec2d .LE. 1) THEN
@@ -276,7 +276,7 @@
      &                + p5*((lvv(:,l)+lvv(:,l+1))*lu(:,l,1) +
      &                      bsubu_e(:,l) + bsubu_e(:,l+1))
       END DO
-      bsubv_e(:,ns) = bsubv_e(:,ns) 
+      bsubv_e(:,ns) = bsubv_e(:,ns)
      &              + p5*(lvv(:,ns)*lu(:,ns,1) + bsubu_e(:,ns))
 
 !
@@ -310,7 +310,7 @@
          lctor = lfreeb .AND. ictrl_prec2d.GT.1      !Yields better accuracy in solution
       END IF
 
-      IF (lctor) THEN       
+      IF (lctor) THEN
          IF (ictrl_prec2d .EQ. 2) THEN
             ctor_prec2d = p5*(buco(ns) - buco(ns1))
          END IF
@@ -328,7 +328,7 @@
       DO l = nsmin, nsmax
          lvv(:,l) = bdamp(l)
       END DO
-     
+
       IF (rank.EQ.0) THEN
          IF (ANY(bsubvh(:,1) .ne. zero)) ier_flag = bsub_bad_js1_flag
          IF (ANY(bsubuh(:,1) .ne. zero)) ier_flag = bsub_bad_js1_flag
@@ -336,7 +336,7 @@
 
       nsmin = tlglob
       nsmax = MIN(trglob,ns - 1)
-      bsubu_e(:,nsmin:nsmax) = p5*(bsubuh(:,nsmin:nsmax) + 
+      bsubu_e(:,nsmin:nsmax) = p5*(bsubuh(:,nsmin:nsmax) +
      &                             bsubuh(:,nsmin+1:nsmax+1))
       IF (trglob .EQ. ns) bsubu_e(:,ns) = p5*bsubuh(:,ns)
 
@@ -391,7 +391,7 @@
      &                        * rzu_fac(nsmin:nsmax)
          rru_fac(nsmin:nsmax) = psqrts(1,nsmin:nsmax)
      &                        * rru_fac(nsmin:nsmax)
-         frcc_fac(nsmin:nsmax) = one/rzu_fac(nsmin:nsmax)  
+         frcc_fac(nsmin:nsmax) = one/rzu_fac(nsmin:nsmax)
          rzu_fac(nsmin:nsmax) = rzu_fac(nsmin:nsmax)/2
          fzsc_fac(nsmin:nsmax) =-one/rru_fac(nsmin:nsmax)
          rru_fac(nsmin:nsmax) = rru_fac(nsmin:nsmax)/2
@@ -427,7 +427,7 @@
          tcon0 = MIN(ABS(tcon0), one)                              !!ignore large tcon0 from old-style files
          tcon_mul = tcon0*(1 + r2*(one/60 + r2/(200*120)))
 
-         tcon_mul = tcon_mul/((4*r0scale**2)**2)                   !!Scaling of ard, azd (2*r0scale**2); 
+         tcon_mul = tcon_mul/((4*r0scale**2)**2)                   !!Scaling of ard, azd (2*r0scale**2);
                                                                    !!Scaling of cos**2 in alias (4*r0scale**2)
          tcon = tcon0
          DO js = MAX(2,tlglob), MIN(ns-1,trglob)

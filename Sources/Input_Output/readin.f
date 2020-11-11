@@ -67,11 +67,11 @@ C-----------------------------------------------
 !   Plasma parameters (MKS units)
 !          ai:   expansion coefficients for iota (power series in s) used when ncurr=0
 !                Interpretation changes with piota_type
-!          am:   mass or pressure (gamma=0) expansion coefficients (series in s)
+!          am:   mass or pressure (adiabatic=0) expansion coefficients (series in s)
 !                in MKS units [NWT/M**2]
 !                Interpretation changes with pmass_type
 !          ac:   expansion coefficients for the normalized (pcurr(s=1) = 1)
-!                radial derivative of the flux-averaged toroidal current density 
+!                radial derivative of the flux-averaged toroidal current density
 !                (power series in s) used when ncurr=1
 !                Interpretation changes with pcurr_type
 !    ai_aux_s:   Auxiliary array for iota profile. Used for splines, s values
@@ -86,7 +86,7 @@ C-----------------------------------------------
 !      extcur:   array of currents in each external current group. Used to
 !                multiply Green''s function for fields and loops read in from
 !                MGRID file. Should use real current units (A).
-!       gamma:   value of compressibility index (gamma=0 => pressure prescribed)
+!   adiabatic:   value of compressibility index (adiabatic=0 => pressure prescribed)
 !         nfp:   number of toroidal field periods ( =1 for Tokamak)
 !         rbc:   boundary coefficients of COS(m*theta-n*zeta) for R [m]
 !         zbs:   boundary coefficients of SIN(m*theta-n*zeta) for Z [m]
@@ -111,7 +111,7 @@ C-----------------------------------------------
 !   Convergence control parameters
 !  ftol_array:   array of value of residual(s) at which each multigrid
 !                iteration ends
-! niter_array:   array of number of iterations (used to terminate run) at 
+! niter_array:   array of number of iterations (used to terminate run) at
 !                each multigrid iteration
 !       nstep:   number of timesteps between printouts on screen
 !    nvacskip:   iterations skipped between full update of vacuum solution
@@ -129,7 +129,7 @@ C-----------------------------------------------
 !  mgrid_file:   full path for vacuum Green''s function data
 !  pcurr_type:   Specifies parameterization type of pcurr function
 !                  'power_series' - I'(s)=Sum[ ac(j) s ** j] - Default
-!                  'gauss_trunc'  - I'(s)=ac(0) (exp(-(s/ac(1)) ** 2) - 
+!                  'gauss_trunc'  - I'(s)=ac(0) (exp(-(s/ac(1)) ** 2) -
 !                                                exp(-(1/ac(1)) ** 2))
 !                   others - see function pcurr
 !  piota_type:   Specifies parameterization type of piota function
@@ -137,7 +137,7 @@ C-----------------------------------------------
 !                   others - see function piota
 !  pmass_type:   Specifies parameterization type of pmass function
 !                  'power_series' - p(s)=Sum[ am(j) s ** j] - Default
-!                  'gauss_trunc'  - p(s)=am(0) (exp(-(s/am(1)) ** 2) - 
+!                  'gauss_trunc'  - p(s)=am(0) (exp(-(s/am(1)) ** 2) -
 !                                                exp(-(1/am(1)) ** 2))
 !                   others - see function pmass
 
@@ -271,7 +271,7 @@ C-----------------------------------------------
 
 !
 !     READ IN COMMENTS DEMARKED BY "!" and transfer to threed1
-!  
+!
       REWIND (iunit, iostat=iexit)
       IF (lWrite) THEN
          DO WHILE(iexit .EQ. 0)
@@ -291,16 +291,16 @@ C-----------------------------------------------
 !
       IF (lfreeb) THEN
          CALL second0(trc)
-         CALL read_mgrid (mgrid_file, extcur, nzeta, nfp, 
+         CALL read_mgrid (mgrid_file, extcur, nzeta, nfp,
      &                    lscreen, ier_flag, comm = RUNVMEC_COMM_WORLD)
          CALL second0(tzc)
          mgrid_file_read_time = mgrid_file_read_time + (tzc - trc)
 
          IF (lfreeb .AND. lscreen .AND. lwrite) THEN
-            WRITE (6,'(2x,a,1p,e10.2,a)') 'Time to read MGRID file: ', 
+            WRITE (6,'(2x,a,1p,e10.2,a)') 'Time to read MGRID file: ',
      &             tzc - trc, ' s'
             IF (ier_flag .ne. norm_term_flag) RETURN
-            IF (lwrite) WRITE (nthreed,20) nr0b, nz0b, np0b, rminb, 
+            IF (lwrite) WRITE (nthreed,20) nr0b, nz0b, np0b, rminb,
      &                         rmaxb, zminb, zmaxb, TRIM(mgrid_file)
  20         FORMAT(//,' VACUUM FIELD PARAMETERS:',/,1x,24('-'),/,
      &     '  nr-grid  nz-grid  np-grid      rmin      rmax      zmin',
@@ -363,12 +363,12 @@ C-----------------------------------------------
       PROC0: IF (lwrite) THEN
          WRITE (nthreed,100)
      &   ns_array(multi_ns_grid),ntheta1,nzeta,mpol,ntor,nfp,
-     &   gamma,spres_ped,phiedge,curtor
+     &   adiabatic,spres_ped,phiedge,curtor
  100  FORMAT(/,' COMPUTATION PARAMETERS: (u = theta, v = zeta)'/,
      &  1x,45('-'),/,
      &  '     ns     nu     nv     mu     mv',/,
      &  5i7,//,' CONFIGURATION PARAMETERS:',/,1x,39('-'),/,
-     &  '    nfp      gamma      spres_ped    phiedge(wb)'
+     &  '    nfp    adiabatic    spres_ped    phiedge(wb)'
      &  '     curtor(A)',
      &  /,i7,1p,e11.3,2e15.3,e14.3/)
 
@@ -446,7 +446,7 @@ C-----------------------------------------------
          IF (ncurr.eq.0) THEN
             WRITE (nthreed,140)
 
-!  Print out ai array          
+!  Print out ai array
 !          WRITE(nthreed,135)(ai(i-1),i=1, SIZE(ai))
             WRITE(nthreed,143) TRIM(piota_type)
             SELECT CASE(TRIM(piota_type))
@@ -573,10 +573,10 @@ C-----------------------------------------------
 
       DO m=0, mpol1
          mj = m + joff
-         IF (lfreeb .and. 
+         IF (lfreeb .and.
      &       (mfilter_fbdy.gt.1 .and. m.gt.mfilter_fbdy)) CYCLE
          DO n = -ntor, ntor
-            IF (lfreeb .and. 
+            IF (lfreeb .and.
      &         (nfilter_fbdy.gt.0 .and. ABS(n).gt.nfilter_fbdy)) CYCLE
             ni = ABS(n) + ioff
             IF (n .eq. 0) THEN
@@ -636,7 +636,7 @@ C-----------------------------------------------
 !
 !     CONVERT TO INTERNAL FORM FOR (CONSTRAINED) m=1 MODES
 !     INTERNALLY, FOR m=1: XC(rss) = .5(RSS+ZCS), XC(zcs) = .5(RSS-ZCS)
-!     WITH XC(zcs) -> 0 FOR POLAR CONSTRAINT 
+!     WITH XC(zcs) -> 0 FOR POLAR CONSTRAINT
 !     (see convert_sym, convert_asym in totzsp_mod file)
 !
 
@@ -656,7 +656,7 @@ C-----------------------------------------------
          END IF
          IF (ALLOCATED(temp)) DEALLOCATE (temp)
       END IF
-      
+
 !
 !     PARSE TYPE OF PRECONDITIONER
 !
@@ -667,7 +667,7 @@ C-----------------------------------------------
 
 !     ALL THE FOLLOWING USE THE FULL 2D BLOCK-TRI PRECONDITIONER
 !     BUT DIFFER IN THE WAY TIME-EVOLUTION IS HANDLED
-      SELECT CASE (ch1) 
+      SELECT CASE (ch1)
          CASE ('c', 'C')
 !conjugate gradient
             IF (ch2 == 'g' .or. ch2 == 'G') itype_precon = 1
@@ -682,7 +682,7 @@ C-----------------------------------------------
             IF (ch2 == 'f' .or. ch2 == 'F') itype_precon = 4
             LPRECOND = .TRUE.
       END SELECT
-      
+
 
       iresidue = -1
 
