@@ -1,6 +1,6 @@
 !> \file fileout.f
 
-      SUBROUTINE fileout_par(iseq, ictrl_flag, ier_flag, lscreen)
+      SUBROUTINE fileout_par(ictrl_flag, ier_flag, lscreen)
       USE vmec_main
       USE parallel_include_module
       USE xstuff, ONLY: pxc, pgc, pxsave, pscalxc,
@@ -20,7 +20,7 @@
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
-      INTEGER, INTENT(in) :: iseq, ictrl_flag
+      INTEGER, INTENT(in) :: ictrl_flag
       INTEGER, INTENT(inout) :: ier_flag
       LOGICAL :: lscreen
 C-----------------------------------------------
@@ -124,10 +124,9 @@ C-----------------------------------------------
 !     CYLINDRICAL COMPONENTS OF B (BR, BPHI, BZ), AND
 !     AVERAGE EQUILIBRIUM PROPERTIES AT END OF RUN
 !
-
       iequi = 1
-      lterm = ier_flag .eq. norm_term_flag  .or.
-     &        ier_flag .eq. successful_term_flag
+      lterm = (ier_flag .eq. norm_term_flag  .or.
+     &         ier_flag .eq. successful_term_flag)
       loutput = (IAND(ictrl_flag, output_flag) .ne. 0)
       loc_ier_flag = ier_flag
       if (ier_flag .eq. successful_term_flag) THEN
@@ -290,21 +289,16 @@ C-----------------------------------------------
            gc = xc
            CALL eqfor(br_out, bz_out, clmn, blmn, rcon(1,1),
      &                gc, ier_flag)
-         END IF
-
-
 
 !         CALL free_mem_precon
 !
 !        Call WROUT to write output or error message if lwrite = false
 !
 
-         IF (loutput .AND. ASSOCIATED(bzmn_o)) THEN
+         IF (ASSOCIATED(bzmn_o)) THEN
 
-            if (lterm) then
                CALL wrout(bzmn_o, azmn_o, clmn, blmn, crmn_o, czmn_e,
      &                    crmn_e, xsave, gc, loc_ier_flag)
-            end if
 
             IF (ntor .EQ. 0) THEN
                CALL write_dcon (xc)
@@ -312,29 +306,24 @@ C-----------------------------------------------
 
             IF (lscreen)
      &         PRINT 120, TRIM(werror(loc_ier_flag))
-            IF (lscreen .and. lterm) THEN
-               IF (grank.EQ.0) THEN
-                  PRINT 10, TRIM(input_extension), ijacob
-               END IF
+            IF (lscreen) THEN
+                PRINT 10, TRIM(input_extension), ijacob
             END IF
 
             IF (nthreed .gt. 0) THEN
                WRITE (nthreed,120) TRIM(werror(loc_ier_flag))
-               IF (.not. lterm) GOTO 1000
                WRITE (nthreed, 10) TRIM(input_extension), ijacob
                IF (rank.EQ.0) THEN
                   CALL write_times(nthreed, lscreen, lfreeb,
      &                             ictrl_prec2d .ne. 0)
 
-               IF (grank.EQ.0) THEN
-                 WRITE(nthreed,*)
-                 WRITE(nthreed,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
-                 WRITE(nthreed,101)         'LPRECOND    :  ',LPRECOND
-               END IF
- 101     FORMAT(1x,a,l4)
+                  WRITE(nthreed,*)
+                  WRITE(nthreed,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
+                  WRITE(nthreed,'(1x,a,l4)') 'LPRECOND    :  ',LPRECOND
                END IF
             END IF
-         END IF
+         END IF ! ASSOCIATED(bzmn_o)
+         end if ! lterm .and. loutput
 
    10    FORMAT(' FILE : ',a,/,' NUMBER OF JACOBIAN RESETS = ',i4,/)
   120    FORMAT(/1x,a,/)
