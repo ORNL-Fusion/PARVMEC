@@ -1,6 +1,6 @@
 !> \file readin.f
 
-      SUBROUTINE readin(input_file, iseq_count, ier_flag, lscreen)
+      SUBROUTINE readin(input_file, ier_flag, lscreen)
       USE vmec_main
       USE vmec_params
       USE vacmod
@@ -14,7 +14,7 @@
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
-      INTEGER :: iseq_count, ier_flag
+      INTEGER :: ier_flag
       LOGICAL :: lscreen
       CHARACTER(LEN=*), intent(in) :: input_file
 C-----------------------------------------------
@@ -140,117 +140,11 @@ C-----------------------------------------------
 !                                                exp(-(1/am(1)) ** 2))
 !                   others - see function pmass
 
-!   Equilibrium reconstruction parameters
-!      phifac:   factor scaling toroidal flux to match apres or limiter
-!   datastark:   pitch angle data from stark measurement
-!    datathom:   pressure data from Thompson, CHEERS (Pa)
-!     imatch_         = 1 (default),match value of PHIEDGE in input file
-!     phiedge:   = 0, USE pressure profile width to determine PHIEDGE
-!                = 2, USE LIMPOS data (in mgrid file) to find PHIEDGE
-!                = 3, USE Ip to find PHIEDGE (fixed-boundary only)
-!        imse:   number of Motional Stark effect data points
-!                >0, USE mse data to find iota; <=0, fixed iota profile ai
-!        itse:   number of pressure profile data points
-!                = 0, no thompson scattering data to READ
-!     isnodes:   number of iota spline points (computed internally unless specified explicitly)
-!     ipnodes:   number of pressure spline points (computed internally unless specified explicitly)
-!       lpofr:   LOGICAL variable. =.true. IF pressure data are
-!                prescribed in REAL space. =.false. IF data in flux space.
-!      pknots:   array of pressure knot values in SQRT(s) space
-!      sknots:   array of iota knot values in SQRT(s) space
-!       tensp:   spline tension for pressure profile
-!
-!       tensi:   spline tension for iota
-!      tensi2:   vbl spline tension for iota
-!      fpolyi:   vbl spline tension form factor (note: IF tensi!=tensi2
-!               THEN tension(i-th point) = tensi+(tensi2-tensi)*(i/n-1))**fpolyi
-!               - - - - - - - - - - - - - - - - - -
-!    mseangle_   uniform EXPerimental offset of MSE data
-!     offset:    (calibration offset) ... PLUS ...
-!    mseangle_   multiplier on mseprof offset array
-!     offsetM:   (calibration offset)
-!     mseprof:   offset array from NAMELIST MSEPROFIL
-!                so that the total offset on the i-th MSE data point is
-!                taken to be
-!                = mseangle_offset+mseangle_offsetM*mseprof(i)
-!               - - - - - - - - - - - - - - - - - -
-! pres_offset:   uniform arbitrary  radial offset of pressure data
-!     presfac:   number by which Thomson scattering data is scaled
-!                to get actual pressure
-!     phidiam:   diamagnetic toroidal flux (Wb)
-!      dsiobt:   measured flux loop signals corresponding to the
-!                combination of signals in iconnect array
-!     indxflx:   array giving INDEX of flux measurement in iconnect array
-!    indxbfld:   array giving INDEX of bfield measurement used in matching
-!        nobd:   number of connected flux loop measurements
-!      nobser:   number of individual flux loop positions
-!      nbsets:   number of B-coil sets defined in mgrid file
-!  nbcoils(n):   number of bfield coils in each set defined in mgrid file
-!    nbcoilsn:   total number of bfield coils defined in mgrid file
-!    bbc(m,n):   measured magnetic field at rbcoil(m,n),zbcoil(m,n) at
-!                the orientation br*COS(abcoil) + bz*SIN(abcoil)
-! rbcoil(m,n):   R position of the m-th coil in the n-th set from mgrid file
-! zbcoil(m,n):   Z position of the m-th coil in the n-th set from mgrid file
-! abcoil(m,n):   orientation (surface normal wrt R axis; in radians)
-!                of the m-th coil in the n-th set from mgrid file.
-!       nflxs:   number of flux loop measurements used in matching
-!    nbfld(n):   number of selected EXTERNAL bfield measurements in set n from nml file
-!      nbfldn:   total number of EXTERNAL bfield measurements used in matching
-!               - - - - - - - - - - - - - - - - - -
-!             NOTE: FOR STANDARD DEVIATIONS (sigma''s) < 0, INTERPRET
-!             AS PERCENT OF RESPECTIVE MEASUREMENT
-!  sigma_thom:   standard deviation (Pa) for pressure profile data
-! sigma_stark:   standard deviation (degrees) in MSE data
-!  sigma_flux:   standard deviaton (Wb) for EXTERNAL poloidal flux data
-!     sigma_b:   standard deviation (T) for EXTERNAL magnetic field data
-!sigma_current:  standard deviation (A) in toroidal current
-!sigma_delphid:  standard deviation (Wb) for diamagnetic match
-!
-!
-!       THE (ABSOLUTE) CHI-SQ ERROR IS DEFINED AS FOLLOWS:
-!
-!          2
-!       CHI      =     SUM [ EQ(K,IOTA,PRESSURE)  -  DATA(K) ] ** 2
-!                     (K) -----------------------------------
-!                                   SIGMA(K)**2
-!
-!       HERE, SIGMA IS THE STANDARD DEVIATION OF THE MEASURED DATA, AND
-!       EQ(IOTA,PRESSURE) IS THE EQUILIBRIUM EXPRESSION FOR THE DATA TO BE
-!       MATCHED:
-!
-!       EQ(I)   =    SUM [ W(I,J)*X(J) ]
-!                   (J)
-!
-!       WHERE W(I,J) ARE THE (LINEAR) MATRIX ELEMENTS AND X(J) REPRESENT
-!       THE KNOT VALUES OF IOTA (AND/OR PRESSURE). THE RESULTING LEAST-SQUARES
-!       MATRIX ELEMENTS AND DATA ARRAY CAN BE EXPRESSED AS FOLLOWS:
-!
-!       ALSQ(I,J) = SUM [ W(K,I) * W(K,J) / SIGMA(K) ** 2]
-!                   (K)
-!
-!       BLSQ(I)   = SUM [ W(K,I) * DATA(K)/ SIGMA(K) ** 2]
-!                   (K)
-!
-!       THEREFORE, INTERNALLY IT IS CONVENIENT TO WORK WITH THE 'SCALED'
-!       W'(K,I) = W(K,I)/SIGMA(K) AND DATA'(K) = DATA(K)/SIGMA(K)
-!
-!       ****!   I - M - P - O - R - T - A - N - T     N - O - T - E   *****
-!
-!       THE INPUT DATA FILE WILL ACCEPT BOTH POSITIVE AND NEGATIVE
-!       SIGMAS, WHICH IT INTERPRETS DIFFERENTLY. FOR SIGMA > 0, IT
-!       TAKES SIGMA TO BE THE STANDARD DEVIATION FOR THAT MEASUREMENT
-!       AS DESCRIBED ABOVE. FOR SIGMA < 0, SIGMA IS INTERPRETED AS
-!       THE FRACTION OF THE MEASURED DATA NEEDED TO COMPUTE THE ABSOLUTE
-!       SIGMA, I.E., (-SIGMA * DATA) = ACTUAL SIGMA USED IN CODE.
-!
-
       CALL second0(treadon)
 
       lwrite = (grank .EQ. 0)
       ier_flag_init = ier_flag
       ier_flag = norm_term_flag
-
-      write(*,*) "readin: input_file      = '",trim(input_file),"'"
 
 !
 !     READ IN DATA FROM INDATA FILE
@@ -365,10 +259,10 @@ C-----------------------------------------------
  110  FORMAT(' RUN CONTROL PARAMETERS:',/,1x,23('-'),/,
      &  '  ncurr  niter   nsin  nstep  nvacskip      ftol     tcon0',
      &  '    lasym  lforbal lmove_axis lconm1',/,
-     &     4i7,i10,1p,2e10.2,2L9,/,
+     &     4i7,i10,1p,2e10.2,4L9,/,
      &  '  mfilter_fbdy nfilter_fbdy',
      &  ' lgiveup fgiveup',/,               ! M Drevlak 20130114
-     &     2(6x,i7),L12,10x,i10,L8,e9.1,/)  ! M Drevlak 20130114
+     &     2(6x,i7),L8,e9.1,/)  ! M Drevlak 20130114
 
          WRITE (nthreed,120) precon_type, prec2d_threshold
  120  FORMAT(' PRECONDITIONER CONTROL PARAMETERS:',/,1x,34('-'),/,

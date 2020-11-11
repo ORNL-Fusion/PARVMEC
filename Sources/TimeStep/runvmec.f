@@ -117,8 +117,6 @@ C-----------------------------------------------
       ns_index   =  ictrl_array(4)
       CALL second0(timeon)
 
-      write(*,*) "runvmec: input_file0 = '",trim(input_file0),"'"
-
 !
 !     PARSE input_file into path/input.ext
 !
@@ -131,10 +129,6 @@ C-----------------------------------------------
          input_extension = TRIM(input_file0(1:index_end))
          input_file = 'input.'//input_extension
       END IF
-
-      write(*,*) "runvmec: input_file      = '",trim(input_file),"'"
-      write(*,*) "runvmec: input_extension = '",
-     &            trim(input_extension),"'"
 
 !
 !     INITIALIZE PARAMETERS
@@ -155,8 +149,7 @@ C-----------------------------------------------
 !
          CALL vsetup()
 
-         write(*,*) "runvmec: input_file      = '",trim(input_file),"'"
-         CALL readin("input.vmec", ier_flag, lscreen)
+         CALL readin(input_file, ier_flag, lscreen)
          if (lscreen) then
             call FLUSH(6)
          end if
