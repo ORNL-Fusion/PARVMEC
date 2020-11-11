@@ -250,7 +250,6 @@ C-----------------------------------------------
       lwrite = (grank .EQ. 0)
       ier_flag_init = ier_flag
       ier_flag = norm_term_flag
-      IF (ier_flag_init .EQ. more_iter_flag) GOTO 1000
 
 !
 !     READ IN DATA FROM INDATA FILE
@@ -376,12 +375,12 @@ C-----------------------------------------------
      &   ns_array(1),nstep,nvacskip,
      &   ftol_array(multi_ns_grid),tcon0,lasym,lforbal,lmove_axis,
      &   lconm1,mfilter_fbdy,nfilter_fbdy,lfull3d1out,
-     &   max_main_iterations,lgiveup,fgiveup                                         ! M Drevlak 20130114
+     &   lgiveup,fgiveup                                         ! M Drevlak 20130114
  110  FORMAT(' RUN CONTROL PARAMETERS:',/,1x,23('-'),/,
      &  '  ncurr  niter   nsin  nstep  nvacskip      ftol     tcon0',
      &  '    lasym  lforbal lmove_axis lconm1',/,
-     &     4i7,i10,1p,2e10.2,4L9,/,
-     &  '  mfilter_fbdy nfilter_fbdy lfull3d1out max_main_iterations', ! J Geiger 20120203
+     &     4i7,i10,1p,2e10.2,3L9,/,
+     &  '  mfilter_fbdy nfilter_fbdy lfull3d1out',
      &  ' lgiveup fgiveup',/,               ! M Drevlak 20130114
      &     2(6x,i7),L12,10x,i10,L8,e9.1,/)  ! M Drevlak 20130114
 

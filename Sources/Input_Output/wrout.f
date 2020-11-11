@@ -1,10 +1,9 @@
 !> \file wrout.f
 
       SUBROUTINE wrout(bsq, gsqrt, bsubu, bsubv, bsubs, bsupv, bsupu,
-     1                 rzl_array, gc_array, ier_flag, lwrite
-     4                 )
+     1                 rzl_array, gc_array, ier_flag)
 ! ... from SPH 2009-10-05; changes for modB sine-harmonics included
-      USE vmec_input, ONLY: ns_array, ftol_array, lwouttxt
+      USE vmec_input, ONLY: ns_array, ftol_array
       USE vmec_params
       USE vmec_main
       USE vmercier
@@ -101,7 +100,6 @@
       REAL(dp), DIMENSION(ns,nznt), INTENT(inout) ::
      1   bsq, gsqrt, bsubu, bsubv, bsubs, bsupv, bsupu
       REAL(dp) :: qfact(ns)
-      LOGICAL :: lwrite
 !-----------------------------------------------
 !   L o c a l   P a r a m e t e r s
 !-----------------------------------------------
@@ -305,8 +303,6 @@
      1      CALL cdf_define(nwout,vn_nbfld,nbfld(1:nbsets))
       END IF
 
-      IF (.not.lwrite) GO TO 800
-
 ! 1D Arrays
 
       CALL cdf_define(nwout, vn_pmod, xm, dimname=mn1dim)
@@ -361,7 +357,6 @@
       j = SIZE(ac_aux_f)
       CALL cdf_define(nwout, vn_ac_aux_f, ac_aux_f(1:j),
      1                dimname=(/'ndfmax'/))
-
 
       CALL cdf_define(nwout, vn_iotaf, iotaf(1:ns),
      1                dimname=r1dim)
@@ -518,50 +513,48 @@
 !        END IF
 !     END IF
 
-      IF (.NOT. lasym) GO TO 800
+      IF (lasym) then
+         CALL cdf_define(nwout, vn_rmns, rmns, dimname=r2dim)
+         CALL cdf_setatt(nwout, vn_rmns, ln_rmns, units='m')
+         CALL cdf_define(nwout, vn_zmnc, zmnc, dimname=r2dim)
+         CALL cdf_setatt(nwout, vn_zmnc, ln_zmnc, units='m')
+         CALL cdf_define(nwout, vn_lmnc, lmnc, dimname=r2dim)
+         CALL cdf_setatt(nwout, vn_lmnc, ln_lmnc)
+         CALL cdf_define(nwout, vn_gmns, gmns, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_gmns, ln_gmns)
+         CALL cdf_define(nwout, vn_bmns, bmns, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_bmns, ln_bmns)
+         CALL cdf_define(nwout, vn_bsubumns, bsubumns, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_bsubumns, ln_bsubumns)
+         CALL cdf_define(nwout, vn_bsubvmns, bsubvmns, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_bsubvmns, ln_bsubvmns)
+         CALL cdf_define(nwout, vn_bsubsmnc, bsubsmnc, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_bsubsmnc, ln_bsubsmnc)
 
-      CALL cdf_define(nwout, vn_rmns, rmns, dimname=r2dim)
-      CALL cdf_setatt(nwout, vn_rmns, ln_rmns, units='m')
-      CALL cdf_define(nwout, vn_zmnc, zmnc, dimname=r2dim)
-      CALL cdf_setatt(nwout, vn_zmnc, ln_zmnc, units='m')
-      CALL cdf_define(nwout, vn_lmnc, lmnc, dimname=r2dim)
-      CALL cdf_setatt(nwout, vn_lmnc, ln_lmnc)
-      CALL cdf_define(nwout, vn_gmns, gmns, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_gmns, ln_gmns)
-      CALL cdf_define(nwout, vn_bmns, bmns, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_bmns, ln_bmns)
-      CALL cdf_define(nwout, vn_bsubumns, bsubumns, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_bsubumns, ln_bsubumns)
-      CALL cdf_define(nwout, vn_bsubvmns, bsubvmns, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_bsubvmns, ln_bsubvmns)
-      CALL cdf_define(nwout, vn_bsubsmnc, bsubsmnc, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_bsubsmnc, ln_bsubsmnc)
+         CALL cdf_define(nwout, vn_currumns, currumns, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_currumns, ln_currumns)
+         CALL cdf_define(nwout, vn_currvmns, currvmns, dimname=r3dim)
+         CALL cdf_setatt(nwout, vn_currvmns, ln_currvmns)
 
-      CALL cdf_define(nwout, vn_currumns, currumns, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_currumns, ln_currumns)
-      CALL cdf_define(nwout, vn_currvmns, currvmns, dimname=r3dim)
-      CALL cdf_setatt(nwout, vn_currvmns, ln_currvmns)
+         IF (lfreeb) THEN
+            CALL cdf_define(nwout, vn_bsubumns_sur, bsubumns_sur,                 &
+     &                      dimname=mn2dim)
+            CALL cdf_setatt(nwout, vn_bsubumns_sur, ln_bsubumns_sur)
+            CALL cdf_define(nwout, vn_bsubvmns_sur, bsubvmns_sur,                 &
+     &                      dimname=mn2dim)
+            CALL cdf_setatt(nwout, vn_bsubvmns_sur, ln_bsubvmns_sur)
+            CALL cdf_define(nwout, vn_bsupumns_sur, bsupumns_sur,                 &
+     &                      dimname=mn2dim)
+            CALL cdf_setatt(nwout, vn_bsupumns_sur, ln_bsupumns_sur)
+            CALL cdf_define(nwout, vn_bsupvmns_sur, bsupvmns_sur,                 &
+     &                      dimname=mn2dim)
+            CALL cdf_setatt(nwout, vn_bsupvmns_sur, ln_bsupvmns_sur)
+         END IF
 
-      IF (lfreeb) THEN
-         CALL cdf_define(nwout, vn_bsubumns_sur, bsubumns_sur,                 &
-     &                   dimname=mn2dim)
-         CALL cdf_setatt(nwout, vn_bsubumns_sur, ln_bsubumns_sur)
-         CALL cdf_define(nwout, vn_bsubvmns_sur, bsubvmns_sur,                 &
-     &                   dimname=mn2dim)
-         CALL cdf_setatt(nwout, vn_bsubvmns_sur, ln_bsubvmns_sur)
-         CALL cdf_define(nwout, vn_bsupumns_sur, bsupumns_sur,                 &
-     &                   dimname=mn2dim)
-         CALL cdf_setatt(nwout, vn_bsupumns_sur, ln_bsupumns_sur)
-         CALL cdf_define(nwout, vn_bsupvmns_sur, bsupvmns_sur,                 &
-     &                   dimname=mn2dim)
-         CALL cdf_setatt(nwout, vn_bsupvmns_sur, ln_bsupvmns_sur)
-      END IF
-
-!     ELIMINATE THESE EVENTUALLY: DON'T NEED THEM
-      CALL cdf_define(nwout, vn_bsupumns, bsupumns, dimname=r3dim)
-      CALL cdf_define(nwout, vn_bsupvmns, bsupvmns, dimname=r3dim)
-
- 800  CONTINUE
+!        ELIMINATE THESE EVENTUALLY: DON'T NEED THEM
+         CALL cdf_define(nwout, vn_bsupumns, bsupumns, dimname=r3dim)
+         CALL cdf_define(nwout, vn_bsupvmns, bsupvmns, dimname=r3dim)
+      end if ! lasym
 
 !================================
 ! Write Variables
@@ -630,8 +623,6 @@
 ! 1D Arrays
       IF (nbsets .gt. 0) CALL cdf_write(nwout,vn_nbfld,nbfld(1:nbsets))
 
-      IF (.not.lwrite) GO TO 940   !change 970 to 940, J.Geiger
-                                   !skip the next cdf_write-calls
       CALL cdf_write(nwout, vn_pmod, xm)
       CALL cdf_write(nwout, vn_tmod, xn)
       CALL cdf_write(nwout, vn_pmod_nyq, xm_nyq0)
@@ -645,45 +636,8 @@
          CALL cdf_write(nwout, vn_xnpot, xnpot)
       END IF
 
-940   CONTINUE   ! before closing, write the initial part of the wouttxt-file
-
-      IF (lwouttxt) THEN
-         wout2_file = 'wout_'//TRIM(input_extension) // '.txt'
-         nwout2 = nwout0
-         CALL safe_open(nwout2, iwout0, wout2_file,
-     1                 'replace', 'formatted')
-         IF (iwout0 .ne. 0) STOP 'Error opening WOUT.txt file in WROUT'
-
-         IF (lasym) THEN
-            iasym = 1                                  ! asymmetric mode
-         ELSE
-            iasym = 0
-         END IF
-
-!
-!     Insert version information into wout file. This will be parsed in
-!     read_wout_file to return the real value version_ to check the version number.
-!
-         WRITE (nwout2, '(a15,a)') 'VMEC VERSION = ', version_
-
-         WRITE (nwout2, *) wb, wp, adiabatic, 1,
-     1    rmax_surf, rmin_surf, zmax_surf
-
-         WRITE (nwout2, *) nfp, ns, mpol, ntor, mnmax, mnmax_nyq0,
-     1     itfsq, iter2, iasym, 0, ier_flag
-
-         WRITE (nwout2, *) 0, 0, nbsets, nobd, nextcur, nstore_seq
-         IF (nbsets .gt. 0) WRITE (nwout2, *) (nbfld(i),i=1,nbsets)
-         WRITE (nwout2, '(a)') mgrid_file
-
-         IF (.not. lwrite) GOTO 950  ! J Geiger: At this point only closing of
-                                     !           txt- and nc-file is needed
-         pres(1) = pres(2)
-      END IF
 !---------------------DEC$ ENDIF
 
-      IF (.not. lwrite) GOTO 970   ! J Geiger: in case lwouttxt is not true
-                                   !           jump to close nc-file
       ALLOCATE (xfinal(neqs), stat=js)
       IF (js .NE. 0) STOP 'Allocation error for xfinal in WROUT!'
       xfinal = xc
@@ -739,22 +693,21 @@
       raxis_cc(0:ntor) = rmnc(1:ntor+1,1)
       zaxis_cs(0:ntor) = zmns(1:ntor+1,1)
 
-      IF (.NOT.lasym) GOTO 900
+      IF (lasym) then
+         WHERE (NINT(xm) .le. 1) lmnc(:,1) = lmnc(:,2)
+         DO js = ns,2,-1
+            WHERE (MOD(NINT(xm),2) .eq. 0)
+               lmnc(:,js) = p5*(lmnc(:,js) + lmnc(:,js-1))
+            ELSEWHERE
+               lmnc(:,js) = p5*(sm(js)*lmnc(:,js) + sp(js-1)*lmnc(:,js-1))
+            END WHERE
+         END DO
 
-      WHERE (NINT(xm) .le. 1) lmnc(:,1) = lmnc(:,2)
-      DO js = ns,2,-1
-         WHERE (MOD(NINT(xm),2) .eq. 0)
-            lmnc(:,js) = p5*(lmnc(:,js) + lmnc(:,js-1))
-         ELSEWHERE
-            lmnc(:,js) = p5*(sm(js)*lmnc(:,js) + sp(js-1)*lmnc(:,js-1))
-         END WHERE
-      END DO
+         lmnc(:,1) = 0;
+         raxis_cs(0:ntor) = rmns(1:ntor+1,1)
+         zaxis_cc(0:ntor) = zmnc(1:ntor+1,1)
+      end if ! lasym
 
-      lmnc(:,1) = 0;
-      raxis_cs(0:ntor) = rmns(1:ntor+1,1)
-      zaxis_cc(0:ntor) = zmnc(1:ntor+1,1)
-
- 900  CONTINUE
 
 !SPH100209: COMPUTE |B| = SQRT(|B|**2) and store in bsq, bsqa
       DO js = 2, ns
@@ -869,94 +822,92 @@
       bsubsmns(:,1) = 2*bsubsmns(:,2) - bsubsmns(:,3)
       bsupumnc(:,1) = 0;  bsupvmnc(:,1) = 0
 
-      IF (.not.lasym) GO TO 200
+      IF (lasym) then
+         RADIUS3: DO js = 2, ns
+            gmn = 0
+            bmn = 0
+            bsubumn = 0
+            bsubvmn = 0
+            bsubsmn = 0
+            bsupumn = 0
+            bsupvmn = 0
 
-      RADIUS3: DO js = 2, ns
-         gmn = 0
-         bmn = 0
-         bsubumn = 0
-         bsubvmn = 0
-         bsubsmn = 0
-         bsupumn = 0
-         bsupvmn = 0
+            MN3: DO mn = 1, mnmax_nyq0
+               n = NINT(xn_nyq0(mn))/nfp
+               m = NINT(xm_nyq0(mn))
+               n1 = ABS(n)
+               dmult = mscale(m)*nscale(n1)*tmult
+               IF (m.eq.0 .or. n.eq.0) dmult = 2*dmult
+               sgn = SIGN(1, n)
+               lk = 0
+               jlk = js
+               DO j = 1, ntheta2
+                  DO k = 1, nzeta
+                     lk = lk + 1
+                     tcosi = dmult*(cosmui(j,m)*cosnv(k,n1) +
+     1                          sgn*sinmui(j,m)*sinnv(k,n1))
+                     tsini = dmult*(sinmui(j,m)*cosnv(k,n1) -
+     1                          sgn*cosmui(j,m)*sinnv(k,n1))
+                     bmn(mn) = bmn(mn) + tsini*bsqa(jlk)
+                     gmn(mn) = gmn(mn) + tsini*gsqrta(jlk,0)
+                     bsubumn(mn) = bsubumn(mn) + tsini*bsubua(jlk)
+                     bsubvmn(mn) = bsubvmn(mn) + tsini*bsubva(jlk)
+                     bsubsmn(mn) = bsubsmn(mn) + tcosi*bsubsa(jlk)
+                     bsupumn(mn) = bsupumn(mn) + tsini*bsupua(jlk)
+                     bsupvmn(mn) = bsupvmn(mn) + tsini*bsupva(jlk)
 
-         MN3: DO mn = 1, mnmax_nyq0
-            n = NINT(xn_nyq0(mn))/nfp
-            m = NINT(xm_nyq0(mn))
-            n1 = ABS(n)
-            dmult = mscale(m)*nscale(n1)*tmult
-            IF (m.eq.0 .or. n.eq.0) dmult = 2*dmult
-            sgn = SIGN(1, n)
-            lk = 0
-            jlk = js
-            DO j = 1, ntheta2
-               DO k = 1, nzeta
-                  lk = lk + 1
-                  tcosi = dmult*(cosmui(j,m)*cosnv(k,n1) +
-     1                       sgn*sinmui(j,m)*sinnv(k,n1))
-                  tsini = dmult*(sinmui(j,m)*cosnv(k,n1) -
-     1                       sgn*cosmui(j,m)*sinnv(k,n1))
-                  bmn(mn) = bmn(mn) + tsini*bsqa(jlk)
-                  gmn(mn) = gmn(mn) + tsini*gsqrta(jlk,0)
-                  bsubumn(mn) = bsubumn(mn) + tsini*bsubua(jlk)
-                  bsubvmn(mn) = bsubvmn(mn) + tsini*bsubva(jlk)
-                  bsubsmn(mn) = bsubsmn(mn) + tcosi*bsubsa(jlk)
-                  bsupumn(mn) = bsupumn(mn) + tsini*bsupua(jlk)
-                  bsupvmn(mn) = bsupvmn(mn) + tsini*bsupva(jlk)
+                     jlk = jlk+ns
+                  END DO
+               END DO
+            END DO MN3
 
-                  jlk = jlk+ns
+            gmns(:,js) = gmn(:)
+            bmns(:,js) = bmn(:)
+            bsubumns(:,js) = bsubumn(:)
+            bsubvmns(:,js) = bsubvmn(:)
+            bsubsmnc(:,js) = bsubsmn(:)
+            bsupumns(:,js) = bsupumn(:)
+            bsupvmns(:,js) = bsupvmn(:)
+         END DO RADIUS3
+
+         gmns(:,1) = 0; bmns(:,1) = 0
+         bsubumns(:,1) = 0
+         bsubvmns(:,1) = 0
+         bsubsmnc(:,1) = 2*bsubsmnc(:,2) - bsubsmnc(:,3)
+         bsupumns(:,1) = 0;  bsupvmns(:,1) = 0
+
+         IF (lfreeb) THEN        !MRC  10-15-15
+            bsubumns_sur = 0
+            bsubvmns_sur = 0
+            bsupumns_sur = 0
+            bsupvmns_sur = 0
+
+            DO mn = 1, mnmax_nyq0
+               n = NINT(xn_nyq0(mn))/nfp
+               m = NINT(xm_nyq0(mn))
+               n1 = ABS(n)
+               dmult = mscale(m)*nscale(n1)*tmult
+               IF (m.eq.0 .or. n.eq.0) dmult = 2*dmult
+               sgn = SIGN(1, n)
+               lk = 0
+               DO j = 1, ntheta2
+                  DO k = 1, nzeta
+                     lk = lk + 1
+                     tsini = dmult*(sinmui(j,m)*cosnv(k,n1) -
+     1                          sgn*cosmui(j,m)*sinnv(k,n1))
+                     bsubumns_sur(mn) = bsubumns_sur(mn)                          &
+     &                                + tsini*bsubua_sur(lk)
+                     bsubvmns_sur(mn) = bsubvmns_sur(mn)                          &
+     &                                + tsini*bsubva_sur(lk)
+                     bsupumns_sur(mn) = bsupumns_sur(mn)                          &
+     &                                + tsini*bsupua_sur(lk)
+                     bsupvmns_sur(mn) = bsupvmns_sur(mn)                          &
+     &                                + tsini*bsupva_sur(lk)
+                  END DO
                END DO
             END DO
-         END DO MN3
-
-         gmns(:,js) = gmn(:)
-         bmns(:,js) = bmn(:)
-         bsubumns(:,js) = bsubumn(:)
-         bsubvmns(:,js) = bsubvmn(:)
-         bsubsmnc(:,js) = bsubsmn(:)
-         bsupumns(:,js) = bsupumn(:)
-         bsupvmns(:,js) = bsupvmn(:)
-      END DO RADIUS3
-
-      gmns(:,1) = 0; bmns(:,1) = 0
-      bsubumns(:,1) = 0
-      bsubvmns(:,1) = 0
-      bsubsmnc(:,1) = 2*bsubsmnc(:,2) - bsubsmnc(:,3)
-      bsupumns(:,1) = 0;  bsupvmns(:,1) = 0
-
-      IF (lfreeb) THEN        !MRC  10-15-15
-         bsubumns_sur = 0
-         bsubvmns_sur = 0
-         bsupumns_sur = 0
-         bsupvmns_sur = 0
-
-         DO mn = 1, mnmax_nyq0
-            n = NINT(xn_nyq0(mn))/nfp
-            m = NINT(xm_nyq0(mn))
-            n1 = ABS(n)
-            dmult = mscale(m)*nscale(n1)*tmult
-            IF (m.eq.0 .or. n.eq.0) dmult = 2*dmult
-            sgn = SIGN(1, n)
-            lk = 0
-            DO j = 1, ntheta2
-               DO k = 1, nzeta
-                  lk = lk + 1
-                  tsini = dmult*(sinmui(j,m)*cosnv(k,n1) -
-     1                       sgn*cosmui(j,m)*sinnv(k,n1))
-                  bsubumns_sur(mn) = bsubumns_sur(mn)                          &
-     &                             + tsini*bsubua_sur(lk)
-                  bsubvmns_sur(mn) = bsubvmns_sur(mn)                          &
-     &                             + tsini*bsubva_sur(lk)
-                  bsupumns_sur(mn) = bsupumns_sur(mn)                          &
-     &                             + tsini*bsupua_sur(lk)
-                  bsupvmns_sur(mn) = bsupvmns_sur(mn)                          &
-     &                             + tsini*bsupva_sur(lk)
-               END DO
-            END DO
-         END DO
-      END IF
-
- 200  CONTINUE
+         END IF
+      end if ! lasym
 
       CALL Compute_Currents(bsubsmnc, bsubsmns, bsubumnc, bsubumns,            &
      &                      bsubvmnc, bsubvmns,                                &
@@ -1110,261 +1061,7 @@
       CALL cdf_write(nwout, vn_fsq, fsqt(1:nstore_seq))
       CALL cdf_write(nwout, vn_wdot, wdot(1:nstore_seq))
 
-!-----------------------------------------------
-!     DATA AND MSE FITS : HAVE NOT CONVERTED TO NETCDF
-!     SINCE THIS WILL BE REPLACED SOON
-!-----------------------------------------------
-!      IF (.not.lrecon) GOTO 925
-! 925  CONTINUE
-
-      IF (lwouttxt) THEN
-         DO js = 1, ns
-            WRITE(nwout2, *) "JS: ", js
-            MN1_OUT: DO mn = 1, mnmax
-               IF (js .eq. 1) THEN
-                  WRITE (nwout2, *) NINT(xm(mn)), NINT(xn(mn))
-               END IF
-
-               WRITE (nwout2, *) rmnc(mn,js), zmns(mn,js), lmns(mn,js)
-               IF (lasym) THEN
-                  WRITE (nwout2, *)rmns(mn,js),zmnc(mn,js),lmnc(mn,js)
-               ENDIF
-            END DO MN1_OUT
-
-            MN2_OUT: DO mn = 1, mnmax_nyq0
-               IF (js .eq. 1) THEN
-                  WRITE (nwout2, *) NINT(xm_nyq0(mn)), NINT(xn_nyq0(mn))
-               END IF
-               WRITE (nwout2, *) bmnc(mn,js), gmnc(mn,js),
-     1               bsubumnc(mn,js), bsubvmnc(mn,js), bsubsmns(mn,js),
-     2               bsupumnc(mn,js), bsupvmnc(mn,js)
-               IF (lasym) THEN
-                  WRITE (nwout2, *) bmns(mn,js), gmns(mn,js),
-     1               bsubumns(mn,js), bsubvmns(mn,js), bsubsmnc(mn,js),
-     2               bsupumns(mn,js), bsupvmns(mn,js)
-               ENDIF
-            END DO MN2_OUT
-         END DO
-
-!
-!     HALF-MESH QUANTITIES (except phi, jcuru, jcurv which are FULL MESH - computed in eqfor)
-!     NOTE: jcuru, jcurv are local current densities, NOT integrated in s and normed to twopi
-!     NOTE: In version <= 6.00, mass, press are written out in INTERNAL units
-!     and should be multiplied by 1/mu0 to transform to pascals. In version > 6.00,
-!     the pressure, mass are in correct (physical) units
-!
-
-!     NOTE: phipf has a twopi * signgs factor compared with phips...
-
-
-         WRITE (nwout2, *) (iotaf(js), presf(js)/mu0,
-     1       twopi*signgs*phipf(js),
-     2       phi(js), jcuru(js)/mu0, jcurv(js)/mu0, js=1,ns)
-         WRITE (nwout2, *) (iotas(js), mass(js)/mu0, pres(js)/mu0,
-     1   beta_vol(js), phip(js), buco(js), bvco(js), vp(js),
-     2   overr(js), specw(js),js=2,ns)
-!-----------------------------------------------
-
-         WRITE (nwout2, *) aspect, betatot, betapol, betator, betaxis,
-     1       b0
-
-!-----------------------------------------------
-!     New output added to version 6.20
-!-----------------------------------------------
-         WRITE (nwout2, *) NINT(signgs)
-         WRITE (nwout2, '(a)') input_extension
-         WRITE (nwout2, *) IonLarmor, VolAvgB, rbtor0, rbtor, ctor/mu0,
-     1       Aminor_p, Rmajor_p, volume_p
-!-----------------------------------------------
-!     MERCIER CRITERION
-!-----------------------------------------------
-         WRITE (nwout2, *) (Dmerc(js), Dshear(js), Dwell(js), Dcurr(js),
-     1       Dgeod(js), equif(js), js=2,ns-1)
-
-         IF (nextcur.gt.0) THEN
-            WRITE (nwout2, *) (extcur(i),i=1,nextcur)
-            lcurr = ALLOCATED(curlabel) .and. lfreeb
-            WRITE (nwout2, *) lcurr
-            IF (lcurr) WRITE (nwout2, *) (curlabel(i),i=1,nextcur)
-         ENDIF
-
-!-----------------------------------------------
-!     NOTE: jdotb is in units of A (1/mu0 incorporated in jxbforce...)
-!     prior to version 6.00, this was output in internal VMEC units...
-!-----------------------------------------------
-         WRITE (nwout2, *) (fsqt(i),wdot(i),i=1,nstore_seq)
-         WRITE (nwout2, *) (jdotb(js),bdotgradv(js),bdotb(js),js=1,ns)
-
-!-----------------------------------------------
-!   Modification to obtain old fort.8 file (depracated)
-!   Write out only the stellarator symmetric parts
-!   Only kept for old codes. (J. Geiger)
-!-----------------------------------------------
-      IF (loldout) THEN
-         WRITE (nfort8, '(f10.3,7i6)')
-     1      adiabatic, nfp, ns, mpol, ntor, mnmax, itfsq, iter2/100+1
-         DO js = 1, ns
-            mn = 0
-            DO m = 0, mpol1
-               nmin0 = -ntor
-               IF (m .eq. 0) nmin0 = 0
-               DO n = nmin0, ntor
-                  mn = mn + 1
-                  IF (js .eq. 1)
-     1               WRITE (nfort8,'(2i10)') NINT(xm(mn)),NINT(xn(mn))
-                  WRITE (nfort8,'(5e20.13)')
-     1               rmnc(mn,js),zmns(mn,js),lmns(mn,js),
-     2               bmnc(mn,js),gmnc(mn,js),
-     3               bsubumnc(mn,js),bsubvmnc(mn,js),bsubsmns(mn,js),
-     4               bsupumnc(mn,js),bsupvmnc(mn,js)
-               END DO
-            END DO
-         END DO
-         WRITE (nfort8,'(5e20.13)') (iotas(js),mass(js),pres(js),
-     1          phips(js),buco(js),bvco(js),phi(js),vp(js),
-     2          jcuru(js)/mu0,jcurv(js)/mu0,specw(js),js=2,ns)
-         WRITE (nfort8,'(5e20.13)') (fsqt(i),wdot(i),i=1,100)
-         CLOSE(nfort8)   !last write to nfort8
-      END IF
-!-----------------------------------------------
-!   Write diagno file (J.Geiger)
-!-----------------------------------------------
-      IF ((.not.lasym).and. ldiagno .and.lfreeb) THEN
-         open(unit=21,file='diagno_input.data',status='unknown',
-     1            action='write')
-         write(21,'(a8)') "vmec2000"
-         write(21,*) "nfp  mpol  ntor"
-         write(21,*) nfp, mpol, ntor
-         write(21,*) "rmnc"
-         write(21,'(1p,e24.16)') (rmnc(mn,ns),mn=1,mnmax)
-         write(21,*) "zmns"
-         write(21,'(1p,e24.16)') (zmns(mn,ns),mn=1,mnmax)
-         write(21,*) "potsin"
-         DO mn = 1, mnpd
-               write(21,'(1p,e24.16)') potvac(mn)
-         END DO
-         write(21,*) "phiedge"
-         write(21,*) phiedge
-         write(21,*) "nextcur"
-         write(21,*) nextcur
-         write(21,*) "external currents"
-         write(21,*) extcur(1:nextcur)
-         write(21,*) "plasma current"
-         write(21,*) ctor
-         write(21,*) "plasma current filament fc R"
-         write(21,*) rmnc(1:ntor+1,1)
-         write(21,*) "plasma current filament fc z"
-         write(21,*) zmns(1:ntor+1,1)
-         close(unit=21)
-      END IF
-!-----------------------------------------------
-!  for diagno version 1.5 written by Sam Lazerson (SAL) start
-!-----------------------------------------------
-      IF(ldiagno)THEN
-         IF(lfreeb .and. (.not.lasym))THEN
-            nfort = 21
-            fort_file = 'diagno1.5_in.'//input_extension
-            call safe_open(nfort,iwout0,fort_file,'replace',
-     1                     'formatted')
-            if (iwout0 .ne. 0)
-     1          stop 'Error writing diagno_in. file in VMEC WROUT'
-
-            write(21,'(a)') "vmec2000_B"
-            write(21,*) "nfp  mpol  ntor"
-            write(21,*) nfp, mpol, ntor
-            write(21,*) "rmnc"
-            write(21,'(1p,e24.16)') (rmnc(mn,ns),mn=1,mnmax)
-            write(21,*) "zmns"
-            write(21,'(1p,e24.16)') (zmns(mn,ns),mn=1,mnmax)
-
-            write(21,*) "potsin"
-            DO i = 1, mnpd
-               write(21,'(1p,e24.16)') potvac(i)
-            END DO
-
-!-----  Added by SAL 11/2010
-            write(21,*) "bsupu"
-            js=ns
-            js2=ns-1
-            do m = 0, mpol1
-               nmin0 = -ntor
-               if (m .eq. 0) nmin0 = 0
-               do n = nmin0, ntor
-                  dmult = two/(mscale(m)*nscale(abs(n)))
-                  if (m .eq. 0 .and. n .eq. 0) dmult = p5*dmult
-                  n1 = abs(n)
-                  isgn = sign(1, n)
-                  d_bsupumn = 0
-                  do j = 1, ntheta2
-                     do k = 1, nzeta
-                        lk = k + nzeta*(j - 1)
-                        tcosi = dmult*(cosmui(j,m)*cosnv(k,n1) +
-     1                            isgn*sinmui(j,m)*sinnv(k,n1))
-                        d_bsupumn = d_bsupumn + 1.5*tcosi*bsupu(js,lk)
-     1                                    - 0.5*tcosi*bsupu(js2,lk)
-                     end do
-                  end do
-                  write (21,'(1p,e24.16)') d_bsupumn
-               end do
-            end do
-!-----  Added by SAL 11/2010
-            write(21,*) "bsupv"
-            js=ns
-            js2=ns-1
-            do m = 0, mpol1
-               nmin0 = -ntor
-               if (m .eq. 0) nmin0 = 0
-               do n = nmin0, ntor
-                  dmult = two/(mscale(m)*nscale(abs(n)))
-                  if (m .eq. 0 .and. n .eq. 0) dmult = p5*dmult
-                  n1 = abs(n)
-                  isgn = sign(1, n)
-                  d_bsupvmn = 0
-                  do j = 1, ntheta2
-                     do k = 1, nzeta
-                        lk = k + nzeta*(j - 1)
-                        tcosi = dmult*(cosmui(j,m)*cosnv(k,n1) +
-     1                            isgn*sinmui(j,m)*sinnv(k,n1))
-                        d_bsupvmn = d_bsupvmn + 1.5*tcosi*bsupv(js,lk)
-     1                                    - 0.5*tcosi*bsupv(js2,lk)
-                     end do
-                  end do
-                  write (21,'(1p,e24.16)') d_bsupvmn
-               end do
-            end do
-
-            write(21,*) "phiedge"
-            write(21,*) phiedge
-            write(21,*) "nextcur"
-            write(21,*) nextcur
-            write(21,*) "external currents"
-            write(21,*) extcur(1:nextcur)
-
-            write(21,*) "plasma current"
-            write(21,*) ctor
-            write(21,*) "plasma current filament fc R"
-            write(21,*) rmnc(1:ntor+1,1)
-            write(21,*) "plasma current filament fc z"
-            write(21,*) zmns(1:ntor+1,1)
-
-            close(unit=21)
-         ELSE
-            write(6,*)"Diagno-file request not completed!"
-            write(6,*)"VMEC2000 not running in free-boundary mode!"
-            write(6,*)"-or- LASYM = .true. !"
-            write(6,*)"LASYM  = ",lasym
-            write(6,*)"LFREEB = ",lfreeb
-            write(6,*)"Check mgrid-file and namelist!"
-         ENDIF
-      ENDIF                   !added for diagno version 1.5 end
-
-      ENDIF
-
- 950  CONTINUE
-
-      IF (lwouttxt) CLOSE (unit=nwout2)   !J Geiger: Close only if open, i.e. lwouttxt==true
 !--------------------DEC$ ENDIF
-      IF (.not. lwrite) GOTO 970   ! J Geiger: in case lwouttxt is not true and netcdf-write is finished
 
       IF (lasym) THEN
          CALL cdf_write(nwout, vn_racs, raxis_cs(0:ntor))
@@ -1392,8 +1089,6 @@
             CALL cdf_write(nwout, vn_bsupvmns_sur, bsupvmns_sur)
          END IF
       END IF
-
- 970  CONTINUE   ! J Geiger: need to keep label 970 out of NETCDF defines.
 
       CALL cdf_close(nwout)
 
@@ -1433,9 +1128,7 @@
 !-----------------------------------------------
 !     FREE BOUNDARY DATA
 !-----------------------------------------------
-      IF (lwrite )
-     1   CALL freeb_data(rmnc1, zmns1, rmns1, zmnc1, bmodmn, bmodmn1)
- 1000 CONTINUE
+      CALL freeb_data(rmnc1, zmns1, rmns1, zmnc1, bmodmn, bmodmn1)
 
       rzl_array = 0
 

@@ -24,8 +24,6 @@ C-----------------------------------------------
 !     2d preconditioner
       nfcn = 0
 
-      lrecon = .true.
-      loldout = .false.
       ledge_dump = .false.
 
       z00 = zero

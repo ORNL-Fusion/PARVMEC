@@ -73,10 +73,7 @@ C-----------------------------------------------
 !                                             to caller after numsteps, rather than niter, steps.
 !              8       output_flag            write out output files (wout, jxbout)
 !             16       cleanup_flag           cleanup (deallocate arrays) - this terminates present run of the sequence
-!                                             This flag will be ignored if the run might be continued. For example,
-!                                             if ier_flag (see below) returns the value more_iter_flag, the cleanup
-!                                             code will be skipped even if cleanup_flag is set, so that the run
-!                                             could be continued on the next call to runvmec.
+!                                             This flag will be ignored if the run might be continued.
 !             32       reset_jacdt_flag       Resets ijacobian flag and time step to delt0
 !
 !                  thus, setting ictrl_flag = 1+2+4+8+16 will perform ALL the tasks thru cleanup_flag

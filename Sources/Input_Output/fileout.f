@@ -6,7 +6,7 @@
       USE xstuff, ONLY: pxc, pgc, pxsave, pscalxc,
      &                  xc, gc, xsave, scalxc
       USE vmec_params, ONLY: uminus, output_flag, cleanup_flag,
-     &                       more_iter_flag, norm_term_flag,
+     &                       norm_term_flag,
      &                       signgs, successful_term_flag,
      &                       mscale, nscale
       USE realspace
@@ -31,14 +31,13 @@ C-----------------------------------------------
       REAL(dp) :: tfileon, tfileoff
       REAL(dp), ALLOCATABLE :: buffer(:,:), tmp(:,:)
       integer :: irst0, istat
-      LOGICAL :: lwrite, lterm
+      LOGICAL :: lterm ! successfully terminated VMEC run
       integer :: loc_ier_flag
       integer:: istat1=0
       REAL(dp), ALLOCATABLE :: br_out(:), bz_out(:)
       CHARACTER(LEN=*), PARAMETER, DIMENSION(0:14) :: werror = (/
      &   'EXECUTION TERMINATED NORMALLY                            ', ! norm_term_flag
      &   'INITIAL JACOBIAN CHANGED SIGN (IMPROVE INITIAL GUESS)    ', ! bad_jacobian_flag
-     &   'FORCE RESIDUALS EXCEED FTOL: MORE ITERATIONS REQUIRED    ', ! more_iter_flag
      &   'VMEC INDATA ERROR: NCURR.ne.1 but BLOAT.ne.1.            ', !
      &   'MORE THAN 75 JACOBIAN ITERATIONS (DECREASE DELT)         ', ! jac75_flag
      &   'ERROR READING INPUT FILE OR NAMELIST                     ', ! input_error_flag
@@ -111,7 +110,7 @@ C-----------------------------------------------
       lk = 0
       IF (.NOT.ALLOCATED(uminus)) ALLOCATE (uminus(nznt))
       DO lt = 1, ntheta2
-         k = ntheta1-lt+2                  
+         k = ntheta1-lt+2
          IF (lt .eq. 1) k = 1             !u=-0 => u=0
          DO lz = 1, nzeta
             lk = lk + 1
@@ -128,14 +127,13 @@ C-----------------------------------------------
       iequi = 1
       lterm = ier_flag .eq. norm_term_flag  .or.
      &        ier_flag .eq. successful_term_flag
-      lwrite = lterm .or. ier_flag.eq.more_iter_flag
       loutput = (IAND(ictrl_flag, output_flag) .ne. 0)
       loc_ier_flag = ier_flag
       if (ier_flag .eq. successful_term_flag) THEN
           loc_ier_flag = norm_term_flag
       end if
 
-      IF (lwrite .AND. loutput) THEN
+      IF (lterm .AND. loutput) THEN
 !
 !     The sign of the jacobian MUST multiply phi to get the physically
 !     correct toroidal flux
@@ -156,7 +154,7 @@ C-----------------------------------------------
 
          irst = irst0
       END IF
-      
+
       IF (grank.LT.nranks .AND. loutput) THEN
          CALL Gather1XArray(vp)
          CALL Gather1XArray(iotas)
@@ -241,7 +239,7 @@ C-----------------------------------------------
          CALL Parallel2Serial2X(pclmn_o, clmn_o)
          CALL Gather2XArray(pclmn_e)
          CALL Parallel2Serial2X(pclmn_e, clmn_e)
- 
+
          ! needed implicitly for bss
          CALL Gather2XArray(prv(:,:,0))
          CALL Gather2XArray(prv(:,:,1))
@@ -286,37 +284,39 @@ C-----------------------------------------------
       fo_prepare_time = fo_prepare_time + (tfileoff-tfileon)
 
       IF (grank .EQ. 0) THEN
-         IF (lwrite .AND. loutput) THEN
+         IF (lterm .AND. loutput) THEN
            ALLOCATE(br_out(nrzt), bz_out(nrzt), stat=istat)
            gc = xc
            CALL eqfor(br_out, bz_out, clmn, blmn, rcon(1,1),
      &                gc, ier_flag)
          END IF
-         
-         
-         
+
+
+
 !         CALL free_mem_precon
-!        
+!
 !        Call WROUT to write output or error message if lwrite = false
-!        
-         
+!
+
          IF (loutput .AND. ASSOCIATED(bzmn_o)) THEN
-            CALL wrout(bzmn_o, azmn_o, clmn, blmn, crmn_o, czmn_e,
-     &                 crmn_e, xsave, gc, loc_ier_flag, lwrite
-     &                )
-         
+
+            if (lterm) then
+               CALL wrout(bzmn_o, azmn_o, clmn, blmn, crmn_o, czmn_e,
+     &                    crmn_e, xsave, gc, loc_ier_flag)
+            end if
+
             IF (ntor .EQ. 0) THEN
                CALL write_dcon (xc)
             END IF
-         
-            IF (lscreen .and. ier_flag.ne.more_iter_flag) 
-     &      PRINT 120, TRIM(werror(loc_ier_flag))
+
+            IF (lscreen)
+     &         PRINT 120, TRIM(werror(loc_ier_flag))
             IF (lscreen .and. lterm) THEN
                IF (grank.EQ.0) THEN
                   PRINT 10, TRIM(input_extension), ijacob
                END IF
             END IF
-         
+
             IF (nthreed .gt. 0) THEN
                WRITE (nthreed,120) TRIM(werror(loc_ier_flag))
                IF (.not. lterm) GOTO 1000
@@ -324,8 +324,8 @@ C-----------------------------------------------
                IF (rank.EQ.0) THEN
                   CALL write_times(nthreed, lscreen, lfreeb, lrecon,
      &                             ictrl_prec2d .ne. 0)
-         
-               IF (grank.EQ.0) THEN 
+
+               IF (grank.EQ.0) THEN
                  WRITE(nthreed,*)
                  WRITE(nthreed,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
                  WRITE(nthreed,101)         'LPRECOND    :  ',LPRECOND
@@ -334,47 +334,46 @@ C-----------------------------------------------
                END IF
             END IF
          END IF
-         
+
    10    FORMAT(' FILE : ',a,/,' NUMBER OF JACOBIAN RESETS = ',i4,/)
   120    FORMAT(/1x,a,/)
-         
-!        
+
+!
 !        TESTING READ_WOUT MODULE WRITING ROUTINES
-!        
+!
          IF (ALLOCATED(br_out)) THEN
 !           IF (lscreen) CALL TestWout(xc, br_out, bz_out, crmn_e, czmn_e)
             DEALLOCATE (br_out, bz_out)
          END IF
-         
+
 !        END TEST
-         
+
  1000    CONTINUE
-         
-!        
+
+!
 !        DEALLOCATE GLOBAL MEMORY AND CLOSE FILES
-!        
-         IF (IAND(ictrl_flag, cleanup_flag) .eq. 0 .or.
-     &       ier_flag                       .eq. more_iter_flag) THEN
+!
+         IF (IAND(ictrl_flag, cleanup_flag) .eq. 0) THEN
             RETURN
          END IF
-         
+
          IF (ALLOCATED(cosmu))
      &     DEALLOCATE(cosmu, sinmu, cosmum, sinmum, cosmui, cosmumi,
      &                sinmui, sinmumi, cosnv, sinnv, cosnvn, sinnvn,
      &                cosmui3, cosmumi3, cos01, sin01, stat=istat1)
          IF (istat1 .ne. 0) PRINT *, Warning // "#1"
-         
-         IF (ALLOCATED(xm)) DEALLOCATE (xm, xn, ixm, xm_nyq, xn_nyq, 
+
+         IF (ALLOCATED(xm)) DEALLOCATE (xm, xn, ixm, xm_nyq, xn_nyq,
      &      jmin3, mscale, nscale, uminus, stat=istat1)
          IF (istat1 .ne. 0) PRINT *, Warning // "#2"
-         
+
          IF (ALLOCATED(tanu))
      &      DEALLOCATE(tanu, tanv, sinper, cosper, sinuv, cosuv, sinu,
      &               cosu, sinv, cosv, sinui, cosui, cmns, csign, sinu1,
      &               cosu1, sinv1, cosv1, imirr, xmpot, xnpot,
      &               stat=istat1)
          IF (istat1 .ne. 0) PRINT *, Warning // "#3"
-         
+
          CALL close_all_files
       ENDIF
 
