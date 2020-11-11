@@ -117,6 +117,8 @@ C-----------------------------------------------
       ns_index   =  ictrl_array(4)
       CALL second0(timeon)
 
+      write(*,*) "runvmec: input_file0 = '",trim(input_file0),"'"
+
 !
 !     PARSE input_file into path/input.ext
 !
@@ -126,9 +128,13 @@ C-----------------------------------------------
          input_file = TRIM(input_file0)
          input_extension = input_file0(index_dat+6:index_end)
       ELSE
-         input_extension = input_file0(1:index_end)
-         input_file = 'input.'//TRIM(input_extension)
+         input_extension = TRIM(input_file0(1:index_end))
+         input_file = 'input.'//input_extension
       END IF
+
+      write(*,*) "runvmec: input_file      = '",trim(input_file),"'"
+      write(*,*) "runvmec: input_extension = '",
+     &            trim(input_extension),"'"
 
 !
 !     INITIALIZE PARAMETERS
@@ -149,7 +155,12 @@ C-----------------------------------------------
 !
          CALL vsetup()
 
-         CALL readin(input_file, ier_flag, lscreen)
+         write(*,*) "runvmec: input_file      = '",trim(input_file),"'"
+         CALL readin("input.vmec", ier_flag, lscreen)
+         if (lscreen) then
+            call FLUSH(6)
+         end if
+
          max_grid_size = ns_array(multi_ns_grid)
 
          IF (ier_flag .NE. 0) GOTO 1000

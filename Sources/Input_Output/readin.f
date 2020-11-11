@@ -16,7 +16,7 @@ C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       INTEGER :: iseq_count, ier_flag
       LOGICAL :: lscreen
-      CHARACTER(LEN=*) :: input_file
+      CHARACTER(LEN=*), intent(in) :: input_file
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
@@ -249,6 +249,8 @@ C-----------------------------------------------
       lwrite = (grank .EQ. 0)
       ier_flag_init = ier_flag
       ier_flag = norm_term_flag
+
+      write(*,*) "readin: input_file      = '",trim(input_file),"'"
 
 !
 !     READ IN DATA FROM INDATA FILE
