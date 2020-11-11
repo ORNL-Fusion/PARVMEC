@@ -29,15 +29,12 @@ C-----------------------------------------------
 
       CALL read_namelist (iunit, iosnml, 'indata')
       IF (iosnml .ne. 0) THEN
-         WRITE (6, '(a,i4)') 
+         WRITE (6, '(a,i4)')
      1   ' In VMEC, indata NAMELIST error: iostat = ', iosnml
          ier_flag = input_error_flag
          RETURN
       ENDIF
 
-      CALL read_namelist (iunit, iosnml, 'mseprofile')
-
-      IF (lrecon .and. itse.le.0 .and. imse.le.0) lrecon = .false.
       IF (lfreeb .and. mgrid_file.eq.'NONE') lfreeb = .false.
 
       IF (bloat .eq. zero) bloat = one
@@ -75,11 +72,11 @@ C-----------------------------------------------
       nfper = nfp
 
 !
-!     INDEXING FOR PACKED-ARRAY STRUCTURE OF XC, GC 
+!     INDEXING FOR PACKED-ARRAY STRUCTURE OF XC, GC
 !
       rcc = 1;  zsc = 1
       rss = 0;  rsc = 0;  rcs = 0
-      zcc = 0;  zss = 0;  zcs = 0     
+      zcc = 0;  zss = 0;  zcs = 0
       IF (.not.lasym) THEN
          ntheta3 = ntheta2
          mnpd2 = mnpd

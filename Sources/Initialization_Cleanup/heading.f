@@ -53,7 +53,6 @@ C-----------------------------------------------
      &                        TRIM(os), TRIM(os_release), TRIM(dateloc)
 
          IF (lfirst) THEN
-            WRITE (*,1001) iseq_count + 1, time_slice, TRIM(extension)
             WRITE (*,1003) TRIM(banner), TRIM(Version),
      &                     TRIM(VersionID1), TRIM(computer), TRIM(os),
      &                     TRIM(os_release), TRIM(dateloc)
@@ -61,8 +60,6 @@ C-----------------------------------------------
       ENDIF
 
 1000  FORMAT('DATE = ',a3,' ',a2,',',a4,' ',' TIME = ',2(a2,':'),a2)
-1001  FORMAT('  SEQ = ',i4,' TIME SLICE',1p,e12.4/
-     &       '  PROCESSING INPUT.',a)
 1002  FORMAT(a,1x,a,/a,//,' COMPUTER: ',a,2x,' OS: ',a,2x,
      &       ' RELEASE: ',a,2x,a)
 1003  FORMAT(1x,a,1x,a,/1x,a,//,'  COMPUTER: ',a,2x,' OS: ',a,2x,

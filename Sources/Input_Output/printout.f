@@ -17,7 +17,7 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   L o c a l   P a r a m e t e r s
 C-----------------------------------------------
-      CHARACTER(LEN=*), PARAMETER :: 
+      CHARACTER(LEN=*), PARAMETER ::
      1   iter_line = "  ITER    FSQR      FSQZ      FSQL   ",
      2   fsq_line  = "   fsqr      fsqz      fsql      DELT    ",
      3   iter_lines = iter_line, fsq_lines = fsq_line,
@@ -30,7 +30,7 @@ C-----------------------------------------------
       REAL(dp) :: betav, w, avm, den, tbroadon, tbroadoff
       REAL(dp), ALLOCATABLE :: bcastbuf(:)
       CHARACTER(len=LEN(iter_line) + LEN(fsq_line) +
-     1          LEN(raxis_line) + LEN(zaxis_line)) :: 
+     1          LEN(raxis_line) + LEN(zaxis_line)) ::
      2          print_line
       INTEGER :: i, j, k, l, lk
 C-----------------------------------------------
@@ -79,28 +79,23 @@ C-----------------------------------------------
       END IF
 
       IF (i0.EQ.1 .AND. lfreeb) THEN
-         print_line = iter_lines // " " // raxis_line 
+         print_line = iter_lines // " " // raxis_line
          IF (lasym) print_line = TRIM(print_line) // " " // zaxis_line
-         IF (lscreen.AND.grank.EQ.0) 
+         IF (lscreen.AND.grank.EQ.0)
      1        PRINT 20, TRIM(print_line)//delt_line  !J Geiger 20101118
          print_line = iter_line // fsq_line // raxis_line
          IF (lasym) print_line = TRIM(print_line) // " " // zaxis_line
-         IF (imatch_phiedge .eq. 1) THEN
-           IF(grank.EQ.0) WRITE (nthreed, 15) TRIM(print_line)
-         ELSE
-           IF(grank.EQ.0) WRITE (nthreed, 16) TRIM(print_line)
-         ENDIF
+         IF(grank.EQ.0) WRITE (nthreed, 16) TRIM(print_line)
       ELSE IF (i0.eq.1 .and. .not.lfreeb) THEN
-         print_line = raxis_line 
+         print_line = raxis_line
          IF (lasym) print_line = raxis_line // zaxis_line
-         IF (lscreen.AND.grank.EQ.0) 
+         IF (lscreen.AND.grank.EQ.0)
      1      PRINT 30, iter_lines, TRIM(print_line)//delt_line !J Geiger 2010118
          print_line = iter_line // fsq_line // raxis_line // "     "
          IF (lasym) print_line = iter_line // fsq_line // raxis_line
      1                        // zaxis_line
          IF (grank .EQ. 0) WRITE (nthreed, 25) TRIM(print_line)
       ENDIF
-   15 FORMAT(/,a,6x,'WMHD      BETA      <M>   DEL-BSQ   FEDGE',/)
    16 FORMAT(/,a,6x,'WMHD      BETA     PHIEDGE  DEL-BSQ    FEDGE',/)
    20 FORMAT(/,a,6x,'WMHD      DEL-BSQ',/)
    25 FORMAT(/,a,6x,'WMHD      BETA      <M>        ',/)
@@ -108,53 +103,39 @@ C-----------------------------------------------
 
       IF (.not. lasym) THEN
          IF (.not.lfreeb) THEN
-            IF (lscreen.AND.grank.EQ.0) 
+            IF (lscreen.AND.grank.EQ.0)
      1        PRINT 45, i0, fsqr, fsqz, fsql, r00, delt0, w !J Geiger 20101118
             IF(grank.EQ.0) WRITE (nthreed, 40) i0, fsqr, fsqz, fsql,
      1      fsqr1, fsqz1, fsql1, delt0, r00, w, betav, avm
             RETURN
          ENDIF
-         IF (lscreen.AND.grank.EQ.0) 
+         IF (lscreen.AND.grank.EQ.0)
      1        PRINT 50, i0, fsqr, fsqz, fsql, r00, delt0, w,
      2                          delbsq !J Geiger 20101118
-         IF (imatch_phiedge .eq. 1) THEN
-            IF(grank.EQ.0) WRITE (nthreed, 40) i0, fsqr, fsqz, fsql,
-     1      fsqr1, fsqz1,  fsql1, delt0, r00, w, betav, avm, delbsq,
-     2      fedge
-         ELSE
-            IF(grank.EQ.0) WRITE (nthreed, 42) i0, fsqr, fsqz, fsql,
-     1      fsqr1, fsqz1, fsql1, delt0, r00, w, betav,
-     2      ABS(phiedge), delbsq, fedge
-         ENDIF
-      
+         IF(grank.EQ.0) WRITE (nthreed, 42) i0, fsqr, fsqz, fsql,
+     1   fsqr1, fsqz1, fsql1, delt0, r00, w, betav,
+     2   ABS(phiedge), delbsq, fedge
+
       ELSE
          IF (.not.lfreeb) THEN
-            IF (lscreen.AND.grank.EQ.0) 
+            IF (lscreen.AND.grank.EQ.0)
      1        PRINT 65, i0, fsqr, fsqz, fsql, r00, z00, !J Geiger 20101118
      2                             delt0, w !J Geiger 20101118
             IF(grank.EQ.0) WRITE (nthreed, 60) i0, fsqr, fsqz, fsql,
      1       fsqr1, fsqz1, fsql1, delt0, r00, z00, w, betav, avm
          RETURN
          ENDIF
-         IF (lscreen.AND.grank.EQ.0) 
+         IF (lscreen.AND.grank.EQ.0)
      1        PRINT 70, i0, fsqr, fsqz, fsql, r00, z00,
      2                          delt0, w, delbsq !J Geiger 20101118
-         IF (imatch_phiedge .eq. 1) THEN
-            IF(grank.EQ.0) WRITE (nthreed, 60) i0, fsqr, fsqz, fsql,
-     1       fsqr1, fsqz1, fsql1, delt0, r00, z00, w, betav, avm,
-     2        delbsq, fedge
-         ELSE
-            IF(grank.EQ.0) WRITE (nthreed, 60) i0, fsqr, fsqz, fsql,
-     1      fsqr1, fsqz1, fsql1, delt0, r00, z00, w, betav, 
-     2      ABS(phiedge), delbsq, fedge
-         ENDIF
+         IF(grank.EQ.0) WRITE (nthreed, 60) i0, fsqr, fsqz, fsql,
+     1   fsqr1, fsqz1, fsql1, delt0, r00, z00, w, betav,
+     2   ABS(phiedge), delbsq, fedge
       END IF
 
-   40 FORMAT(i6,1x,1p,7e10.2,e11.3,e12.4,e11.3,0p,f7.3,1p,2e9.2)
    42 FORMAT(i5,1p,7e10.2,e11.3,e12.4,2e11.3,0p,f7.3,1p,e9.2)
    45 FORMAT(i5,1p,3e10.2,e11.3,e10.2,e12.4)
    50 FORMAT(i5,1p,3e10.2,e11.3,e10.2,e12.4,e11.3)
-   60 FORMAT(i6,1x,1p,7e10.2,2e11.3,e12.4,e11.3,0p,f7.3,1p,2e9.2)
    65 FORMAT(i5,1p,3e10.2,2e11.3,e10.2,e12.4)
    70 FORMAT(i5,1p,3e10.2,2e11.3,e10.2,e12.4,e11.3)
 

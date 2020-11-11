@@ -3,7 +3,6 @@
       SUBROUTINE profil3d_par(rmn, zmn, lreset, linterp)
       USE vmec_main
       USE vmec_params
-      USE vspline, ONLY: sknots, pknots, hstark, hthom
       USE realspace
       USE xstuff
       USE parallel_include_module

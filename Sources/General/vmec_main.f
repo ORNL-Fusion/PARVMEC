@@ -44,7 +44,7 @@ C-----------------------------------------------
       INTEGER, DIMENSION(:), ALLOCATABLE :: ireflect
       INTEGER :: multi_ns_grid, iequi, itype_precon, irst,
      1    iter1, iter2, iterc=1, ijacob, itfsq, iresidue, neqs,
-     2    irzloff, ivac, ndatap, ndatai
+     2    irzloff, ivac, ndatap, ndatai, niter
 
       REAL(dp) :: router
       REAL(dp) :: rinner

@@ -3,7 +3,6 @@
       SUBROUTINE profil1d_par(xc, xcdot, lreset)
       USE vmec_main
       USE vmec_params, ONLY: signgs, lamscale, rcc, pdamp
-      USE vspline
       USE init_geometry, ONLY: lflip
       USE vmec_input, ONLY: nzeta
       USE vmec_dim, ONLY: ns, ntheta3
@@ -128,35 +127,24 @@ C-----------------------------------------------
 !     POSSIBLE PRESSURE PEDESTAL FOR S >= SPRES_PED
 !
       spres_ped = ABS(spres_ped)
-      IF (.not.lrecon) THEN
-         nsmin = MAX(2,t1lglob)
-         nsmax = t1rglob
-         DO i = nsmin, nsmax
-            si = hs*(i - c1p5)
+      nsmin = MAX(2,t1lglob)
+      nsmax = t1rglob
+      DO i = nsmin, nsmax
+         si = hs*(i - c1p5)
 
-!         NORMALIZE mass so dV/dPHI (or dV/dPSI) in pressure to mass relation
-!         See line 195 of bcovar: pres(2:ns) = mass(2:ns)/vp(2:ns)**adiabatic
+!      NORMALIZE mass so dV/dPHI (or dV/dPSI) in pressure to mass relation
+!      See line 195 of bcovar: pres(2:ns) = mass(2:ns)/vp(2:ns)**adiabatic
 
-            tf = MIN(one, torflux(si))
-            vpnorm = torflux_edge*torflux_deriv(si)
+         tf = MIN(one, torflux(si))
+         vpnorm = torflux_edge*torflux_deriv(si)
 
-            IF (si .gt. spres_ped) THEN
-               pedge = pmass(spres_ped)
-            ELSE
-               pedge = pmass(tf)
-            END IF
-            mass(i) = pedge*(ABS(vpnorm)*r00)**adiabatic
-         END DO
-
-      ELSE
-         nsmin = t1lglob
-         nsmax = t1rglob
-         iotas(nsmin:nsmax) = 0
-         iotaf(nsmin:nsmax) = 0
-         mass (nsmin:nsmax) = 0
-         presf(nsmin:nsmax) = 0
-      END IF
-
+         IF (si .gt. spres_ped) THEN
+            pedge = pmass(spres_ped)
+         ELSE
+            pedge = pmass(tf)
+         END IF
+         mass(i) = pedge*(ABS(vpnorm)*r00)**adiabatic
+      END DO
 
       nsmin = t1lglob
       nsmax = MIN(t1rglob, ns + 1)
