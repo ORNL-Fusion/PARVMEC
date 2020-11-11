@@ -501,21 +501,11 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
     INTEGER :: istat
 
-    envvar = 'LPRECOND'
-    CALL GETENV(envvar, envval)
-    IF (envval .EQ. 'TRUE') THEN
-       LPRECOND = .TRUE.
-    ELSE IF (envval .EQ. 'FALSE') THEN
-       LPRECOND=.FALSE.
-    END IF
-
     IF (grank.EQ.0) THEN
        WRITE(*,*)
        WRITE(*,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
-       WRITE(*,100)         'LPRECOND    :  ',LPRECOND
     END IF
  100  FORMAT(1x,a,l4)
-
 
     CALL MPI_Finalize(istat)
 

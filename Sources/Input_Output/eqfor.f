@@ -92,7 +92,7 @@ C-----------------------------------------------
 !
 !     STORE EDGE VALUES OF B-FIELD
 !
-      IF ((lfreeb .and. ivac .gt. 1) .or. ledge_dump) THEN
+      IF (lfreeb .and. ivac .gt. 1) THEN
          IF (ALLOCATED(bredge)) THEN
             DEALLOCATE(bredge, bpedge, bzedge)
          END IF

@@ -13,7 +13,7 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER :: iread, inthreed=0, imac0=0
+      INTEGER :: iread, inthreed=0
       CHARACTER(LEN=120) :: threed1_file
 C-----------------------------------------------
 !
@@ -34,13 +34,13 @@ C-----------------------------------------------
          CALL safe_open(nthreed, iread, threed1_file, 'new',
      1                 'formatted')
             IF (iread .ne. 0) THEN
-               IF (iseq .eq. 0 .and. lscreen) PRINT *,
+               IF (lscreen) PRINT *,
      1         ' VMEC OUTPUT FILES ALREADY EXIST: OVERWRITING THEM ...'
                CALL safe_open(nthreed, inthreed, threed1_file,
      1         'replace', 'formatted')
          ENDIF
 
-         IF (inthreed.ne.0 .or. imac0.ne.0) THEN
+         IF (inthreed.ne.0) THEN
             PRINT *,' nthreed = ',      nthreed,
      1              ' istat_threed = ', inthreed
             PRINT *, 'Error opening output file in VMEC ',

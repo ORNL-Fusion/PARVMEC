@@ -1121,11 +1121,6 @@
          DEALLOCATE(bsupua_sur, bsupva_sur)
       END IF
 
-!-----------------------------------------------
-!     FREE BOUNDARY DATA
-!-----------------------------------------------
-      CALL freeb_data(rmnc1, zmns1, rmns1, zmnc1, bmodmn, bmodmn1)
-
       rzl_array = 0
 
       CALL second0 (twoutoff)

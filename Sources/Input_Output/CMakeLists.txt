@@ -5,7 +5,6 @@ target_sources(vmec
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/elongation.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/eqfor.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fileout.f>
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/freeb_data.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fsym_fft.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fsym_invfft.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getbsubs.f>

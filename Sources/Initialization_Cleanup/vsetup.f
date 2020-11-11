@@ -24,8 +24,6 @@ C-----------------------------------------------
 !     2d preconditioner
       nfcn = 0
 
-      ledge_dump = .false.
-
       z00 = zero
       mgrid_mode = 'S'             !Assume scaled mode; read in from mgrid in free-bdy mode
       nextcur = 0
