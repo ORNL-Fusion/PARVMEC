@@ -374,13 +374,13 @@ C-----------------------------------------------
          WRITE (nthreed,110) ncurr,niter_array(multi_ns_grid),
      &   ns_array(1),nstep,nvacskip,
      &   ftol_array(multi_ns_grid),tcon0,lasym,lforbal,lmove_axis,
-     &   lconm1,mfilter_fbdy,nfilter_fbdy,lfull3d1out,
+     &   lconm1,mfilter_fbdy,nfilter_fbdy,
      &   lgiveup,fgiveup                                         ! M Drevlak 20130114
  110  FORMAT(' RUN CONTROL PARAMETERS:',/,1x,23('-'),/,
      &  '  ncurr  niter   nsin  nstep  nvacskip      ftol     tcon0',
      &  '    lasym  lforbal lmove_axis lconm1',/,
-     &     4i7,i10,1p,2e10.2,3L9,/,
-     &  '  mfilter_fbdy nfilter_fbdy lfull3d1out',
+     &     4i7,i10,1p,2e10.2,2L9,/,
+     &  '  mfilter_fbdy nfilter_fbdy',
      &  ' lgiveup fgiveup',/,               ! M Drevlak 20130114
      &     2(6x,i7),L12,10x,i10,L8,e9.1,/)  ! M Drevlak 20130114
 
