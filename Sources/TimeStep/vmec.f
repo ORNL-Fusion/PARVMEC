@@ -134,12 +134,13 @@ C-----------------------------------------------
 !
       INTERFACE
          SUBROUTINE runvmec(ictrl_array, input_file0,
-     &                      lscreen, reset_file_name)
+     &                      lscreen, COMM_WORLD, reset_file_name)
          IMPLICIT NONE
          INTEGER, INTENT(inout), TARGET :: ictrl_array(4)
          LOGICAL, INTENT(in) :: lscreen
          CHARACTER(LEN=*), INTENT(in) :: input_file0
          CHARACTER(LEN=*), OPTIONAL :: reset_file_name
+         INTEGER, INTENT(IN), OPTIONAL  :: COMM_WORLD
          END SUBROUTINE runvmec
       END INTERFACE
 
@@ -208,7 +209,7 @@ C-----------------------------------------------
      &         + output_flag  + cleanup_flag                ! Sets all flags
 
       CALL runvmec(ictrl, input_file, lscreen,
-     &             reset_file_name)
+     &             MPI_COMM_WORLD, reset_file_name)
 
       ierr_vmec = ictrl(2)
       SELECT CASE (ierr_vmec)
