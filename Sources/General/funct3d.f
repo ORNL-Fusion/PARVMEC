@@ -2,7 +2,7 @@
 
       SUBROUTINE funct3d_par (lscreen, ier_flag)
       USE vmec_main
-      USE vacmod, ONLY: bsqvac, bsqvac0, raxis_nestor, zaxis_nestor, 
+      USE vacmod, ONLY: bsqvac, bsqvac0, raxis_nestor, zaxis_nestor,
      &                  nuv, nuv3
       USE vmec_params, ONLY: ntmax, norm_term_flag
       USE realspace
@@ -50,7 +50,7 @@ C-----------------------------------------------
 
 
 !     CONVERT ODD M TO 1/SQRT(S) INTERNAL REPRESENTATION
-      ACTIVE1: IF (lactive) THEN 
+      ACTIVE1: IF (lactive) THEN
          IF (ictrl_prec2d .EQ. 3) THEN
             CALL SAXPBYLASTNTYPE(one, pxc, one, pxcdot, pgc)
             CALL SAXLASTNTYPE(pgc, pscalxc, pgc)
@@ -122,7 +122,6 @@ C-----------------------------------------------
          ELSE IF (iter2        .EQ. iter1 .AND.
      &            ivac         .LE. 0     .AND.
      &            ictrl_prec2d .EQ. 0) THEN
-#if defined(MPI_OPT)
             ALLOCATE(bcastbuf(2*nznt))
             bcastbuf(1:nznt)=prcon(:,ns,0)
             bcastbuf(nznt+1:2*nznt)=pzcon(:,ns,0)
@@ -134,7 +133,7 @@ C-----------------------------------------------
             prcon(:,ns,0)=bcastbuf(1:nznt)
             pzcon(:,ns,0)=bcastbuf(nznt+1:2*nznt)
             DEALLOCATE(bcastbuf)
-#endif
+
             DO l = nsmin, nsmax
                prcon0(:,l) = prcon(:,ns,0)*psqrts(:,l)**2
                pzcon0(:,l) = pzcon(:,ns,0)*psqrts(:,l)**2
@@ -155,8 +154,8 @@ C-----------------------------------------------
          bcovar_time=bcovar_time+(tbcovoff - tbcovon)
 
       END IF ACTIVE1
-      
-      CALL MPI_BCast( ier_flag, 1, MPI_INTEGER, 0, 
+
+      CALL MPI_BCast( ier_flag, 1, MPI_INTEGER, 0,
      &                RUNVMEC_COMM_WORLD, MPI_ERR) !SAL 070719
 
       bbuf(1)=irst; bbuf(2)=iequi; bbuf(3)=ivac; bbuf(4)=iter2
@@ -183,7 +182,7 @@ C-----------------------------------------------
      &    iter2 .GT. 1 .AND.
      &    iequi .EQ. 0) THEN
 
-         IF (ictrl_prec2d.LE.1 .AND. (fsqr + fsqz).LE.1.e-3_dp) 
+         IF (ictrl_prec2d.LE.1 .AND. (fsqr + fsqz).LE.1.e-3_dp)
      &      ivac = ivac+1   !decreased from e-1 to e-3 - sph12/04
 
          IF (nvskip0 .EQ. 0) nvskip0 = MAX(1, nvacskip)
@@ -216,7 +215,7 @@ C-----------------------------------------------
 !           FOR ictrl_prec2d = 1 (RUN WITH PRECONDITIONER APPLIED), MUST
 !           COMPUTE EXACT VACUUM RESPONSE NOW.
 !
-!           THE EXCEPTION TO THIS IS IF WE ARE TESTING THE HESSIAN (lHess_exact=T), 
+!           THE EXCEPTION TO THIS IS IF WE ARE TESTING THE HESSIAN (lHess_exact=T),
 !           THEN MUST USE FULL VACUUM CALCULATION TO COMPUTE IT (ivacskip=0)
 !
 !           lHess_exact = .FALSE.
@@ -231,7 +230,7 @@ C-----------------------------------------------
 
 !          NOTE: pgc contains correct edge values of r,z,l arrays
 !                convert_sym, convert_asym have been applied to m=1 modes
-          
+
             CALL convert_par(rmnc,zmns,lmns,rmns,zmnc,lmnc,pgc)
 
 !          DO NOT UPDATE THIS WHEN USING PRECONDITIONER: BREAKS TRI-DIAGONAL STRUCTURE
@@ -308,7 +307,7 @@ C-----------------------------------------------
 !          UNCOMMENT ALL "RPRES" COMMENTS HERE AND IN BCOVAR, FORCES ROUTINES
 !          IF NON-VARIATIONAL FORCES ARE DESIRED
 !
-!          presf_ns = 1.5_dp*pres(ns) - 0.5_dp*pres(ns1)  
+!          presf_ns = 1.5_dp*pres(ns) - 0.5_dp*pres(ns1)
 !          MUST NOT BREAK TRI-DIAGONAL RADIAL COUPLING: OFFENDS PRECONDITIONER!
             presf_ns = pmass(hs*(ns-1.5_dp))
             IF (presf_ns .NE. zero) THEN
@@ -373,7 +372,7 @@ C-----------------------------------------------
      &                         pru, prv, pz1, pzu, pzv, pextra3,
      &                         pextra4, pextra1, pextra2)
          END IF
-     
+
 !
 !     FOURIER-TRANSFORM MHD FORCES TO (M,N)-SPACE
 !
@@ -399,7 +398,6 @@ C-----------------------------------------------
       END IF ACTIVE2
 
 !NEED THIS ON ALL PROCESSORS IN GROUP (NOT JUST ACTIVE ONES) FOR STOPPING CRITERION IN EVOLVE
-#if defined(MPI_OPT)
       IF (gnranks .GT. nranks) THEN
          ALLOCATE(bcastbuf(6))
          bcastbuf(1) = fsqr; bcastbuf(2) = fsqr1
@@ -415,7 +413,6 @@ C-----------------------------------------------
          fsql = bcastbuf(5); fsql1 = bcastbuf(6)
          DEALLOCATE(bcastbuf)
       END IF
-#endif
 
 !     Force new initial axis guess IF ALLOWED (l_moveaxis=T)
       IF (lmove_axis                  .and.

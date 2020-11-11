@@ -19,27 +19,27 @@ C-----------------------------------------------
       INTEGER, PRIVATE :: ntyptot, m_2d, n_2d, ntype_2d
       INTEGER, PRIVATE, ALLOCATABLE :: ipiv_blk(:,:)
       INTEGER, PRIVATE :: mblk_size
-      INTEGER, PRIVATE :: mystart(3), myend(3) 
+      INTEGER, PRIVATE :: mystart(3), myend(3)
       LOGICAL, PRIVATE :: FIRSTPASS=.TRUE.
-      REAL(sp),PRIVATE, ALLOCATABLE, DIMENSION(:,:,:,:,:,:,:) :: 
+      REAL(sp),PRIVATE, ALLOCATABLE, DIMENSION(:,:,:,:,:,:,:) ::
      1    block_diag, block_plus, block_mins,
      2    block_dsave, block_msave, block_psave
       REAL(sp),PRIVATE, ALLOCATABLE, DIMENSION(:,:,:,:,:,:) ::
      1    block_diag_sw, block_plus_sw, block_mins_sw
-   
+
       REAL(dp), PRIVATE, DIMENSION(:,:,:,:), ALLOCATABLE :: gc_save
       REAL(dp) :: ctor_prec2d
       INTEGER :: ictrl_prec2d
       LOGICAL :: lHess_exact = .TRUE.,  !FALSE -> FASTER, LESS ACCURATE VACUUM CALCULATION OF HESSIAN
      1           l_backslv = .FALSE.,
-     2           l_comp_prec2D = .TRUE., 
+     2           l_comp_prec2D = .TRUE.,
      3           l_edge  = .FALSE.,                !=T IF EDGE PERTURBED
      4           edge_mesh(3)
 
       LOGICAL, PARAMETER, PRIVATE :: lscreen = .FALSE.
       INTEGER, PARAMETER, PRIVATE :: jstart(3) = (/1,2,3/)
 
-      PRIVATE :: swap_forces, reswap_forces 
+      PRIVATE :: swap_forces, reswap_forces
 
 !
 !     Direct-Access (swap to disk) stuff
@@ -65,7 +65,7 @@ C-----------------------------------------------
 !     LHESS_EXACT : if true, edge value of ctor (in bcovar) is computed as a constant to make
 !                   Hessian symmetric. Also, sets ivacskip=0 in call to vacuum in computation of
 !                   Hessian. However, the ivacskip=0 option is (very) slow and found not to be necessary
-!                   in practice. Set this true primarily for debugging purposes (check Ap ~ -p in MatVec 
+!                   in practice. Set this true primarily for debugging purposes (check Ap ~ -p in MatVec
 !                   routine, for example, in GMRes module)
 !
 
@@ -80,12 +80,12 @@ C-----------------------------------------------
       REAL(dp), DIMENSION(mblk,nblocks), INTENT(out) :: temp
 C-----------------------------------------------
 !
-!     reorders forces (gc) array prior to applying 
+!     reorders forces (gc) array prior to applying
 !     block-tridiagonal pre-conditioner. on exit, temp is the reordered array
 !     flip sign so eigenvalue is negative (corresponding to damping)
 !
       temp = -TRANSPOSE(gc)
-    
+
       END SUBROUTINE swap_forces
 
       SUBROUTINE reswap_forces(temp, gc, mblk, nblocks)
@@ -106,7 +106,7 @@ C-----------------------------------------------
 
       SUBROUTINE block_precond_par(gc)
       USE blocktridiagonalsolver, ONLY: SetMatrixRHS
-      USE blocktridiagonalsolver, ONLY: BackwardSolve 
+      USE blocktridiagonalsolver, ONLY: BackwardSolve
       USE blocktridiagonalsolver, ONLY: GetSolutionVector
       USE parallel_include_module
 C-----------------------------------------------
@@ -138,7 +138,7 @@ C-----------------------------------------------
       ALLOCATE (tmp(mblk,ns), stat=istat)
       CALL tolastns(gc, tmp)
       tmp(:,tlglob:trglob) = -tmp(:,tlglob:trglob)
-      
+
       DO globrow=tlglob, trglob
          CALL SetMatrixRHS(globrow,tmp(:,globrow))
       END DO
@@ -148,7 +148,7 @@ C-----------------------------------------------
       CALL BackwardSolve
       CALL second0(toff)
       bcyclic_backwardsolve_time=bcyclic_backwardsolve_time+(toff-ton)
-       
+
       ALLOCATE (solvec(mblk,ns), stat=istat)
       IF (istat .NE. 0) THEN
          STOP 'Allocation error in block_precond_par before gather'
@@ -161,9 +161,9 @@ C-----------------------------------------------
       CALL tolastntype(solvec, gc)
 
       CALL Gather4XArray(gc)
-      
+
       DEALLOCATE (solvec)
-   
+
       END SUBROUTINE block_precond_par
 
       SUBROUTINE compute_blocks_par (xc, xcdot, gc)
@@ -190,11 +190,11 @@ C-----------------------------------------------
 !     USING EITHER A SLOW - BUT RELIABLE - "JOG" TECHNIQUE, OR
 !     USING PARTIAL ANALYTIC FORMULAE.
 !
-!     THE SUBROUTINE lam_blks IS CALLED FROM BCOVAR TO COMPUTE 
+!     THE SUBROUTINE lam_blks IS CALLED FROM BCOVAR TO COMPUTE
 !     THE ANALYTIC BLOCK ELEMENTS
 !
       CALL second0(tprec2don)
-      
+
       IF (l_backslv .and. sp.ne.dp) THEN
          STOP 'Should set sp = dp!'
       END IF
@@ -279,13 +279,13 @@ C-----------------------------------------------
       END IF
 
 !
-!     FACTORIZE HESSIAN 
+!     FACTORIZE HESSIAN
 !
       CALL second0(time_on)
       IF (ALLOCATED(ipiv_blk)) THEN
          DEALLOCATE(ipiv_blk, stat=ntype)
       END IF
-      ALLOCATE (ipiv_blk(mblk,ns), stat=ntype)     
+      ALLOCATE (ipiv_blk(mblk,ns), stat=ntype)
       IF (ntype .ne. 0) THEN
          STOP 'Allocation error2 in block_precond_par'
       END IF
@@ -404,12 +404,6 @@ C-----------------------------------------------
          END DO
       END IF
 
-!     STORE chips in xc 
-#if defined(CHI_FORCE)
-      IF (ncurr .EQ. 1) THEN
-         xc(0,0,nsmin:nsmax,lamtype) = chips(nsmin:nsmax)
-      END IF
-#endif
       left = rank - 1
       IF (rank .EQ. 0) THEN
          left = MPI_PROC_NULL
@@ -424,7 +418,7 @@ C-----------------------------------------------
       CALL PadSides(xcdot)
 
       CALL restart_iter(delt0r)
-      gc_save(:,:,nsmin:nsmax,:) = gc(:,:,nsmin:nsmax,:) 
+      gc_save(:,:,nsmin:nsmax,:) = gc(:,:,nsmin:nsmax,:)
       ictrl_prec2d = 3                 !Signals funct3d that preconditioner is being computed
 
       CALL MPI_COMM_SIZE(NS_COMM,lastrank,MPI_ERR)
@@ -527,13 +521,13 @@ C-----------------------------------------------
          END IF
 
          M2D: DO m_2d = 0, mpol1
-            
+
             N2D: DO n_2d = 0, ntor
 
                icol = icol + 1
-            
+
                MESH_3PT: DO mesh = 1,3
- 
+
 !              APPLY JOG TO ACTIVE PROCESSORS
                   IF (lactive) THEN
                      DO js = mystart(mesh), myend(mesh), 3
@@ -547,7 +541,7 @@ C-----------------------------------------------
                   l_edge = edge_mesh(mesh)
                   CALL funct3d_par (lscreen, istat)
                   IF (istat .NE. 0) STOP 'Error computing Hessian jog!'
-              
+
 !
 !              COMPUTE PRECONDITIONER (HESSIAN) ELEMENTS. LINEARIZED EQUATIONS
 !              OF FORM (FIXED mn FOR SIMPLICITY):
@@ -571,7 +565,7 @@ C-----------------------------------------------
 !                 CLEAR JOG AND STORE BLOCKS FOR THIS JOG
                         xcdot(n_2d,m_2d,js,ntype_2d) = 0
 
-                  !block_mins(js+1) 
+                  !block_mins(js+1)
                        js1 = js+1
                         IF (tlglob.LE.js1 .AND. js1.LE.trglob) THEN
                            DataItem =
@@ -627,7 +621,7 @@ C-----------------------------------------------
       DEALLOCATE(DataItem, diag_val)
       CALL second0(toff)
       fill_blocks_time=fill_blocks_time + (toff - ton)
- 
+
       END SUBROUTINE sweep3_blocks_par
 
 
@@ -680,8 +674,8 @@ C-----------------------------------------------
       INTEGER               :: js, M1
       INTEGER               :: MPI_STAT(MPI_STATUS_SIZE)
 !-----------------------------------------------
- 
-      DO js = tlglob, trglob 
+
+      DO js = tlglob, trglob
         colscale(:,js) = colsum(:,js)
       END DO
 
@@ -689,11 +683,11 @@ C-----------------------------------------------
 
 ! Get left boundary elements (tlglob-1)
       IF (rank.LT.nranks-1) THEN
-        CALL MPI_Send(colsum(:,trglob),M1,MPI_REAL8,    
+        CALL MPI_Send(colsum(:,trglob),M1,MPI_REAL8,
      1                rank+1,1,NS_COMM,MPI_ERR)
       END IF
       IF (rank.GT.0) THEN
-        CALL MPI_Recv(colscale(:,tlglob-1),M1,      
+        CALL MPI_Recv(colscale(:,tlglob-1),M1,
      1                MPI_REAL8,rank-1,1,NS_COMM,MPI_STAT,MPI_ERR)
       END IF
 
@@ -714,18 +708,18 @@ C-----------------------------------------------
       INTEGER :: istat
 
       istat=0
-      IF (ALLOCATED(block_diag)) 
+      IF (ALLOCATED(block_diag))
      1    DEALLOCATE (block_diag, block_plus, block_mins, stat=istat)
       IF (istat .ne. 0) STOP 'Deallocation error-1 in free_mem_precon'
-      
+
       istat=0
       IF (ALLOCATED(block_diag_sw))
-     1   DEALLOCATE (block_diag_sw, block_plus_sw, block_mins_sw, 
+     1   DEALLOCATE (block_diag_sw, block_plus_sw, block_mins_sw,
      2                stat=istat)
       IF (istat .ne. 0) STOP 'Deallocation error-2 in free_mem_precon'
 
       istat=0
-      IF (ALLOCATED(ipiv_blk)) DEALLOCATE (ipiv_blk, stat=istat)     
+      IF (ALLOCATED(ipiv_blk)) DEALLOCATE (ipiv_blk, stat=istat)
       IF (istat .ne. 0) STOP 'Deallocation error-3 in free_mem_precon'
 
       END SUBROUTINE free_mem_precon

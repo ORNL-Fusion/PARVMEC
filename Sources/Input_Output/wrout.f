@@ -17,11 +17,7 @@
       USE totzsp_mod
       USE vforces, ONLY: bsupua=>brmn_e, bsupva=>czmn_o, bsqa=>bzmn_e,
      1                   bsubsa=>armn_e, bsubua=>azmn_e, bsubva=>armn_o
-#ifdef _VACUUM2
-      USE vac2_vacmod, ONLY: potvac, mnpd, xmpot, xnpot
-#else
-      USE vacmod, ONLY: potvac, mnpd, xmpot, xnpot       !added for diagno, J.Geiger
-#endif
+      USE vacmod, ONLY: potvac, mnpd, xmpot, xnpot
 
       USE ezcdf
       USE read_wout_mod, ONLY: Compute_Currents,
