@@ -4,7 +4,7 @@
       USE vmec_main
       USE vacmod
       USE realspace
-      USE mgrid_mod, ONLY: nbcoil_max, nlim_max, nextcur, mgrid_mode
+      USE mgrid_mod, ONLY: nextcur, mgrid_mode
       USE gmres_mod, ONLY: nfcn
 
       IMPLICIT NONE

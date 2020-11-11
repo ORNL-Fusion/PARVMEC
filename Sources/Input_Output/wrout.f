@@ -290,11 +290,6 @@
       CALL cdf_define(nwout, vn_mgmode, mgrid_mode)
       IF (lfreeb) THEN
          CALL cdf_define(nwout, vn_maxpot, mnpd)
-         CALL cdf_define(nwout, vn_flp, nobser)
-         CALL cdf_define(nwout, vn_nobd, nobd)
-         CALL cdf_define(nwout, vn_nbset, nbsets)
-         IF (nbsets .gt. 0)
-     1      CALL cdf_define(nwout,vn_nbfld,nbfld(1:nbsets))
       END IF
 
 ! 1D Arrays
@@ -605,10 +600,7 @@
          CALL cdf_write(nwout, vn_mgmode, mgrid_mode)
       ENDIF
       IF (lfreeb) THEN
-         CALL cdf_write(nwout, vn_flp, nobser)
          CALL cdf_write(nwout, vn_maxpot, mnpd)
-         CALL cdf_write(nwout, vn_nobd, nobd)
-         CALL cdf_write(nwout, vn_nbset, nbsets)
          IF (nextcur.gt.0 .and. ALLOCATED(curlabel))
      1   CALL cdf_write(nwout, vn_curlab, curlabel(1:nextcur))
       END IF
