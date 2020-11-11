@@ -4,7 +4,7 @@
      1                 rzl_array, gc_array, ier_flag, lwrite
      4                 )
 ! ... from SPH 2009-10-05; changes for modB sine-harmonics included
-      USE vmec_input, ONLY: ns_array, ftol_array, lwouttxt, lnyquist
+      USE vmec_input, ONLY: ns_array, ftol_array, lwouttxt
       USE vmec_params
       USE vmec_main
       USE vmercier
@@ -180,17 +180,10 @@
 !
 !     BSQ, BSUPU,V, BSUBU,V, GSQRT (HALF); BSUBS (FULL-CONVERTED IN JXBFORCE)
 !
-      IF (lnyquist) THEN
-         mnmax_nyq0 = mnmax_nyq
-         mnyq0 = mnyq
-         nnyq0 = nnyq
-         xm_nyq0 => xm_nyq; xn_nyq0 => xn_nyq
-      ELSE
-         mnmax_nyq0 = mnmax
-         mnyq0 = mpol1
-         nnyq0 = ntor
-         xm_nyq0 => xm; xn_nyq0 => xn
-      END IF
+      mnmax_nyq0 = mnmax_nyq
+      mnyq0 = mnyq
+      nnyq0 = nnyq
+      xm_nyq0 => xm_nyq; xn_nyq0 => xn_nyq
 
       ALLOCATE (gmn(mnmax_nyq0), bmn(mnmax_nyq0),
      1   bsubumn(mnmax_nyq0), bsubvmn(mnmax_nyq0), bsubsmn(mnmax_nyq0),
@@ -241,10 +234,9 @@
       ftolx1=ftol_array(indx1(1))
 
 !     NYQUIST FREQUENCY REQUIRES FACTOR OF 1/2
-      IF (lnyquist) THEN
-         IF (mnyq .ne. 0) cosmui(:,mnyq) = p5*cosmui(:,mnyq)
-         IF (nnyq .ne. 0) cosnv (:,nnyq) = p5*cosnv (:,nnyq)
-      END IF
+      IF (mnyq .ne. 0) cosmui(:,mnyq) = p5*cosmui(:,mnyq)
+      IF (nnyq .ne. 0) cosnv (:,nnyq) = p5*cosnv (:,nnyq)
+
       wout_file = version_
       READ (wout_file, *) vversion
 
@@ -1408,10 +1400,8 @@
 !
 !     RESTORE nyq ENDPOINT VALUES
 !
-      IF (lnyquist) THEN
-         IF (mnyq .ne. 0) cosmui(:,mnyq) = 2*cosmui(:,mnyq)
-         IF (nnyq .ne. 0) cosnv (:,nnyq) = 2*cosnv (:,nnyq)
-      END IF
+      IF (mnyq .ne. 0) cosmui(:,mnyq) = 2*cosmui(:,mnyq)
+      IF (nnyq .ne. 0) cosnv (:,nnyq) = 2*cosnv (:,nnyq)
 
 !
 ! DEALLOCATIONS ! J Geiger: these have been moved downwards.
