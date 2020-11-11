@@ -353,9 +353,6 @@ C-----------------------------------------------
             CALL alias_par (pgcon, pextra1(:,:,0), pgc, pgc(1+mns),
      &                      pgc(1+2*mns), pextra1(:,:,1))
          ELSE
-            IF (lrecon) THEN
-               pxc(:ns) = pxc(:ns) + delr_mse
-            END IF
             GOTO 100
          END IF
 

@@ -262,7 +262,6 @@
       CALL cdf_define(nwout, vn_maxit, iter2)
       CALL cdf_define(nwout, vn_actit, itfsq)
       CALL cdf_define(nwout, vn_asym, lasym)
-      CALL cdf_define(nwout, vn_recon, lrecon)
       CALL cdf_define(nwout, vn_free, lfreeb)
       CALL cdf_define(nwout, vn_error, ier_flag)
       CALL cdf_define(nwout, vn_aspect, aspect)
@@ -577,7 +576,6 @@
       CALL cdf_write(nwout, vn_maxit, iter2)
       CALL cdf_write(nwout, vn_actit, itfsq)
       CALL cdf_write(nwout, vn_asym, lasym)
-      CALL cdf_write(nwout, vn_recon, lrecon)
       CALL cdf_write(nwout, vn_free, lfreeb)
       CALL cdf_write(nwout, vn_error, ier_flag)
 !

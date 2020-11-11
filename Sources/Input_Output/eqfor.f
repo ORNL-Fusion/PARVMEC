@@ -642,7 +642,6 @@ C-----------------------------------------------
       IF(rank.EQ.0) WRITE (nthreed, 168)
       IF(rank.EQ.0) WRITE (nthreed, 170) rshaf, rcen, rlao,
      1   scaling_ratio, s3, smaleli, musubi, betai, lambda
-!      IF (lrecon.AND.rank.EQ.0) WRITE (nthreed, 172) dmusubi_meas
       IF(rank.EQ.0) WRITE (nthreed, 174) delta1, delta2, delta3,
      1   s11, s12, s13, s2, s2/fgeo, s2/flao,
      5   musubi + s11,musubi + s12,
