@@ -1,9 +1,9 @@
 !> \file initialize_radial.f
 
-      SUBROUTINE initialize_radial(nsval, ns_old, delt0,
+      SUBROUTINE initialize_radial(nsval, ns_old,
      1                             lscreen, reset_file_name)
       USE vmec_main
-      USE vmec_params, ONLY: ntmax 
+      USE vmec_params, ONLY: ntmax
       USE realspace
       USE xstuff
       USE parallel_include_module
@@ -14,7 +14,6 @@ C-----------------------------------------------
       INTEGER, INTENT(IN) :: nsval
       INTEGER, INTENT(INOUT) :: ns_old
       CHARACTER(LEN=*), OPTIONAL :: reset_file_name
-      REAL(dp), INTENT(OUT) :: delt0
       LOGICAL, INTENT(IN) :: lscreen
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
@@ -47,14 +46,12 @@ C-----------------------------------------------
 !
       ns = nsval
       ns1 = ns - 1
-      delt0 = delt
       hs = one/ns1
       ohs = one/hs
       mns = ns*mnsize
       irzloff = ntmax*mns
       nrzt = nznt*ns
       neqs = 3*irzloff
-
 
       IF (grank .EQ. 0) THEN
          WRITE (nthreed, 1000) ns, mnmax, ftolv, niter

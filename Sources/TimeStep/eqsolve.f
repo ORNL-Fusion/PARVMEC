@@ -3,7 +3,7 @@
       SUBROUTINE eqsolve(ier_flag, lscreen)
       USE vmec_main
       USE vmec_params, ONLY: ntmax, ns4, jac75_flag, norm_term_flag,
-     &                       bad_jacobian_flag, more_iter_flag,
+     &                       bad_jacobian_flag,
      &                       successful_term_flag
       USE precon2d, ONLY: ScratchFile, lswap2disk, ictrl_prec2d
       USE directaccess, ONLY: DeleteDAFile
@@ -63,7 +63,7 @@ C-----------------------------------------------
 !
    20 CONTINUE
 !
-!     RECOMPUTE INITIAL PROFILE, BUT WITH IMPROVED AXIS/OR RESTART 
+!     RECOMPUTE INITIAL PROFILE, BUT WITH IMPROVED AXIS/OR RESTART
 !     FROM INITIAL PROFILE, BUT WITH A SMALLER TIME-STEP
 !
       IF (irst .EQ. 2) THEN
@@ -75,7 +75,7 @@ C-----------------------------------------------
          irst = 1
          IF (liter_flag) CALL restart_iter(delt0r)
       END IF
-!      IF (liter_flag) CALL restart_iter(delt0r)
+
       liter_flag = .true.
       ier_flag = norm_term_flag
 
@@ -113,6 +113,7 @@ C-----------------------------------------------
             RETURN
          END IF
 
+         ! total plasma energy
          w0 = wb + wp/(gamma - one)
 
 !
@@ -136,7 +137,6 @@ C-----------------------------------------------
             ier_flag = jac75_flag
             liter_flag = .false.
          ELSE IF (iter2.ge.niter .and. liter_flag) THEN
-            ier_flag = more_iter_flag
             liter_flag = .false.
          END IF
 
@@ -182,25 +182,10 @@ C-----------------------------------------------
          END IF
       END DO iter_loop
 
-!SPH (021711): V3FITA - SAVE STATE FOR RESTART IF PRECONDITIONER IS ON
-
-      IF (l_v3fit) THEN
-
-!JDH 2011-09-14. Correct logic error.
-
-!         IF (ictrl_prec2d .eq. 0) THEN
-!            lqmr = (itype_precon .ge. 2)
-!         ELSE
-         IF (ictrl_prec2d .gt. 0) THEN
-            CALL restart_iter(delt0r)
-         END IF
-      END IF
-
       IF (lSwap2Disk) CALL DeleteDAFile(ScratchFile)
 
       IF (grank .EQ. 0) THEN
 	     WRITE (nthreed, 60) w0*twopi**2, wdota, r0dot
-         IF (lrecon) WRITE (nthreed, 70) r00*fsqsum0/wb
          IF (nfcn .GT. 0) WRITE (nthreed, 80) nfcn
       END IF
 

@@ -13,12 +13,12 @@ C-----------------------------------------------
       REAL(dp), DIMENSION(:,:), ALLOCATABLE ::
      1    ard, arm, brd, brm, azd, azm, bzd, bzm, bmin, bmax
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
-     1    crd, iotaf, phipf, chipf, mass, phi, presf, beta_vol, 
-     2    jcuru, jcurv, jdotb, 
-     2    buco, bvco, bdotgradv, equif, specw, tcon, 
-     3    psi, yellip, yinden, ytrian, yshift, ygeo, overr, 
-     4    sm, sp, iotas, phips, chips, pres, vp, jpar2, jperp2, bdotb, 
-     5    blam, clam, dlam, icurv, vpphi, presgrad, 
+     1    crd, iotaf, phipf, chipf, mass, phi, presf, beta_vol,
+     2    jcuru, jcurv, jdotb,
+     2    buco, bvco, bdotgradv, equif, specw, tcon,
+     3    psi, yellip, yinden, ytrian, yshift, ygeo, overr,
+     4    sm, sp, iotas, phips, chips, pres, vp, jpar2, jperp2, bdotb,
+     5    blam, clam, dlam, icurv, vpphi, presgrad,
      6    r01, z01, bdamp, bucof, bvcof, chi
       REAL(dp), DIMENSION(:,:,:,:), ALLOCATABLE :: faclam, faclam0
       REAL(dp), DIMENSION(:,:,:,:), ALLOCATABLE :: pfaclam
@@ -26,9 +26,9 @@ C-----------------------------------------------
 
       REAL(dp), DIMENSION(0:mpol1d,3) :: xmpq
       REAL(dp), DIMENSION(0:mpol1d) :: faccon
-      REAL(dp) :: dcon, currv, aspect, hs, ohs, voli, 
+      REAL(dp) :: dcon, currv, aspect, hs, ohs, voli,
      1   signiota, rc0mse, r00, r0scale, z00, dkappa, fsqsum0,
-     2   pressum0, fnorm, fsqr=1, fsqz=1, fsql=1, fnorm1, fnorml, 
+     2   pressum0, fnorm, fsqr=1, fsqz=1, fsql=1, fnorm1, fnorml,
      3   fsqr1, fsqz1, fsql1, fsq, fedge, wb, wp, r00b, z00b, fz00_edge
       REAL(dp), DIMENSION(nstore_seq) :: fsqt, wdot
       REAL(dp) :: ftolv, otav, alphaR, alphaZ
@@ -37,7 +37,7 @@ C-----------------------------------------------
      1    rmn_bdy, zmn_bdy
       REAL(dp), DIMENSION(:,:), ALLOCATABLE :: bsqsav
       REAL(dp), DIMENSION(:), ALLOCATABLE :: bsubu0, dbsq, rbsq
-      REAL(dp) :: rbtor, rbtor0, ctor, delbsq, res0, res1, delt0r   !DO NOT remove res0, delt0r -> V3FIT
+      REAL(dp) :: rbtor, rbtor0, ctor, delbsq, res1
       REAL(dp), DIMENSION(ndatafmax) ::
      1  spfa, spfa2, hp, sifa, sifa2, hi
       LOGICAL :: lthreed, lconm1

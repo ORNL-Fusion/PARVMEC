@@ -41,15 +41,11 @@ MODULE parallel_vmec_module
     INTEGER, ALLOCATABLE, DIMENSION (:) :: nsrcounts, nsdisp
     INTEGER, PRIVATE :: mmax, nmax, tmax
 
-    LOGICAL :: LV3FITCALL=.FALSE.
     LOGICAL :: LIFFREEB=.FALSE.
     LOGICAL :: LPRECOND=.FALSE.
 
     LOGICAL :: lactive=.FALSE.
     LOGICAL :: vlactive=.FALSE.
-
-    CHARACTER*100 :: envvar
-    CHARACTER*100 :: envval
 
     REAL(dp) :: bcyclic_comp_time
     REAL(dp) :: bcyclic_comm_time
@@ -78,27 +74,10 @@ MODULE parallel_vmec_module
 CONTAINS
 
   !--------------------------------------------------------------------------
-  ! Read in environment variables 
-  !--------------------------------------------------------------------------
-    SUBROUTINE MyEnvVariables
-    
-    LV3FITCALL=.FALSE.
-    envvar='LV3FITCALL'
-    CALL GETENV(envvar,envval)
-    IF (envval.EQ.'TRUE'.OR.envval.EQ.'true' &
-      .OR.envval.EQ.'T'.OR.envval.EQ.'t') THEN
-      LV3FITCALL=.TRUE.
-    END IF
-
-    END SUBROUTINE  MyEnvVariables
-  !--------------------------------------------------------------------------
-
-
-  !--------------------------------------------------------------------------
   ! Declarations of all timers to be used in the parallel implementation
   !--------------------------------------------------------------------------
     SUBROUTINE InitializeParallel
-    
+
        CALL MPI_Init(MPI_ERR)
        CALL MPI_Comm_rank(MPI_COMM_WORLD,grank,MPI_ERR)
        CALL MPI_Comm_size(MPI_COMM_WORLD,gnranks,MPI_ERR)
@@ -121,7 +100,7 @@ CONTAINS
 
   !--------------------------------------------------------------------------
     SUBROUTINE InitSurfaceComm(ns, nzeta, ntheta3, ntmax, ntor, mpol1)
-    
+
 INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     INTEGER, INTENT(IN) :: ntmax, ntor, mpol1
     INTEGER :: i
@@ -141,44 +120,35 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     tmax = 3*par_ntmax
     NS_RESLTN = NS_RESLTN + 1
 
-    IF (LV3FITCALL) THEN
-       IF (last_ns.NE.par_ns) THEN
-          CALL SetSurfaceCommunicator
-          CALL SetSurfacePartitions
-          CALL SetSurfacePartitionArrays
-          last_ns = par_ns
-       END IF
-    ELSE
-       CALL SetSurfaceCommunicator
-       CALL SetSurfacePartitions
-       CALL SetSurfacePartitionArrays
-       last_ns = par_ns
+    CALL SetSurfaceCommunicator
+    CALL SetSurfacePartitions
+    CALL SetSurfacePartitionArrays
+    last_ns = par_ns
 
-       IF (lactive) THEN
-          IF (grank.EQ.0) THEN
-             IF (FIRSTPASS) THEN
-                CALL SetOutputFile(rank,nranks,'parvmecinfo')
-                WRITE(TOFU,*)"============================================================"
-                WRITE(TOFU,*) "> available processor count:", gnranks
-                WRITE(TOFU,*) '> global rank:', grank
-                WRITE(TOFU,*) '> nzeta:      ', par_nzeta
-                WRITE(TOFU,*) '> ntheta3:    ', par_ntheta3
-                WRITE(TOFU,*) '> ntor:       ', par_ntor
-                WRITE(TOFU,*) '> mpol1:      ', par_mpol1
-                WRITE(TOFU,*) '> ntmax:      ', par_ntmax
-                WRITE(TOFU,*) '> blocksize:  ',(par_mpol1+1)*(par_ntor+1)
-                WRITE(TOFU,*)"============================================================"
-                WRITE(TOFU,*)
-                CALL FLUSH(TOFU)
-                FIRSTPASS = .FALSE.
-             END IF
-             WRITE(TOFU,*) ">>> grid resolution:   ",par_ns
-             WRITE(TOFU,*) ">>> active processors: ",nranks
-             WRITE(TOFU,*) ">>> xc/gc size:        ", par_ns*(par_ntor+1)*(par_mpol1+1)*3*ntmax
-             WRITE(TOFU,*)"------------------------------------------------------------"
+    IF (lactive) THEN
+       IF (grank.EQ.0) THEN
+          IF (FIRSTPASS) THEN
+             CALL SetOutputFile(rank,nranks,'parvmecinfo')
+             WRITE(TOFU,*)"============================================================"
+             WRITE(TOFU,*) "> available processor count:", gnranks
+             WRITE(TOFU,*) '> global rank:', grank
+             WRITE(TOFU,*) '> nzeta:      ', par_nzeta
+             WRITE(TOFU,*) '> ntheta3:    ', par_ntheta3
+             WRITE(TOFU,*) '> ntor:       ', par_ntor
+             WRITE(TOFU,*) '> mpol1:      ', par_mpol1
+             WRITE(TOFU,*) '> ntmax:      ', par_ntmax
+             WRITE(TOFU,*) '> blocksize:  ',(par_mpol1+1)*(par_ntor+1)
+             WRITE(TOFU,*)"============================================================"
              WRITE(TOFU,*)
              CALL FLUSH(TOFU)
+             FIRSTPASS = .FALSE.
           END IF
+          WRITE(TOFU,*) ">>> grid resolution:   ",par_ns
+          WRITE(TOFU,*) ">>> active processors: ",nranks
+          WRITE(TOFU,*) ">>> xc/gc size:        ", par_ns*(par_ntor+1)*(par_mpol1+1)*3*ntmax
+          WRITE(TOFU,*)"------------------------------------------------------------"
+          WRITE(TOFU,*)
+          CALL FLUSH(TOFU)
        END IF
     END IF
 
@@ -190,7 +160,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! computations
   !------------------------------------------------
     SUBROUTINE SetSurfaceCommunicator
-    
+
     INTEGER :: num_active, color
 
     num_active = MIN(gnranks, par_ns/2)
@@ -224,7 +194,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! computations
   !------------------------------------------------
     SUBROUTINE SetSurfacePartitions
-    
+
     INTEGER :: mypart, local_err
 
     IF (par_ns.LT.nranks) THEN
@@ -274,7 +244,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! computations
   !------------------------------------------------
     SUBROUTINE SetSurfacePartitionArrays
-    
+
     INTEGER, ALLOCATABLE, DIMENSION(:) :: localpart
     INTEGER                            :: i, smallpart, largepart
 
@@ -313,11 +283,11 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   !------------------------------------------------
 
   !------------------------------------------------
-  ! Compute AllGather vector variant parameters for 
+  ! Compute AllGather vector variant parameters for
   ! blocksized movements.
   !------------------------------------------------
     SUBROUTINE ComputeNTmaxBlockAllGatherParameters(activeranks)
-    
+
     INTEGER :: activeranks
     INTEGER :: i
     IF(.NOT.ALLOCATED(ntblkrcounts)) ALLOCATE(ntblkrcounts(activeranks))
@@ -333,11 +303,11 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   !------------------------------------------------
 
   !------------------------------------------------
-  ! Compute AllGather vector variant parameters for 
+  ! Compute AllGather vector variant parameters for
   ! blocksized movements.
   !------------------------------------------------
     SUBROUTINE ComputeBlockAllGatherParameters(activeranks)
-    
+
     INTEGER :: activeranks
     INTEGER :: i
     IF(.NOT.ALLOCATED(blkrcounts)) ALLOCATE(blkrcounts(activeranks))
@@ -353,7 +323,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   !------------------------------------------------
 
   !------------------------------------------------
-  ! Compute AllGather vector variant parameters for 
+  ! Compute AllGather vector variant parameters for
   ! blocksized movements.
   !------------------------------------------------
     SUBROUTINE ComputeNSAllGatherParameters(activeranks)
@@ -390,14 +360,14 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !--------------------------------------------------------------------------
     SUBROUTINE FinalizeRunVmec(INCOMM)
-    
+
     INTEGER, INTENT(INOUT)  :: INCOMM
     CALL MPI_Comm_free(INCOMM, MPI_ERR)
     IF(LIFFREEB) CALL MPI_Comm_free(VAC_COMM,MPI_ERR)
     INCOMM=0
     VAC_COMM = 0
     rank = 0
-    IF (.not.LV3FITCALL) par_ns = 0
+    par_ns = 0
     nranks = 1
     grank = 0
     gnranks = 1
@@ -417,12 +387,12 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! nuv3 = nzeta*ntheta3
   !------------------------------------------------
     SUBROUTINE SetVacuumCommunicator(nuv, nuv3, mgs)
-    
+
     INTEGER, INTENT(IN) :: nuv, nuv3, mgs
     INTEGER :: num_active, color, mypart
 
     par_nuv3 = nuv3
-    par_nuv = nuv 
+    par_nuv = nuv
 
     num_active = MIN(gnranks, par_nuv3)
 
@@ -454,7 +424,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! computations
   !------------------------------------------------
     SUBROUTINE SetVacuumPartitions(num, left, right)
-    
+
     INTEGER, INTENT(IN)    :: num
     INTEGER, INTENT(INOUT) :: left, right
     INTEGER                :: mypart
@@ -488,7 +458,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! computations
   !------------------------------------------------
     SUBROUTINE Setnuv3PartitionArrays
-    
+
     INTEGER, ALLOCATABLE, DIMENSION(:) :: localpart
     INTEGER                            :: i, smallpart, largepart
 
@@ -528,7 +498,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE FinalizeParallel
-    
+
     INTEGER :: istat
 
     envvar = 'LPRECOND'
@@ -539,11 +509,10 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
        LPRECOND=.FALSE.
     END IF
 
-    IF (grank.EQ.0) THEN 
+    IF (grank.EQ.0) THEN
        WRITE(*,*)
        WRITE(*,'(1x,a,i4)') 'NO. OF PROCS:  ',gnranks
        WRITE(*,100)         'LPRECOND    :  ',LPRECOND
-       WRITE(*,100)         'LV3FITCALL  :  ',LV3FITCALL
     END IF
  100  FORMAT(1x,a,l4)
 
@@ -554,10 +523,10 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   !------------------------------------------------
 
   !------------------------------------------------
-  ! Print debugging output to compare aray values 
+  ! Print debugging output to compare aray values
   !------------------------------------------------
     SUBROUTINE PrintNSArray(arr, left, right, fileno, ifstop, string)
-    
+
     INTEGER, INTENT(IN) :: fileno, left, right
     LOGICAL, INTENT(IN) :: ifstop
     REAL(dp), DIMENSION (par_ns + 1), INTENT(IN) :: arr
@@ -573,7 +542,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
        WRITE(fileno + rank,50) string, i, arr(i)
        CALL FLUSH(fileno+rank)
     END DO
-    WRITE(fileno+rank,*) 
+    WRITE(fileno+rank,*)
     CALL FLUSH(fileno+rank)
     IF(ifstop) STOP 'STOPPED CODE'
 
@@ -584,7 +553,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE STOPMPI(code)
-    
+
     INTEGER, INTENT(IN) :: code
 
     CALL MPI_Barrier(MPI_COMM_WORLD, MPI_ERR)
@@ -596,7 +565,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE Parallel2Serial4X(inarr,outarr)
-    
+
     REAL(dp), INTENT(IN)  :: inarr(par_ns*(par_ntor+1)*(par_mpol1+1)*3*(par_ntmax))
     REAL(dp), INTENT(OUT) :: outarr(par_ns*(par_ntor+1)*(par_mpol1+1)*3*(par_ntmax))
     INTEGER               :: i, j, k, l, lk, lks, lkp
@@ -621,7 +590,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE Serial2Parallel4X (inarr,outarr)
-    
+
     REAL(dp), INTENT(IN)  :: inarr(par_ns*(par_ntor+1)*(par_mpol1+1)*3*(par_ntmax))
     REAL(dp), INTENT(OUT) :: outarr(par_ns*(par_ntor+1)*(par_mpol1+1)*3*(par_ntmax))
     INTEGER               :: i, j, k, l, lk, lks, lkp
@@ -646,7 +615,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE Parallel2Serial2X(inarr, outarr)
-    
+
     REAL(dp), DIMENSION(par_nzeta,par_ntheta3,par_ns), INTENT(IN)    :: inarr
     REAL(dp), DIMENSION(par_ns*par_nzeta*par_ntheta3+1), INTENT(OUT) :: outarr
     INTEGER                                                          :: i, j, k, l
@@ -666,7 +635,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE RPrintOutLinearArray(arr, left, right, flag, fileno)
-    
+
     REAL(dp), DIMENSION(:)              :: arr
     INTEGER, INTENT(IN)                 :: fileno, left, right
     LOGICAL, INTENT(IN)                 :: flag !flag: TRUE for parallel, FALSE for serial
@@ -703,7 +672,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE PrintOutLinearArray(arr, left, right, flag, fileno)
-    
+
     REAL(dp), DIMENSION(ntmaxblocksize*par_ns) :: arr
     INTEGER, INTENT(IN)                        :: fileno, left, right
     LOGICAL, INTENT(IN)                        :: flag !flag: TRUE for parallel, FALSE for serial
@@ -752,7 +721,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
           END DO
        END DO
     END DO
-    WRITE(fileno+rank,*) 
+    WRITE(fileno+rank,*)
     CALL FLUSH(fileno+rank)
     IF(ifstop) STOP 'STOPPED PARALLEL CODE'
  50 FORMAT(A,3I6,1P,E24.14)
@@ -764,7 +733,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! Prints out [nsmin, nsmax] part of a (ns, nzeta, ntheta) array
   !------------------------------------------------
     SUBROUTINE PrintSerialIJSPArray (arr, left, right, fileno, ifstop, string)
-    
+
     INTEGER, INTENT(IN)       :: fileno, left, right
     LOGICAL, INTENT(IN)       :: ifstop
     REAL(dp), DIMENSION (par_ns,par_nzeta,par_ntheta3), INTENT(IN) :: arr
@@ -780,7 +749,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
           END DO
        END DO
     END DO
-    WRITE(fileno+rank,*) 
+    WRITE(fileno+rank,*)
     CALL FLUSH(fileno+rank)
     IF(ifstop) STOP 'STOPPED SERIAL CODE'
  50 FORMAT(A,3I6,1P,E24.14)
@@ -792,7 +761,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! Prints out [nsmin, nsmax] part of a (ntor,mpol1,ns) array
   !------------------------------------------------
     SUBROUTINE PrintParallelMNSPArray (arr, left, right, fileno, ifstop, string)
-    
+
     INTEGER, INTENT(IN)       :: fileno, left, right
     LOGICAL, INTENT(IN)       :: ifstop
     REAL(dp), DIMENSION (0:par_ntor,0:par_mpol1,1:par_ns), INTENT(IN) :: arr
@@ -808,7 +777,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
           END DO
        END DO
     END DO
-    WRITE(fileno+rank,*) 
+    WRITE(fileno+rank,*)
     CALL FLUSH(fileno+rank)
     IF(ifstop) STOP 'STOPPED PARALLEL CODE'
  50 FORMAT(A,3I6,1P,E20.12)
@@ -836,7 +805,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
           END DO
        END DO
     END DO
-    WRITE(fileno+rank,*) 
+    WRITE(fileno+rank,*)
     CALL FLUSH(fileno+rank)
     IF(ifstop) STOP 'STOPPED SERIAL CODE'
  50 FORMAT(A,3I6,1P,E20.12)
@@ -940,7 +909,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
 
   !------------------------------------------------
     SUBROUTINE Gather2XArray(arr)
-    
+
     REAL(dp), DIMENSION(par_nznt,par_ns), INTENT(INOUT) :: arr
     INTEGER :: i
     INTEGER :: par_nsmin, par_nsmax, blksize, numjs
@@ -1020,7 +989,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   ! Setting the output files
   !------------------------------------------------
     SUBROUTINE SetOutputFile(iam, nprocs, prefix)
-    
+
     INTEGER, INTENT(IN)       :: iam, nprocs
     CHARACTER (*), INTENT(IN) :: prefix
     INTEGER                   :: istat
@@ -1086,7 +1055,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
   !------------------------------------------------
 
   !------------------------------------------------
-  ! 
+  !
   !------------------------------------------------
     SUBROUTINE copylastns(a1, a2)
     REAL(dp), INTENT(IN),    DIMENSION(ntmaxblocksize,par_ns) :: a1
@@ -1258,7 +1227,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
       !------------------------------------------------
     SUBROUTINE CompareEdgeValues(pxc, pxsave)
     REAL(dp), INTENT(IN), DIMENSION(blocksize,par_ns,3*par_ntmax) :: pxc, pxsave
-    
+
     IF (rank                .EQ. nranks - 1 .AND.                              &
         ANY(pxc(:,par_ns,:) .NE. pxsave(:,par_ns,:))) THEN
        PRINT *,' xsave != xc at edge returning from GMRES'

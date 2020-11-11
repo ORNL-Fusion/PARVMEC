@@ -4,11 +4,10 @@
         USE vmec_input, ONLY:lfreeb
         USE mpi_inc
 
-        USE parallel_vmec_module, ONLY: LV3FITCALL
         USE parallel_vmec_module, ONLY: LPRECOND
         USE parallel_vmec_module, ONLY: TOFU
 
-        USE parallel_vmec_module, ONLY: num_grids 
+        USE parallel_vmec_module, ONLY: num_grids
         USE parallel_vmec_module, ONLY: grid_procs
         USE parallel_vmec_module, ONLY: grid_size
         USE parallel_vmec_module, ONLY: grid_time
@@ -31,18 +30,18 @@
         USE parallel_vmec_module, ONLY: tlglob, trglob
         USE parallel_vmec_module, ONLY: t1lglob, t1rglob
         USE parallel_vmec_module, ONLY: tlglob_arr, trglob_arr
-        USE parallel_vmec_module, ONLY: nuv3min_arr,nuv3max_arr 
+        USE parallel_vmec_module, ONLY: nuv3min_arr,nuv3max_arr
         USE parallel_vmec_module, ONLY: trow, brow
         USE parallel_vmec_module, ONLY: lcol, rcol
         USE parallel_vmec_module, ONLY: par_ntmax
         USE parallel_vmec_module, ONLY: par_mpol1
-        USE parallel_vmec_module, ONLY: par_ntor 
-        USE parallel_vmec_module, ONLY: par_ns 
-        USE parallel_vmec_module, ONLY: par_nuv 
+        USE parallel_vmec_module, ONLY: par_ntor
+        USE parallel_vmec_module, ONLY: par_ns
+        USE parallel_vmec_module, ONLY: par_nuv
         USE parallel_vmec_module, ONLY: blkrcounts
-        USE parallel_vmec_module, ONLY: blkdisp 
+        USE parallel_vmec_module, ONLY: blkdisp
         USE parallel_vmec_module, ONLY: ntblkrcounts
-        USE parallel_vmec_module, ONLY: ntblkdisp 
+        USE parallel_vmec_module, ONLY: ntblkdisp
         USE parallel_vmec_module, ONLY: nsrcounts
         USE parallel_vmec_module, ONLY: nsdisp
         USE parallel_vmec_module, ONLY: blocksize
@@ -128,7 +127,7 @@
         REAL(dp) :: myenvvar_time=0
         REAL(dp) :: init_MPI_time=0
         REAL(dp) :: read_namelist_time=0
-        REAL(dp) :: get_args_time=0 
+        REAL(dp) :: get_args_time=0
         REAL(dp) :: safe_open_time=0
 
         REAL(dp) :: jacob1=0, jacob2=0
@@ -221,18 +220,18 @@
         REAL(rprec) :: maxvalue, minvalue
         INTEGER :: maxrank, minrank
 
-        !V3FIT 
+        !V3FIT
         INTEGER :: RUNVMEC_PASS=0
 
 !        INTEGER :: v3fgcomm, v3freccomm, v3feqcomm
 !        INTEGER :: v3fgnranks, v3frecnranks, v3feqnranks
-!        INTEGER :: v3fgrank, v3frecrank, v3feqrank 
+!        INTEGER :: v3fgrank, v3frecrank, v3feqrank
 !        LOGICAL :: lreconactive=.FALSE.
 
 CONTAINS
 
         !------------------------------------------------
-        ! Print out parallel timing information 
+        ! Print out parallel timing information
         !------------------------------------------------
         SUBROUTINE PrintTimes
           IMPLICIT NONE
@@ -253,7 +252,7 @@ CONTAINS
           CALL MPI_Bcast(maxvalue,1,MPI_DOUBLE_PRECISION,0,NS_COMM,MPI_ERR)
           CALL MPI_Bcast(minrank,1,MPI_INTEGER,0,NS_COMM,MPI_ERR)
           CALL MPI_Bcast(maxrank,1,MPI_INTEGER,0,NS_COMM,MPI_ERR)
-          
+
           IF (.FALSE..AND.ABS(maxvalue-minvalue).GE.0.0) THEN
             LMINMAXFILE=.TRUE.
             IF (grank.EQ.0) THEN
@@ -280,7 +279,7 @@ CONTAINS
             CALL WriteTimes('timings.txt')
           END IF
 
-        END SUBROUTINE PrintTimes 
+        END SUBROUTINE PrintTimes
 !------------------------------------------------
 
 !------------------------------------------------
@@ -297,71 +296,71 @@ CONTAINS
           OPEN(UNIT=TFILE, FILE=fname, STATUS="REPLACE", ACTION="WRITE",&
             &FORM="FORMATTED",POSITION="APPEND", IOSTAT=istat)
 
-          WRITE(TFILE,*) '====================== PARALLEL TIMINGS ====================' 
+          WRITE(TFILE,*) '====================== PARALLEL TIMINGS ===================='
 
           WRITE(TFILE,'(A20,A4,F15.6)') 'total', ': ', total_time
           WRITE(TFILE,'(A20,A4,I15)') 'rank', ': ', rank
           WRITE(TFILE,'(A20,A4,F15.6)') 'mgrid file read time', ': ', mgrid_file_read_time
           WRITE(TFILE,'(A20,A4,I15)') 'No. of procs', ': ', gnranks
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
 
           IF (lfreeb) THEN
             DO igrd=1, num_grids
               WRITE(TFILE,'(A20,A4,3I15,F15.6)') '--- non-vacuum', ': ',&
                 f3d_num(igrd), grid_size(igrd), grid_procs(igrd), f3d_time(igrd)-vgrid_time(igrd)
             END DO
-            WRITE(TFILE,*) 
+            WRITE(TFILE,*)
 
-            WRITE(TFILE,'(A20,A4,I15)') 'VNRANKS ',': ', vnranks 
+            WRITE(TFILE,'(A20,A4,I15)') 'VNRANKS ',': ', vnranks
             DO igrd=1, num_grids
               WRITE(TFILE,'(A20,A4,I15,F15.6)') '--- vacuum ', ': ',&
                 grid_size(igrd),vgrid_time(igrd)
             END DO
-            WRITE(TFILE,*) 
+            WRITE(TFILE,*)
           ELSE
             DO igrd=1, num_grids
               WRITE(TFILE,'(A20,A4,3I15,F15.6)') '--- non-vacuum', ': ',&
                 f3d_num(igrd), grid_size(igrd), grid_procs(igrd), f3d_time(igrd)
             END DO
-            WRITE(TFILE,*) 
+            WRITE(TFILE,*)
           END IF
-        
+
           WRITE(TFILE,'(A20,A4,F15.6)') 'runvmec', ': ', runvmec_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
 
           WRITE(TFILE,'(A20,A4,F15.6)') 'init radial', ': ',init_radial_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'eqsolve', ': ', eqsolve_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'fileout', ': ', fileout_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') 'evolve', ': ', evolve_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'funct3d', ': ', funct3d_time
           WRITE(TFILE,'(A20,A4,I15)') 'nfunct3d', ': ', nfunct3d
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') 'totzsps', ': ', totzsps_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'totzspa', ': ', totzspa_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'symrzl', ': ', symrzl_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'jacobian', ': ', jacobian_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'bcovar', ': ', bcovar_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'vacuum', ': ', vacuum_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') '- precal', ': ', precal_time
           WRITE(TFILE,'(A20,A4,F15.6)') '- surface', ': ', surface_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') '- bextern', ': ', bextern_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') '-- becoil', ': ', becoil_time
           WRITE(TFILE,'(A20,A4,F15.6)') '-- tolicu', ': ', tolicu_time
           WRITE(TFILE,'(A20,A4,F15.6)') '-- belicu', ': ', belicu_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') '- scalpot', ': ', scalpot_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') '-- analyt', ': ', analyt_time
           WRITE(TFILE,'(A20,A4,F15.6)') '-- greenf', ': ', greenf_time
           WRITE(TFILE,'(A20,A4,F15.6)') '-- fourp', ': ', fourp_time
           WRITE(TFILE,'(A20,A4,F15.6)') '-- fouri', ': ', fouri_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') '- solver', ': ', solver_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') 'alias', ': ', alias_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'forces', ': ', forces_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'symforces', ': ', symforces_time
@@ -369,19 +368,19 @@ CONTAINS
           WRITE(TFILE,'(A20,A4,F15.6)') 'tomnspa', ': ', tomnspa_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'residue', ': ', residue_time
           WRITE(TFILE,'(A20,A4,F15.6)') '-- tridslv', ': ', tridslv_time
-          WRITE(TFILE,*) 
-          WRITE(TFILE,*) '============================================================' 
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
+          WRITE(TFILE,*) '============================================================'
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') 'allgather', ': ', allgather_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'allreduce', ': ', allreduce_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'broadcast', ': ', broadcast_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'sendrecv ', ': ', sendrecv_time
-          WRITE(TFILE,*) 
+          WRITE(TFILE,*)
           WRITE(TFILE,'(A20,A4,F15.6)') 'Fill_blocks    ', ': ', fill_blocks_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'Compute blocks ', ': ', compute_blocks_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'Forward solve  ', ': ', bcyclic_forwardsolve_time
           WRITE(TFILE,'(A20,A4,F15.6)') 'Backward solve ', ': ', bcyclic_backwardsolve_time
-          WRITE(TFILE,*) '============================================================' 
+          WRITE(TFILE,*) '============================================================'
           CALL FLUSH(TFILE)
           CLOSE(TFILE)
 
