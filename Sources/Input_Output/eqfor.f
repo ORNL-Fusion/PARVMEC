@@ -12,7 +12,6 @@
       USE vmec_io
       USE mgrid_mod
       USE fbal
-      USE v3f_vmec_comm
       USE stel_constants, ONLY: pi
 
       USE xstuff, ONLY: xc, pxc

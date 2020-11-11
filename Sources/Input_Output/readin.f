@@ -308,38 +308,26 @@ C-----------------------------------------------
 !
 !     PARSE NS_ARRAY
 !
-      nsin = MAX (3, nsin)
       multi_ns_grid = 1
-      IF (ns_array(1) .eq. 0) THEN                    !Old input style
-          ns_array(1) = MIN(nsin,nsd)
-          multi_ns_grid = 2
-          ns_array(multi_ns_grid) = ns_default        !Run on 31-point mesh
-      ELSE
-          nsmin = 1
-          DO WHILE (ns_array(multi_ns_grid) .ge. nsmin .and.
-     &             multi_ns_grid .lt. 100)      ! .ge. previously .gt.
-             nsmin = MAX(nsmin, ns_array(multi_ns_grid))
-             IF (nsmin .le. nsd) THEN
-                multi_ns_grid = multi_ns_grid + 1
-             ELSE                                      !Optimizer, Boozer code overflows otherwise
-                ns_array(multi_ns_grid) = nsd
-                nsmin = nsd
-                IF (lwrite) THEN
-                   PRINT *,' NS_ARRAY ELEMENTS CANNOT EXCEED ',nsd
-                   PRINT *,' CHANGING NS_ARRAY(',multi_ns_grid,') to ',
-     &                       nsd
-                END IF
-             END IF
-          END DO
-          multi_ns_grid = multi_ns_grid - 1
-      ENDIF
+      nsmin = 1
+      DO WHILE (ns_array(multi_ns_grid) .ge. nsmin .and.
+     &         multi_ns_grid .lt. max_grids)
+         nsmin = MAX(nsmin, ns_array(multi_ns_grid))
+         IF (nsmin .le. nsd) THEN
+            multi_ns_grid = multi_ns_grid + 1
+         ELSE                                      !Optimizer, Boozer code overflows otherwise
+            ns_array(multi_ns_grid) = nsd
+            nsmin = nsd
+            IF (lwrite) THEN
+               PRINT *,' NS_ARRAY ELEMENTS CANNOT EXCEED ',nsd
+               PRINT *,' CHANGING NS_ARRAY(',multi_ns_grid,') to ',
+     &                   nsd
+            END IF
+         END IF
+      END DO
+      multi_ns_grid = multi_ns_grid - 1
       IF (ftol_array(1) .eq. zero) THEN
          ftol_array(1) = 1.e-8_dp
-         IF (multi_ns_grid .eq. 1) ftol_array(1) = ftol
-         DO igrid = 2, multi_ns_grid
-            ftol_array(igrid) = 1.e-8_dp * (1.e8_dp * ftol)**
-     &                          ( REAL(igrid-1,dp)/(multi_ns_grid-1) )
-         END DO
       ENDIF
 
       ns_maxval = nsmin
