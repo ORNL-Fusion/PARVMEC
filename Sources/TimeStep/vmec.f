@@ -23,7 +23,7 @@ C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: numargs, ierr_vmec, index_end,
-     &   iopen, isnml, iread,
+     &   iopen, isnml, iread, iseq,
      &   index_dat, iunit, ncount, nsteps, i
       INTEGER :: ictrl(4)
       CHARACTER(LEN=120) :: input_file, reset_file_name, arg
@@ -184,7 +184,7 @@ C-----------------------------------------------
       ELSE
          DO iseq = 2, MIN(numargs,10)
             arg = command_arg(iseq)
-            IF (TRIM(arg) .eq. 'noscreen' THEN
+            IF (TRIM(arg) .eq. 'noscreen') THEN
                lscreen = .false.
             END IF
 
