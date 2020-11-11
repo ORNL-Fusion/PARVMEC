@@ -79,19 +79,18 @@ C-----------------------------------------------
 !    am_aux_f:   Auxiliary array for mass profile. Used for splines, function values
 !    ac_aux_s:   Auxiliary array for current profile. Used for splines, s values
 !    ac_aux_f:   Auxiliary array for current profile. Used for splines, function values
-!      curtor:   value of toroidal current [A]. Used if ncurr = 1 to specify
-!                current profile, or IF in data reconstruction mode.
-!     phiedge:   toroidal flux enclosed by plasma at edge (in Wb)
+!      curtor:   value of toroidal current [A].
+!                Used if ncurr = 1 to specify current profile.
+!     phiedge:   toroidal flux enclosed by plasma at edge [Wb]
 !      extcur:   array of currents in each external current group. Used to
 !                multiply Green''s function for fields and loops read in from
-!                MGRID file. Should use real current units (A).
+!                MGRID file. Should use real current units [A].
 !   adiabatic:   value of compressibility index (adiabatic=0 => pressure prescribed)
 !         nfp:   number of toroidal field periods ( =1 for Tokamak)
 !         rbc:   boundary coefficients of COS(m*theta-n*zeta) for R [m]
 !         zbs:   boundary coefficients of SIN(m*theta-n*zeta) for Z [m]
 !         rbs:   boundary coefficients of SIN(m*theta-n*zeta) for R [m]
 !         zbc:   boundary coefficients of COS(m*theta-n*zeta) for Z [m]
-!
 !
 !   Numerical and logical control parameters
 !       ncurr:   flux conserving (=0) or prescribed toroidal current (=1)
@@ -122,7 +121,7 @@ C-----------------------------------------------
 !                'tfqmr', block tri-di, transpose-free quasi minimum residual
 ! prec2d_threshold:
 !                value of preconditioned force residuals at which block (2d) tri-di
-!                solver is turned on, if requested via type_prec2d
+!                solver is turned on, if requested via precon_type
 !
 !   Character parameters
 !  mgrid_file:   full path for vacuum Green''s function data
