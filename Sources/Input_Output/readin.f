@@ -264,8 +264,7 @@ C-----------------------------------------------
 !
 !      PRINT *,'IN READIN, LWRITE: ', lwrite
       IF (lwrite) THEN
-         CALL heading(input_extension, time_slice,
-     &                iseq_count, lmac, lscreen, lwrite)
+         CALL heading(input_extension, lscreen, lwrite)
       END IF
 
 !

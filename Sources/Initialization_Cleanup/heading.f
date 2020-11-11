@@ -1,7 +1,6 @@
 !> \file heading.f
 
-      SUBROUTINE heading(extension, time_slice, iseq_count, lmac,
-     1                   lscreen, lwrite)
+      SUBROUTINE heading(extension, lscreen, lwrite)
       USE vmec_main, ONLY: rprec
       USE vparams, ONLY: nthreed, nmac
       USE vmec_params, ONLY: version_
@@ -11,10 +10,8 @@
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
-      INTEGER :: iseq_count
-      REAL(rprec) :: time_slice
       CHARACTER(LEN=*) :: extension
-      LOGICAL :: lmac, lscreen, lwrite
+      LOGICAL :: lscreen, lwrite
 C-----------------------------------------------
 C   L o c a l   P a r a m e t e r s
 C-----------------------------------------------
@@ -37,8 +34,7 @@ C-----------------------------------------------
          lscreen = .FALSE.
       END IF
 
-      CALL open_output_files(extension, iseq_count, lmac, lscreen,
-     &                       lfirst, lwrite)
+      CALL open_output_files(extension, lscreen, lfirst, lwrite)
 
       IF (.NOT.lfirst .OR. .NOT.lwrite) RETURN
 
@@ -64,15 +60,6 @@ C-----------------------------------------------
          END IF
       ENDIF
 
-      DO nout = nthreed, nthreed + 1
-         imon = nout
-         IF (imon .eq. nthreed + 1) THEN
-            imon = nmac
-         END IF
-         IF (imon .eq. nmac .and. .not.lmac) CYCLE
-         WRITE (imon,1004) TRIM(extension), iseq_count, time_slice
-      END DO
-
 1000  FORMAT('DATE = ',a3,' ',a2,',',a4,' ',' TIME = ',2(a2,':'),a2)
 1001  FORMAT('  SEQ = ',i4,' TIME SLICE',1p,e12.4/
      &       '  PROCESSING INPUT.',a)
@@ -80,7 +67,5 @@ C-----------------------------------------------
      &       ' RELEASE: ',a,2x,a)
 1003  FORMAT(1x,a,1x,a,/1x,a,//,'  COMPUTER: ',a,2x,' OS: ',a,2x,
      &       ' RELEASE: ',a,2x,a)
-1004    FORMAT(' SHOT ID.: ',a,2x,'SEQ. NO.:',i4,/,
-     &         ' TIME SLICE = ',f5.0,' ms')
 
       END SUBROUTINE heading
