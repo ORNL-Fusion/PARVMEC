@@ -20,7 +20,7 @@ C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: mpar, ir, i, jk, jka
-      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: ars_0, brs_0, azs_0, 
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: ars_0, brs_0, azs_0,
      &              bzs_0, bls_0, rcs_0, zcs_0, crs_0, czs_0, cls_0
       INTEGER :: nsmin, nsmax, j, k
 C-----------------------------------------------
@@ -28,7 +28,7 @@ C-----------------------------------------------
       nsmin=t1lglob
       nsmax=t1rglob
 
-      ALLOCATE (ars_0(nzeta,ns), brs_0(nzeta,ns), azs_0(nzeta,ns), 
+      ALLOCATE (ars_0(nzeta,ns), brs_0(nzeta,ns), azs_0(nzeta,ns),
      &          bzs_0(nzeta,ns), bls_0(nzeta,ns), rcs_0(nzeta,ns),
      &          zcs_0(nzeta,ns), crs_0(nzeta,ns), czs_0(nzeta,ns),
      &          cls_0(nzeta,ns), stat=ir)
@@ -39,7 +39,6 @@ C-----------------------------------------------
 !
 !       ARS(v,u) = .5*( ARS(v,u) + ARS(-v,-u) )     ! * COS(mu - nv)
 !       ARA(v,u) = .5*( ARS(v,u) - ARS(-v,-u) )     ! * SIN(mu - nv)
-!
 !
       DO k = nsmin, nsmax
          DO mpar = 0, 1
@@ -126,8 +125,7 @@ C-----------------------------------------------
       SUBROUTINE symoutput(bsq, gsqrt , bsubu , bsubv ,bsupu,
      &                     bsupv, bsubs,
      &                     bsqa, gsqrta, bsubua, bsubva, bsupua,
-     &                     bsupva, bsubsa
-     &                    )
+     &                     bsupva, bsubsa)
 
       USE vmec_main, p5 => cp5
       IMPLICIT NONE
@@ -142,7 +140,7 @@ C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: ir, i, jk, jka
-      REAL(dp), DIMENSION(ns*nzeta) :: bsq_0, gsqrt_0, bsubu_0, 
+      REAL(dp), DIMENSION(ns*nzeta) :: bsq_0, gsqrt_0, bsubu_0,
      &    bsubv_0, bsupu_0, bsupv_0, bsubs_0
 C-----------------------------------------------
 
@@ -152,9 +150,8 @@ C-----------------------------------------------
 !
 !       BSQ-S(v,u) = .5*( BSQ(v,u) + BSQ(-v,-u) )     ! * COS(mu - nv)
 !       BSQ-A(v,u) = .5*( BSQ(v,u) - BSQ(-v,-u) )     ! * SIN(mu - nv)
-!    
-!       FOR BSUBS, THIS IS REVERSED, S-PIECE ~ SIN, A-PIECE ~ COS
 !
+!       FOR BSUBS, THIS IS REVERSED, S-PIECE ~ SIN, A-PIECE ~ COS
 !
       DO i = 1, ntheta2
          ir = ntheta1 + 2 - i                 !-theta
@@ -224,8 +221,6 @@ C-----------------------------------------------
 !
 !       FOR BSUBS, THIS IS REVERSED, S-PIECE ~ SIN, A-PIECE ~ COS
 !
-!
-
       ir = 1 !-theta
       DO i = 1, ntheta2
          jka = 1 !-zeta

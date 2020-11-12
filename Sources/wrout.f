@@ -707,8 +707,7 @@
          CALL symoutput (bsq,   gsqrt,  bsubu,  bsubv,  bsupu,
      1                   bsupv,  bsubs,
      4                   bsqa,  gsqrta, bsubua, bsubva, bsupua,
-     5                   bsupva, bsubsa
-     8                    )
+     5                   bsupva, bsubsa)
 
          IF (lfreeb) THEN     !MRC  10-15-15
             CALL symoutput_sur(bsubu_sur, bsubv_sur,                           &
