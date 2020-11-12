@@ -8,7 +8,6 @@
      1   gsqrt => azmn_o, bsq => bzmn_o, izeta => azmn_e,
      2   brho => bzmn_e, bphi => czmn_o, curtheta => brmn_e
       USE vacmod
-      USE csplinx
       USE vmec_io
       USE mgrid_mod
       USE fbal
@@ -59,17 +58,13 @@ C-----------------------------------------------
      &   rcenin, rgeo, rjs,
      &   rjs1, rlao, rqmin1, rqmin2, rshaf, rshaf1, rshaf2, s11, s12,
      &   s13, s2, s3, sigr0, sigr1, sigz1, smaleli,
-     &   splintx, splints, sqmin, sumbpol, sumbtot, sumbtor, sump,
+     &   sqmin, sumbpol, sumbtot, sumbtor, sump,
      &   sump2, sump20, t1, tz, jpar_perp=0, jparPs_perp=0,
      &   tol, toroidal_flux, vnorm, vprime, wght0, xmax,
      &   xmida, xmidb, xmin, rzmax, rzmin, zxmax, zxmin, zaxis0,
      &   zmax, zmin, yr1u, yz1u, waist(2), height(2)
       REAL(dp) :: d_of_kappa, tmpxc, rmssum
       INTEGER :: istat1, OFU, j, k
-C-----------------------------------------------
-C   E x t e r n a l   F u n c t i o n s
-C-----------------------------------------------
-      EXTERNAL splintx, splints
 C-----------------------------------------------
 !
 !     POINTER ASSOCIATIONS
@@ -117,8 +112,7 @@ C-----------------------------------------------
 
       CALL jxbforce(bsupu, bsupv, bsubu, bsubv, crmn_o, rcon, zcon,
      &              gsqrt, bsq, curtheta, izeta, brho, sigma_an,
-     &              ier_flag
-     &             )
+     &              ier_flag)
 
 !
 !     HALF-MESH VOLUME-AVERAGED BETA

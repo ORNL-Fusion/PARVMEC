@@ -2,7 +2,7 @@
 
       SUBROUTINE heading(extension, lscreen, lwrite)
       USE vmec_main, ONLY: rprec
-      USE vparams, ONLY: nthreed, nmac
+      USE vparams, ONLY: nthreed
       USE vmec_params, ONLY: version_
       USE date_and_computer
       USE parallel_include_module, ONLY: grank

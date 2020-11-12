@@ -20,10 +20,11 @@ C-----------------------------------------------
       IF (istat1.ne.0) STOP 'allocation error #2 in allocate_nunv'
 
 !     PERSISTENT ARRAYS (DURATION OF PROGRAM)
-      IF (lfreeb)
+      IF (lfreeb) then
      1   ALLOCATE (amatsav(mnpd2*mnpd2),bvecsav(mnpd2),
      2          bsqsav(nznt,3), potvac(2*mnpd), raxis_nestor(nv),
      3          zaxis_nestor(nv), stat=istat1)
          IF (istat1.ne.0) STOP 'allocation error #3 in allocate_nunv'
+      end if
 
       END SUBROUTINE allocate_nunv

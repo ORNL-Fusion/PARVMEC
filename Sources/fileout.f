@@ -4,7 +4,7 @@
       USE vmec_main
       USE parallel_include_module
       USE xstuff, ONLY: pxc, pgc, pxsave, pscalxc,
-     &                  xc, gc, xsave, scalxc
+     &                   xc,  gc,  xsave,  scalxc
       USE vmec_params, ONLY: uminus, output_flag, cleanup_flag,
      &                       norm_term_flag,
      &                       signgs, successful_term_flag,

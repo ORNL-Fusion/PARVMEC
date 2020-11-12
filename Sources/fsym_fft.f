@@ -13,7 +13,7 @@ C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: ir, i, kz, kzr
 C-----------------------------------------------
-!     
+!
 !     Extends bs from ntheta2 interval to full ntheta3 interval in angle u
 !     bs_s ~ cos(mu-nv) (symmetric);   bs_a ~ sin(mu-nv) (anti-symmetric)
 !     ntheta2 = pi
@@ -55,7 +55,7 @@ C-----------------------------------------------
 !       bs_s(v,u) = .5*( bs(v,u) - bs(-v,-u) )     ! * SIN(mu - nv)
 !       bs_a(v,u) = .5*( bs(v,u) + bs(-v,-u) )     ! * COS(mu - nv)
 !
-!       bu, bv have opposite parity       
+!       bu, bv have opposite parity
 !
       DO i = 1, ntheta2
          ir = ntheta1+2-i                     !-theta
@@ -64,8 +64,8 @@ C-----------------------------------------------
 !           kzr = ireflect(ns*kz)/ns          !-zeta
             kzr = nzeta+2-kz
             IF (kz .eq. 1) kzr = 1
-            bs_a(kz,i)      = cp5*(bs(kz,i)+bs(kzr,ir))
-            bs_s(kz,i)      = cp5*(bs(kz,i)-bs(kzr,ir))
+            bs_a(kz,i)   = cp5*(bs(kz,i  )+bs(kzr,ir)  )
+            bs_s(kz,i)   = cp5*(bs(kz,i  )-bs(kzr,ir)  )
             bu_a(kz,i,:) = cp5*(bu(kz,i,:)-bu(kzr,ir,:))
             bu_s(kz,i,:) = cp5*(bu(kz,i,:)+bu(kzr,ir,:))
             bv_a(kz,i,:) = cp5*(bv(kz,i,:)-bv(kzr,ir,:))

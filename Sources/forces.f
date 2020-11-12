@@ -3,7 +3,7 @@
       SUBROUTINE forces_par
       USE vmec_main, p5 => cp5
       USE realspace
-      USE vforces, ru12 => pazmn_e, zu12 => parmn_e, 
+      USE vforces, ru12 => pazmn_e, zu12 => parmn_e,
      &             pazmn_e => pazmn_e, parmn_e => parmn_e,
      &             lv_e => pcrmn_e, lu_e => pczmn_e, lu_o => pczmn_o,
      &             pcrmn_e => pcrmn_e, pczmn_e => pczmn_e,
@@ -20,7 +20,7 @@ C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: l, ndim
       INTEGER :: i, j, k, nsmin, nsmax
-      REAL(dp), DIMENSION(:,:), POINTER :: 
+      REAL(dp), DIMENSION(:,:), POINTER ::
      &    bsqr, gvvs, guvs, guus
       REAL(dp), ALLOCATABLE, DIMENSION(:) :: bcastbuf
 C-----------------------------------------------
@@ -39,7 +39,7 @@ C-----------------------------------------------
       lu_e(:,1) = 0; lv_e(:,1) = 0
       pguu(:,1)  = 0; pguv(:,1)  = 0; pgvv(:,1) = 0
 
-      DO l = nsmin, nsmax      
+      DO l = nsmin, nsmax
          guus(:,l) = pguu(:,l)*pshalf(:,l)
          guvs(:,l) = pguv(:,l)*pshalf(:,l)
          gvvs(:,l) = pgvv(:,l)* pshalf(:,l)
@@ -88,10 +88,10 @@ C-----------------------------------------------
          pbzmn_e(:,l) = p5*(pbzmn_e(:,l) + pbzmn_e(:,l+1))
       END DO
 
-      parmn_e(:,ns) = - parmn_e(:,ns) + p5*lv_e(:,ns)  
+      parmn_e(:,ns) = - parmn_e(:,ns) + p5*lv_e(:,ns)
       pazmn_e(:,ns) = - pazmn_e(:,ns)
       pbrmn_e(:,ns) = p5*pbrmn_e(:,ns)
-      pbzmn_e(:,ns) = p5*pbzmn_e(:,ns) 
+      pbzmn_e(:,ns) = p5*pbzmn_e(:,ns)
 
       nsmin=tlglob; nsmax=t1rglob
       DO l = nsmin, nsmax
@@ -122,7 +122,7 @@ C-----------------------------------------------
      &                + p5*lv_e(:,ns)
       pazmn_o(:,ns) = - pazmn_o(:,ns) + pru(:,ns,0)*bsqr(:,ns)
       pbrmn_o(:,ns) = p5*pbrmn_o(:,ns)
-      pbzmn_o(:,ns) = p5*pbzmn_o(:,ns) 
+      pbzmn_o(:,ns) = p5*pbzmn_o(:,ns)
       lu_o(:,ns)   = lu_o(:,ns)
 
       nsmin=tlglob; nsmax=trglob
@@ -177,7 +177,6 @@ C-----------------------------------------------
 !     ASSIGN EDGE FORCES (JS = NS) FOR FREE BOUNDARY CALCULATION
 !
       IF (ivac .GE. 1) THEN
-
          DO k = 1, ntheta3
             DO j = 1, nzeta
                l = (k-1)*nzeta + j
@@ -187,10 +186,7 @@ C-----------------------------------------------
                pazmn_o(l,ns) = pazmn_o(l,ns) - pru0(l,ns)*rbsq(l)
             END DO
          END DO
-
       ENDIF
-
- 100  CONTINUE
 
 !
 !     COMPUTE CONSTRAINT FORCE KERNELS

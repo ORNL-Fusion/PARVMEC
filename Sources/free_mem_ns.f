@@ -5,7 +5,6 @@
       USE realspace
       USE vforces
       USE xstuff
-      USE csplinx
       USE fbal
 
       IMPLICIT NONE

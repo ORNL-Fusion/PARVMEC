@@ -16,7 +16,6 @@ target_sources(vmec
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bss.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/close_all_files.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/convert.f>
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/csplinx.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/directaccess.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dump_output.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/elongation.f>

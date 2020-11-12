@@ -6,7 +6,6 @@
       USE realspace
       USE vforces
       USE xstuff
-      USE csplinx
       USE mgrid_mod
       USE fbal
       USE parallel_include_module
@@ -62,7 +61,7 @@ C-----------------------------------------------
 !
       CALL free_mem_ns_par (.true.)
 
-      ALLOCATE (phip(ndim), chip(ndim), shalf(ndim), sqrts(ndim), 
+      ALLOCATE (phip(ndim), chip(ndim), shalf(ndim), sqrts(ndim),
      1          wint(ndim), stat=istat1)
       IF (istat1.ne.0) THEN
          STOP 'allocation error #2 in allocate_ns'

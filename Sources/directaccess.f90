@@ -10,25 +10,25 @@
       INTEGER :: irec_pos, byte_size_rec, byte_size_dp
       CHARACTER(LEN=256) :: filename
 
-      CONTAINS 
+      CONTAINS
 
       SUBROUTINE OpenDAFile(datasize, blksize, blocksperrow,            &
      &                      filename_in, iunit, iflag)
       INTEGER, INTENT(in) :: datasize, blksize, blocksperrow,           &
      &                       iflag
-      INTEGER, INTENT(inout) :: iunit 
+      INTEGER, INTENT(inout) :: iunit
       CHARACTER*(*), INTENT(in) :: filename_in
       INTEGER, PARAMETER :: CreateNew=0, OpenExisting=1, Scratch=2
       INTEGER :: ierr
       REAL(dp) :: dummy
       CHARACTER(LEN=10) :: Status
-   
+
 !GET EFFECTIVE "byte_size" OF UNFORMATTED dp VARIABLE (machine dependent!)
 !ON Compaq, rec length size is in units of 4 byte chunks, so byte_size_rec = 4
 !ON lf95, byte_size_rec = 1
       INQUIRE(iolength=byte_size_rec) dummy
       byte_size_dp = KIND(dummy)
-   
+
       data_size = datasize
       rec_length = byte_size_rec*datasize
       block_size = byte_size_dp*blksize
@@ -48,7 +48,6 @@
          Status = "scratch"
       END IF
 
-
       CALL safe_open(iunit, ierr, filename, Status, 'unformatted',   &
      &     rec_length, 'DIRECT')
 
@@ -61,7 +60,6 @@
 
       END SUBROUTINE OpenDAFile
 
-      
       SUBROUTINE ChangeDAFileParams(datasize, blksize,                  &
      &                              blocksperrow, new_filename, nrows)
       INTEGER, INTENT(in) :: datasize, blksize, blocksperrow, nrows
@@ -71,7 +69,6 @@
       CHARACTER*(*)  :: new_filename
       REAL(dp), ALLOCATABLE :: DataItem(:)
 
-    
 !store new parameters
       new_data_size = datasize
       new_rec_length = byte_size_rec*datasize
@@ -112,7 +109,7 @@
             END DO
          END DO
 
-      ELSE 
+      ELSE
          num_rows = nrows
 
 !        Data comes out as follows for each COLUMN (m,n,ntype):
@@ -125,7 +122,7 @@
          DO nsplit = 1, 3
          DO i = nsplit, nrows, 3
             isplit = isplit+1         !sequential index of records in original file
-            DO j = 1, blocks_per_row    
+            DO j = 1, blocks_per_row
 !        j=1=>L  2=>D  3=>U block
                boffset = 1
                new_row_offset = 2-j+i
@@ -148,7 +145,7 @@
 
 !     Close old scratch file when finished writing out new file
       CLOSE (iunit_da, status='DELETE')
- 
+
       iunit_da = inew_da
       data_size = new_data_size
       rec_length = new_rec_length
@@ -164,7 +161,7 @@
 
       END SUBROUTINE ChangeDAFileParams
 
-      
+
       SUBROUTINE CloseDAFile
 
       IF (iunit_da .gt. 0) THEN
@@ -178,7 +175,7 @@
       SUBROUTINE DeleteDAFile (filename)
       CHARACTER*(*) :: filename
       INTEGER :: ierr, rec_length=1
-      
+
       IF (iunit_da .eq. 0) THEN
          iunit_da=100
          CALL safe_open(iunit_da, ierr, filename, 'replace', 'unformatted', &
@@ -194,7 +191,7 @@
 
       END SUBROUTINE DeleteDAFile
 
-     
+
       SUBROUTINE WriteDAItem_RA(DataItem, BlockRowIndex, ColIndex, IndexInBlock)
       REAL(dp), INTENT(in) :: DataItem(data_size)
       INTEGER, INTENT(in)  :: BlockRowIndex, ColIndex, IndexInBlock
@@ -203,7 +200,7 @@
 
       IF (ColIndex > blocks_per_row) STOP 'ColIndex > Block_Per_Row in WriteDAItem'
       IF (IndexInBlock > recs_per_block)  STOP 'IndexInBloc > skip_size in WriteDAItem'
-         
+
 
       StartIndex = IndexInBlock
       IF (recs_per_block .eq. 1) StartIndex = 1
@@ -217,7 +214,7 @@
 
       END SUBROUTINE WriteDAItem_RA
 
-      
+
       SUBROUTINE WriteDAItem_SEQ(DataItem)
       REAL(dp), INTENT(in) :: DataItem(data_size)
       INTEGER :: ierr
