@@ -1,7 +1,95 @@
-# Add subdirectories for all the sources.
-add_subdirectory (General)
-add_subdirectory (Hessian)
-add_subdirectory (Initialization_Cleanup)
-add_subdirectory (Input_Output)
+# keep NESTOR separate for now
 add_subdirectory (NESTOR_vacuum)
-add_subdirectory (TimeStep)
+
+# VMEC core sources
+target_sources(vmec
+               PRIVATE
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/add_fluxes.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/alias.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_funct3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_ns.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/allocate_nunv.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/aspectratio.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bcovar.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/blocktridiagonalsolver.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/blocktridiagonalsolver_bst.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bss.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/close_all_files.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/convert.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/csplinx.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/directaccess.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dump_output.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/elongation.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/eqfor.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/eqsolve.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/evolve.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fbal.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fileout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fixaray.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/forces.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_funct3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_ns.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_mem_nunv.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/free_persistent_mem.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fsym_fft.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fsym_invfft.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/funct3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getbsubs.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getcurmid.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getfsq.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gmres_mod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/guess_axis.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/heading.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/init_geometry.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/initialize_radial.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/interp.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/jacobian.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/jxbforce.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lamcal.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/load_xc_from_wout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/magnetic_fluxes.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mercier.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/open_output_files.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/parallel_include_module.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/parallel_vmec_module.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/perf2likwid.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precon2d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precondn.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/printout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profil1d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profil3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/profile_functions.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/readin.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/read_indata.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/realspace.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/reset_params.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/residue.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/restart.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/runvmec.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/scalfor.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/spectrum.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/symforce.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/symrzl.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/TestWout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/timer_sub.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tomnsp_mod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/totzsp_mod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vforces.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_dim.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_history.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_io.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_main.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_params.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_persistent.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmercier.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vsetup.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/write_dcon.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/wrout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/xstuff.f>
+)
+
+# stand-alone VMEC executable
+target_sources(xvmec
+               PRIVATE
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec.f>
+)
