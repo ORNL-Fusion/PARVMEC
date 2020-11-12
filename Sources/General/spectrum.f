@@ -18,7 +18,7 @@ C-----------------------------------------------
       INTEGER, PARAMETER :: m1 = 1
       INTEGER :: js, ntype, n, m, nsmin, nsmax
       REAL(dp), DIMENSION(ns) :: t1, dnumer, denom
-      REAL(dp) :: scale
+      REAL(dp) :: mn_scale
 C-----------------------------------------------
 !
 !     CONVERT FROM INTERNAL XC REPRESENTATION FOR m=1 MODES, R+(at rsc) = .5(rsc + zcc),
@@ -40,10 +40,10 @@ C-----------------------------------------------
       DO ntype = 1,ntmax
          DO n = 0,ntor
             DO m = 1,mpol1
-               scale = (mscale(m)*nscale(n))**2
+               mn_scale = (mscale(m)*nscale(n))**2
                DO js = nsmin,nsmax
                   t1(js) = (rmn(n,m,js,ntype)**2 +
-     &                      zmn(n,m,js,ntype)**2)*scale
+     &                      zmn(n,m,js,ntype)**2)*mn_scale
                END DO
                dnumer(nsmin:nsmax) = dnumer(nsmin:nsmax)
      &                             + t1(nsmin:nsmax)*xmpq(m,3)
