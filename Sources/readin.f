@@ -386,8 +386,6 @@ C-----------------------------------------------
 
       END IF PROC0
 
-1000  CONTINUE
-
 !
 !     CONVERT TO REPRESENTATION WITH RBS(m=1) = ZBC(m=1)
 !
@@ -560,7 +558,6 @@ C-----------------------------------------------
             IF (ch2 == 'f' .or. ch2 == 'F') itype_precon = 4
             LPRECOND = .TRUE.
       END SELECT
-
 
       iresidue = -1
 

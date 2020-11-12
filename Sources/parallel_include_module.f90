@@ -132,7 +132,7 @@
 
         REAL(dp) :: jacob1=0, jacob2=0
 
-        INTEGER :: nfunct3d=0
+        INTEGER  :: nfunct3d=0
         REAL(dp) :: old_vacuum_time=0
 
         REAL(dp) :: fo_funct3d_time=0
@@ -222,11 +222,6 @@
 
         !V3FIT
         INTEGER :: RUNVMEC_PASS=0
-
-!        INTEGER :: v3fgcomm, v3freccomm, v3feqcomm
-!        INTEGER :: v3fgnranks, v3frecnranks, v3feqnranks
-!        INTEGER :: v3fgrank, v3frecrank, v3feqrank
-!        LOGICAL :: lreconactive=.FALSE.
 
 CONTAINS
 

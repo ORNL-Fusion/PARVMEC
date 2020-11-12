@@ -51,7 +51,6 @@ target_sources(vmec
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/open_output_files.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/parallel_include_module.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/parallel_vmec_module.f90>
-               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/perf2likwid.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precon2d.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precondn.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/printout.f>

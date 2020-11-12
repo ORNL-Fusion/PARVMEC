@@ -649,7 +649,7 @@
             piota = HUGE(piota)
          ENDIF
 
-      CASE('nice_quadratic') !
+      CASE('nice_quadratic')
 !  Quadratic with slightly rearranged coefficients.
 !    iota(s) = a0(1-s) + a1 s + 4 a2 s (1 - s)
 !       a0 is the iota value at s = 0

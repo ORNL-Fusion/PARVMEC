@@ -1,7 +1,8 @@
 !> \file load_xc_from_wout.f
 
-      SUBROUTINE load_xc_from_wout(rmn, zmn, lmn, lreset, 
+      SUBROUTINE load_xc_from_wout(rmn, zmn, lmn, lreset,
      1    ntor_in, mpol1_in, ns_in, reset_file)
+
       USE read_wout_mod, ONLY: rmnc, zmns, lmns, rmns, zmnc, lmnc,
      1    xm, xn, ntor, ns,
      2    nfp, mnmax, read_wout_file, read_wout_deallocate
@@ -71,30 +72,30 @@ C-----------------------------------------------
          zmn(:ns,n1,m,zsc) = zmn(:ns,n1,m,zsc) + t1*zmns(mn,:ns)
          lmn(:ns,n1,m,zsc) = lmn(:ns,n1,m,zsc) + t1*lmns(mn,:ns)
          IF (lthreed) THEN
-         rmn(:ns,n1,m,rss) = rmn(:ns,n1,m,rss) + t2*rmnc(mn,:ns)
-         zmn(:ns,n1,m,zcs) = zmn(:ns,n1,m,zcs) - t2*zmns(mn,:ns)
-         lmn(:ns,n1,m,zcs) = lmn(:ns,n1,m,zcs) - t2*lmns(mn,:ns)
+            rmn(:ns,n1,m,rss) = rmn(:ns,n1,m,rss) + t2*rmnc(mn,:ns)
+            zmn(:ns,n1,m,zcs) = zmn(:ns,n1,m,zcs) - t2*zmns(mn,:ns)
+            lmn(:ns,n1,m,zcs) = lmn(:ns,n1,m,zcs) - t2*lmns(mn,:ns)
          END IF
          IF (lasym) THEN
-         rmn(:ns,n1,m,rsc) = rmn(:ns,n1,m,rsc) + t1*rmns(mn,:ns)
-         zmn(:ns,n1,m,zcc) = zmn(:ns,n1,m,zcc) + t1*zmnc(mn,:ns)
-         lmn(:ns,n1,m,zcc) = lmn(:ns,n1,m,zcc) + t1*lmnc(mn,:ns)
-         IF (lthreed) THEN
-         rmn(:ns,n1,m,rcs) = rmn(:ns,n1,m,rcs) - t2*rmns(mn,:ns)
-         zmn(:ns,n1,m,zss) = zmn(:ns,n1,m,zss) + t2*zmnc(mn,:ns)
-         lmn(:ns,n1,m,zss) = lmn(:ns,n1,m,zss) + t2*lmnc(mn,:ns)
-         END IF
+            rmn(:ns,n1,m,rsc) = rmn(:ns,n1,m,rsc) + t1*rmns(mn,:ns)
+            zmn(:ns,n1,m,zcc) = zmn(:ns,n1,m,zcc) + t1*zmnc(mn,:ns)
+            lmn(:ns,n1,m,zcc) = lmn(:ns,n1,m,zcc) + t1*lmnc(mn,:ns)
+            IF (lthreed) THEN
+               rmn(:ns,n1,m,rcs) = rmn(:ns,n1,m,rcs) - t2*rmns(mn,:ns)
+               zmn(:ns,n1,m,zss) = zmn(:ns,n1,m,zss) + t2*zmnc(mn,:ns)
+               lmn(:ns,n1,m,zss) = lmn(:ns,n1,m,zss) + t2*lmnc(mn,:ns)
+            END IF
          END IF
          IF (m .eq. 0) THEN
             zmn(:ns,n1,m,zsc) = zero
             lmn(:ns,n1,m,zsc) = zero
             IF (lthreed) rmn(:ns,n1,m,rss) = zero
             IF (lasym) THEN
-            rmn(:ns,n1,m,rsc) = zero
-            IF (lthreed) THEN
-            zmn(:ns,n1,m,zss) = zero
-            lmn(:ns,n1,m,zss) = zero
-            END IF
+               rmn(:ns,n1,m,rsc) = zero
+               IF (lthreed) THEN
+                  zmn(:ns,n1,m,zss) = zero
+                  lmn(:ns,n1,m,zss) = zero
+               END IF
             END IF
          END IF
       END DO
@@ -125,7 +126,7 @@ C-----------------------------------------------
       lmn(1,:,0,:) = lmn(2,:,0,:)
       lmn(1,:,1,:) = 2*lmn(2,:,1,:)/(sm(2) + sp(1))
       lmn(1,:,2:,:) = 0
-      
+
       DO m = 0, mpol1, 2
          DO js = 2, ns
             lmn(js,:,m,:) = 2*lmn(js,:,m,:) - lmn(js-1,:,m,:)
@@ -134,7 +135,7 @@ C-----------------------------------------------
 
       DO m = 1, mpol1, 2
          DO js = 2, ns
-            lmn(js,:,m,:) = (2*lmn(js,:,m,:) 
+            lmn(js,:,m,:) = (2*lmn(js,:,m,:)
      1                    - sp(js-1)*lmn(js-1,:,m,:))/sm(js)
          END DO
       END DO

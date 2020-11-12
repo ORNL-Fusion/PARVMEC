@@ -44,10 +44,8 @@ C-----------------------------------------------
 !
 !     POINTER ALIASES
 !
-
       nfunct3d = nfunct3d + 1
       lu => pczmn;  lv => pcrmn
-
 
 !     CONVERT ODD M TO 1/SQRT(S) INTERNAL REPRESENTATION
       ACTIVE1: IF (lactive) THEN
@@ -69,7 +67,6 @@ C-----------------------------------------------
 !     FIRST, DO SYMMETRIC [ F(u,v) = F(-u,-v) ] PIECES
 !     ON THE RANGE u = 0,pi  and v = 0,2*pi
 !
-
          CALL totzsps_par (pgc, pr1, pru, prv, pz1, pzu, pzv, lu, lv,
      &                     prcon, pzcon, ier_flag)
 
@@ -80,8 +77,10 @@ C-----------------------------------------------
             CALL totzspa_par (pgc, parmn, pbrmn, pextra3, pazmn, pbzmn,
      &                        pextra4, pblmn, pclmn, pextra1, pextra2)
 
+!
 !        SUM SYMMETRIC, ANTISYMMETRIC PIECES APPROPRIATELY
 !        TO GET R, Z, L, (AND RCON, ZCON) ON FULL RANGE OF u (0 to 2*pi)
+!
             CALL symrzl_par (pr1, pru, prv, pz1, pzu, pzv, lu, lv,
      &                       prcon, pzcon, parmn, pbrmn, pextra3, pazmn,
      &                       pbzmn, pextra4, pblmn, pclmn, pextra1,

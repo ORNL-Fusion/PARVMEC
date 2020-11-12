@@ -54,27 +54,27 @@ C-----------------------------------------------
       IF (ivac .GE. 1) THEN
 !SPH CHANGE (MOVE OUT OF FUNCT3D)
         ACTIVE1: IF (lactive) THEN
-        CALL second0(tbroadon)
-        ALLOCATE(bcastbuf(3*nznt+1))
-        bcastbuf(1:nznt) = dbsq
-        bcastbuf(nznt+1:2*nznt) = bsqsav(:,3)
-        bcastbuf(2*nznt+1:3*nznt) = rbsq    !NEED THIS WHEN INTERPOLATING MESHES
-        bcastbuf(3*nznt+1) = fedge
+           CALL second0(tbroadon)
+           ALLOCATE(bcastbuf(3*nznt+1))
+           bcastbuf(1:nznt) = dbsq
+           bcastbuf(nznt+1:2*nznt) = bsqsav(:,3)
+           bcastbuf(2*nznt+1:3*nznt) = rbsq    !NEED THIS WHEN INTERPOLATING MESHES
+           bcastbuf(3*nznt+1) = fedge
 
-        CALL MPI_Bcast(bcastbuf,SIZE(bcastbuf),MPI_REAL8,
-     1                 nranks-1,NS_COMM,MPI_ERR)
+           CALL MPI_Bcast(bcastbuf,SIZE(bcastbuf),MPI_REAL8,
+     1                    nranks-1,NS_COMM,MPI_ERR)
 
-        dbsq = bcastbuf(1:nznt)
-        bsqsav(:,3) = bcastbuf(nznt+1:2*nznt)
-        rbsq = bcastbuf(2*nznt+1:3*nznt)
-        fedge = bcastbuf(3*nznt+1)
-        DEALLOCATE(bcastbuf)
+           dbsq = bcastbuf(1:nznt)
+           bsqsav(:,3) = bcastbuf(nznt+1:2*nznt)
+           rbsq = bcastbuf(2*nznt+1:3*nznt)
+           fedge = bcastbuf(3*nznt+1)
+           DEALLOCATE(bcastbuf)
 
-        CALL second0(tbroadoff)
-        broadcast_time = broadcast_time + (tbroadoff - tbroadon)
-        den = SUM(bsqsav(:nznt,3)*pwint(:,2))
-        IF (den .NE. zero) delbsq =
-     1   SUM(dbsq(:nznt)*pwint(:,2))/den
+           CALL second0(tbroadoff)
+           broadcast_time = broadcast_time + (tbroadoff - tbroadon)
+           den = SUM(bsqsav(:nznt,3)*pwint(:,2))
+           IF (den .NE. zero)
+     1        delbsq = SUM(dbsq(:nznt)*pwint(:,2))/den
         END IF ACTIVE1
       END IF
 

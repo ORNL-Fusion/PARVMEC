@@ -1,16 +1,16 @@
 !> \file jxbforce.f
 
       SUBROUTINE jxbforce(bsupu, bsupv, bsubu, bsubv, bsubs, bsubsu,
-     1   bsubsv, gsqrt, bsq, itheta, izeta, brho, sigma_an, ier_flag 
-     3                   )
+     1   bsubsv, gsqrt, bsq, itheta, izeta, brho, sigma_an, ier_flag)
+
       USE safe_open_mod
       USE vmec_main
-      USE vmec_params, ONLY: mscale, nscale, signgs, mnyq, nnyq, 
+      USE vmec_params, ONLY: mscale, nscale, signgs, mnyq, nnyq,
      1                       successful_term_flag
       USE realspace,   ONLY: shalf, wint, guu, guv, gvv, r1, ru, rv,
      1                       zu   , zv  , phip
       USE ezcdf
-      USE xstuff, ONLY: xc 
+      USE xstuff, ONLY: xc
       USE parallel_include_module
       IMPLICIT NONE
 !-----------------------------------------------
@@ -42,7 +42,7 @@
 !   L o c a l   V a r i a b l e s
 !-----------------------------------------------
       INTEGER lk, lz, lt, k, m, js, j, n, injxbout, mparity, nznt1
-      INTEGER :: njxbout = jxbout0, nmin, info 
+      INTEGER :: njxbout = jxbout0, nmin, info
       INTEGER, PARAMETER :: ns_skip = 1, nu_skip = 1, nv_skip = 1
       REAL(rprec), DIMENSION(:,:), ALLOCATABLE ::
      1    bdotk, bsubuv, bsubvu
@@ -51,14 +51,14 @@
      1     bsubs3, bsubv3, bsubu3, jxb_gradp, jcrossb, sqrtg3,
      2     bsupv3, bsupu3, jsups3, jsupv3, jsupu3, jdotb_sqrtg
       REAL(rprec), POINTER :: bs1(:), bu1(:,:), bv1(:,:)
-      REAL(rprec), DIMENSION(:), ALLOCATABLE     :: kperpu, kperpv, 
+      REAL(rprec), DIMENSION(:), ALLOCATABLE     :: kperpu, kperpv,
      2    sqgb2, sqrtg, kp2, jxb, jxb2, bsupu1, bsupv1, bsubu1, bsubv1,
      3    avforce, aminfor, amaxfor, toroidal_angle, phin, pprim, pprime
       REAL(rprec), DIMENSION(:,:), ALLOCATABLE   :: bsubua, bsubva
       REAL(rprec) ::
      1    bsubsmn1, bsubsmn2, bsubvmn1, bsubvmn2, bsubumn1, bsubumn2,
      1    bsubsmn3, bsubsmn4, bsubvmn3, bsubvmn4, bsubumn3, bsubumn4,
-     2    dnorm1, tcos1, tcos2, tsini1, tsini2, tcosi1, tcosi2, 
+     2    dnorm1, tcos1, tcos2, tsini1, tsini2, tcosi1, tcosi2,
      3    tcosm1, tcosm2, tcosn1, tcosn2, tsinm1, tsinm2, tsin1, tsin2,
      4    tsinn1, tsinn2, tjnorm, ovp, pnorm, brho00(ns)
       REAL(rprec), DIMENSION(:,:), ALLOCATABLE ::
@@ -145,10 +145,10 @@
       nznt1 = nzeta*ntheta2
       ALLOCATE (avforce(ns),aminfor(ns),amaxfor(ns))
       ALLOCATE (bdotk(ns,nznt), bsubuv(ns,nznt),
-     1          bsubvu(ns,nznt), kperpu(nznt), kperpv(nznt), 
+     1          bsubvu(ns,nznt), kperpu(nznt), kperpv(nznt),
      2          sqgb2(nznt), brhomn(0:mnyq,-nnyq:nnyq,0:1),kp2(nznt),
-     3          jxb(nznt), jxb2(nznt), bsupu1(nznt), 
-     3          bsubua(nznt1,0:1), bsubva(nznt1,0:1), 
+     3          jxb(nznt), jxb2(nznt), bsupu1(nznt),
+     3          bsubua(nznt1,0:1), bsubva(nznt1,0:1),
      4          bsupv1(nznt), bsubu1(nznt), bsubv1(nznt),
      5          bsubsmn(ns,0:mnyq,-nnyq:nnyq,0:1),
      6          bsubs_s(nznt), bsubs_a(nznt), sqrtg(nznt),
@@ -166,7 +166,7 @@
 !
 !     Put bsubs on full mesh
 !
-         IF (js.gt.1 .and. js.lt.ns) THEN     
+         IF (js.gt.1 .and. js.lt.ns) THEN
             bsubs(js,:) = p5*(bsubs(js,:) + bsubs(js+1,:))
          END IF
 
@@ -177,7 +177,7 @@
 !        _s: symmetric in u,v  _a: antisymmetric in u,v on half (ntheta2) interval
          IF (lasym)  THEN
             bs1=>bsubs(js,:); bu1=>bsubu(js,:,:); bv1=>bsubv(js,:,:)
-            CALL fsym_fft (bs1, bu1, bv1, bsubs_s, bsubu_s, bsubv_s, 
+            CALL fsym_fft (bs1, bu1, bv1, bsubs_s, bsubu_s, bsubv_s,
      1                     bsubs_a, bsubu_a, bsubv_a)
          ELSE
             bsubs_s(:) = bsubs(js,:)
@@ -237,7 +237,7 @@
 !
 !              FOURIER INVERSE TRANSFORM
 !              Compute on u-v grid (must add symmetric, antisymmetric parts for lasym=T)
-! 
+!
                DO k = 1, nzeta
                   lk = k
                   DO j = 1, ntheta2
@@ -256,10 +256,10 @@
                      tcosn2 = cosmu(j,m)*cosnvn(k,n)
                      bsubsv(js,lk,0) = bsubsv(js,lk,0) +
      1                  tcosn1*bsubsmn1 + tcosn2*bsubsmn2
-                     bsubvu(js,lk) = bsubvu(js,lk) + 
+                     bsubvu(js,lk) = bsubvu(js,lk) +
      1                               sinmum(j,m)*cosnv(k,n)*bsubvmn1 +
      2                               cosmum(j,m)*sinnv(k,n)*bsubvmn2
-                     bsubuv(js,lk) = bsubuv(js,lk) + 
+                     bsubuv(js,lk) = bsubuv(js,lk) +
      1                               cosmu(j,m)*sinnvn(k,n)*bsubumn1 +
      2                               sinmu(j,m)*cosnvn(k,n)*bsubumn2
 
@@ -279,10 +279,10 @@
                      tsinn2 = sinmu(j,m)*cosnvn(k,n)
                      bsubsv(js,lk,1) = bsubsv(js,lk,1) +
      1                   tsinn1*bsubsmn3 + tsinn2*bsubsmn4
-                     bsubvu(js,lk) = bsubvu(js,lk) + 
+                     bsubvu(js,lk) = bsubvu(js,lk) +
      1                               cosmum(j,m)*cosnv(k,n)*bsubvmn3 +
      2                               sinmum(j,m)*sinnv(k,n)*bsubvmn4
-                     bsubuv(js,lk) = bsubuv(js,lk) + 
+                     bsubuv(js,lk) = bsubuv(js,lk) +
      1                               sinmu(j,m)*sinnvn(k,n)*bsubumn3 +
      2                               cosmu(j,m)*cosnvn(k,n)*bsubumn4
                      END IF
@@ -300,7 +300,7 @@
 
                bsubsmn(js,m,n,0) = bsubsmn1
                IF (n .gt. 0) bsubsmn(js,m,-n,0) = bsubsmn2
-             
+
                IF (.not.lasym) CYCLE
 
                bsubsmn(js,m,n,1) = bsubsmn3
@@ -327,7 +327,7 @@
       IF (lasym) CALL fsym_invfft (bsubsu, bsubsv)
 
 !     SKIPS Bsubs Correction - uses Bsubs from metric elements
-      IF (.not.lbsubs) GOTO 1500          
+      IF (lbsubs) then
 
 !
 !     Compute corrected Bsubs coefficients (brhomn) (impacts currents)
@@ -336,158 +336,155 @@
 !     brho==sigma B_s, pp1 and pp2 are the Jacobian times the hot particle parallel
 !     pressure radial gradient Amplitudes on the full integer mesh
 !
-      correct_bsubs: DO js = 2, ns-1
-         jxb(:) = p5*(gsqrt(js,:) + gsqrt(js+1,:))
-         bsupu1(:) = p5*(bsupu(js,:)*gsqrt(js,:)
-     1    + bsupu(js+1,:)*gsqrt(js+1,:))
-         bsupv1(:) = p5*(bsupv(js,:)*gsqrt(js,:)
-     1    + bsupv(js+1,:)*gsqrt(js+1,:))
-         brho(js,:) = ohs*
-     1   ( bsupu1(:)*(bsubu(js+1,:,0) - bsubu(js,:,0))
-     2   + bsupv1(:)*(bsubv(js+1,:,0) - bsubv(js,:,0)))
-     3   + (pres(js+1) - pres(js))*ohs*jxb(:)
+         correct_bsubs: DO js = 2, ns-1
+            jxb(:) = p5*(gsqrt(js,:) + gsqrt(js+1,:))
+            bsupu1(:) = p5*(bsupu(js,:)*gsqrt(js,:)
+     1       + bsupu(js+1,:)*gsqrt(js+1,:))
+            bsupv1(:) = p5*(bsupv(js,:)*gsqrt(js,:)
+     1       + bsupv(js+1,:)*gsqrt(js+1,:))
+            brho(js,:) = ohs*
+     1      ( bsupu1(:)*(bsubu(js+1,:,0) - bsubu(js,:,0))
+     2      + bsupv1(:)*(bsubv(js+1,:,0) - bsubv(js,:,0)))
+     3      + (pres(js+1) - pres(js))*ohs*jxb(:)
 !
-!     SUBTRACT FLUX-SURFACE AVERAGE FORCE BALANCE FROM brho, OTHERWISE
-!     LOCAL FORCE BALANCE EQUATION B dot grad(Bs) = brho CAN'T BE SOLVED
+!        SUBTRACT FLUX-SURFACE AVERAGE FORCE BALANCE FROM brho, OTHERWISE
+!        LOCAL FORCE BALANCE EQUATION B dot grad(Bs) = brho CAN'T BE SOLVED
 !
-         brho00(js) = SUM(brho(js,:)*wint(js:nrzt:ns))
-         brho(js,:) = brho(js,:) - signgs*jxb(:)*brho00(js)/
-     1      (p5*(vp(js) + vp(js+1)))
+            brho00(js) = SUM(brho(js,:)*wint(js:nrzt:ns))
+            brho(js,:) = brho(js,:) - signgs*jxb(:)*brho00(js)/
+     1         (p5*(vp(js) + vp(js+1)))
 
-         jxb(:) = brho(js,:)
-         CALL getbsubs (brhomn, jxb, bsupu1, bsupv1, mnyq, nnyq, info)
-         IF (info .ne. 0) THEN
-            PRINT *, 'Error in GETBRHO: info= ',info, ' js= ',js
-         ELSE IF (lprint) THEN
-            WRITE (33, *) ' JS = ', js
-            IF (lasym) THEN
-            WRITE (33, '(a)') 
-     1      '   M    N        BSUBS(old)        BSUBS(new)' //
-     2      '        BSUBS(old)        BSUBS(new)'
-            ELSE
-            WRITE (33, *) '  M    N        BSUBS(old)        BSUBS(new)'
-            END IF
-            DO m = 0, mpol1
-               DO n = -ntor, ntor
-                  IF (lasym) THEN
-                  WRITE(33,1223) m, n, bsubsmn(js,m,n,0), brhomn(m,n,0),
-     1                                 bsubsmn(js,m,n,1), brhomn(m,n,1)
-                  ELSE
-                  WRITE(33,1224) m, n, bsubsmn(js,m,n,0), brhomn(m,n,0)
-                  END IF
-               END DO
-            END DO
-         END IF
- 1223    FORMAT (i4,1x,i4,4(6x,1p,e12.3))
- 1224    FORMAT (i4,1x,i4,2(6x,1p,e12.3))
-
-!
-!        Recompute bsubsu,v now using corrected bsubs
-!        Store old values (itheta,izeta) for checking force balance later
-!
-         itheta(js,:) = bsubsu(js,:,0);  izeta (js,:) = bsubsv(js,:,0)
-
-         IF (info .ne. 0) CYCLE
-         bsubsu(js,:,:) = 0;   bsubsv(js,:,:) = 0;  bsubs_s = 0
-         IF (lasym) bsubs_a = 0;
-
-         DO m = 0, mnyq
-            DO n = 0, nnyq
-               IF (n .eq. 0) THEN
-                  bsubsmn1 = brhomn(m,0,0)
-                  bsubsmn2 = 0
-               ELSE
-                  bsubsmn1 = brhomn(m,n,0)
-                  bsubsmn2 = brhomn(m,-n,0)
-               END IF
-
+            jxb(:) = brho(js,:)
+            CALL getbsubs (brhomn, jxb, bsupu1, bsupv1, mnyq, nnyq, info)
+            IF (info .ne. 0) THEN
+               PRINT *, 'Error in GETBRHO: info= ',info, ' js= ',js
+            ELSE IF (lprint) THEN
+               WRITE (33, *) ' JS = ', js
                IF (lasym) THEN
-                  IF (n .eq. 0) THEN
-                     bsubsmn3 = brhomn(m,0,1)
-                     bsubsmn4 = 0
-                  ELSE
-                     bsubsmn3 = brhomn(m,n,1)
-                     bsubsmn4 = brhomn(m,-n,1)
-                  END IF
+               WRITE (33, '(a)')
+     1         '   M    N        BSUBS(old)        BSUBS(new)' //
+     2         '        BSUBS(old)        BSUBS(new)'
+               ELSE
+               WRITE (33, *) '  M    N        BSUBS(old)        BSUBS(new)'
                END IF
-
-               DO k = 1, nzeta
-                  lk = k
-                  DO j = 1, ntheta2
-                     tsin1 = sinmu(j,m)*cosnv(k,n)
-                     tsin2 = cosmu(j,m)*sinnv(k,n)
-                     bsubs_s(lk) = bsubs_s(lk) + tsin1*bsubsmn1
-     1                                         + tsin2*bsubsmn2
-                     tcosm1 = cosmum(j,m)*cosnv(k,n)
-                     tcosm2 = sinmum(j,m)*sinnv(k,n)
-                     bsubsu(js,lk,0) = bsubsu(js,lk,0) +
-     1                  tcosm1*bsubsmn1 + tcosm2*bsubsmn2
-                     tcosn1 = sinmu(j,m)*sinnvn(k,n)
-                     tcosn2 = cosmu(j,m)*cosnvn(k,n)
-                     bsubsv(js,lk,0) = bsubsv(js,lk,0) +
-     1                  tcosn1*bsubsmn1 + tcosn2*bsubsmn2
-                     
+               DO m = 0, mpol1
+                  DO n = -ntor, ntor
                      IF (lasym) THEN
-                     tcos1 = cosmu(j,m)*cosnv(k,n)
-                     tcos2 = sinmu(j,m)*sinnv(k,n)
-                     bsubs_a(lk) = bsubs_a(lk) + tcos1*bsubsmn3
-     1                                         + tcos2*bsubsmn4
-                     tsinm1 = sinmum(j,m)*cosnv(k,n)
-                     tsinm2 = cosmum(j,m)*sinnv(k,n)
-                     bsubsu(js,lk,1) = bsubsu(js,lk,1) +
-     1                  tsinm1*bsubsmn3 + tsinm2*bsubsmn4
-                     tsinn1 = cosmu(j,m)*sinnvn(k,n)
-                     tsinn2 = sinmu(j,m)*cosnvn(k,n)
-                     bsubsv(js,lk,1) = bsubsv(js,lk,1) +
-     1                  tsinn1*bsubsmn3 + tsinn2*bsubsmn4
-
+                     WRITE(33,1223) m, n, bsubsmn(js,m,n,0), brhomn(m,n,0),
+     1                                    bsubsmn(js,m,n,1), brhomn(m,n,1)
+                     ELSE
+                     WRITE(33,1224) m, n, bsubsmn(js,m,n,0), brhomn(m,n,0)
                      END IF
- 
-                     lk = lk + nzeta
+                  END DO
+               END DO
+            END IF
+ 1223       FORMAT (i4,1x,i4,4(6x,1p,e12.3))
+ 1224       FORMAT (i4,1x,i4,2(6x,1p,e12.3))
 
+!
+!           Recompute bsubsu,v now using corrected bsubs
+!           Store old values (itheta,izeta) for checking force balance later
+!
+            itheta(js,:) = bsubsu(js,:,0);  izeta (js,:) = bsubsv(js,:,0)
+
+            IF (info .ne. 0) CYCLE
+            bsubsu(js,:,:) = 0;   bsubsv(js,:,:) = 0;  bsubs_s = 0
+            IF (lasym) bsubs_a = 0;
+
+            DO m = 0, mnyq
+               DO n = 0, nnyq
+                  IF (n .eq. 0) THEN
+                     bsubsmn1 = brhomn(m,0,0)
+                     bsubsmn2 = 0
+                  ELSE
+                     bsubsmn1 = brhomn(m,n,0)
+                     bsubsmn2 = brhomn(m,-n,0)
+                  END IF
+
+                  IF (lasym) THEN
+                     IF (n .eq. 0) THEN
+                        bsubsmn3 = brhomn(m,0,1)
+                        bsubsmn4 = 0
+                     ELSE
+                        bsubsmn3 = brhomn(m,n,1)
+                        bsubsmn4 = brhomn(m,-n,1)
+                     END IF
+                  END IF
+
+                  DO k = 1, nzeta
+                     lk = k
+                     DO j = 1, ntheta2
+                        tsin1 = sinmu(j,m)*cosnv(k,n)
+                        tsin2 = cosmu(j,m)*sinnv(k,n)
+                        bsubs_s(lk) = bsubs_s(lk) + tsin1*bsubsmn1
+     1                                            + tsin2*bsubsmn2
+                        tcosm1 = cosmum(j,m)*cosnv(k,n)
+                        tcosm2 = sinmum(j,m)*sinnv(k,n)
+                        bsubsu(js,lk,0) = bsubsu(js,lk,0) +
+     1                     tcosm1*bsubsmn1 + tcosm2*bsubsmn2
+                        tcosn1 = sinmu(j,m)*sinnvn(k,n)
+                        tcosn2 = cosmu(j,m)*cosnvn(k,n)
+                        bsubsv(js,lk,0) = bsubsv(js,lk,0) +
+     1                     tcosn1*bsubsmn1 + tcosn2*bsubsmn2
+
+                        IF (lasym) THEN
+                        tcos1 = cosmu(j,m)*cosnv(k,n)
+                        tcos2 = sinmu(j,m)*sinnv(k,n)
+                        bsubs_a(lk) = bsubs_a(lk) + tcos1*bsubsmn3
+     1                                            + tcos2*bsubsmn4
+                        tsinm1 = sinmum(j,m)*cosnv(k,n)
+                        tsinm2 = cosmum(j,m)*sinnv(k,n)
+                        bsubsu(js,lk,1) = bsubsu(js,lk,1) +
+     1                     tsinm1*bsubsmn3 + tsinm2*bsubsmn4
+                        tsinn1 = cosmu(j,m)*sinnvn(k,n)
+                        tsinn2 = sinmu(j,m)*cosnvn(k,n)
+                        bsubsv(js,lk,1) = bsubsv(js,lk,1) +
+     1                     tsinn1*bsubsmn3 + tsinn2*bsubsmn4
+
+                        END IF
+
+                        lk = lk + nzeta
+
+                     END DO
                   END DO
                END DO
             END DO
-         END DO
 
-         IF (lasym) THEN
-!           EXTEND TO FULL (ntheta3) u-GRID
-            bs1 => bsubs(js,:)
-            CALL fext_fft (bs1, bsubs_a, bsubs_s)
-         ELSE
-            bsubs(js,:) = bsubs_s(:)
-         END IF
+            IF (lasym) THEN
+!              EXTEND TO FULL (ntheta3) u-GRID
+               bs1 => bsubs(js,:)
+               CALL fext_fft (bs1, bsubs_a, bsubs_s)
+            ELSE
+               bsubs(js,:) = bsubs_s(:)
+            END IF
 
-      END DO correct_bsubs
+         END DO correct_bsubs
 
-!     EXTEND bsubsu, bsubsv TO NTHETA3 MESH
-      IF (lasym) CALL fsym_invfft (bsubsu, bsubsv)
+!        EXTEND bsubsu, bsubsv TO NTHETA3 MESH
+         IF (lasym) CALL fsym_invfft (bsubsu, bsubsv)
 
 !
-!     CHECK FORCE BALANCE: SQRT(g)*(bsupu*bsubsu + bsupv*bsubsv) = brho
+!        CHECK FORCE BALANCE: SQRT(g)*(bsupu*bsubsu + bsupv*bsubsv) = brho
 !
-      IF (.not.lprint) GOTO 1500
+         IF (lprint) then
+            WRITE (33, '(/,2a,/)') 'ANGLE INDEX       B*grad(Bs)      Frhs',
+     1                    '          Fold'
+            check_fb: DO js = 2, ns-1
+               bsupu1(:) = p5*(bsupu(js,:)*gsqrt(js,:)
+     1                   +     bsupu(js+1,:)*gsqrt(js+1,:))
+               bsupv1(:) = p5*(bsupv(js,:)*gsqrt(js,:)
+     1                   + bsupv(js+1,:)*gsqrt(js+1,:))
+               kp2(:) = bsupu1(:)*bsubsu(js,:,0) + bsupv1(:)*bsubsv(js,:,0)
+               jxb(:) = bsupu1(:)*itheta(js,:) + bsupv1(:)*izeta(js,:)
 
-      WRITE (33, '(/,2a,/)') 'ANGLE INDEX       B*grad(Bs)      Frhs',
-     1              '          Fold'
-      check_fb: DO js = 2, ns-1
-         bsupu1(:) = p5*(bsupu(js,:)*gsqrt(js,:)
-     1             +     bsupu(js+1,:)*gsqrt(js+1,:))
-         bsupv1(:) = p5*(bsupv(js,:)*gsqrt(js,:)
-     1             + bsupv(js+1,:)*gsqrt(js+1,:))
-         kp2(:) = bsupu1(:)*bsubsu(js,:,0) + bsupv1(:)*bsubsv(js,:,0)
-         jxb(:) = bsupu1(:)*itheta(js,:) + bsupv1(:)*izeta(js,:)
-
-         WRITE (33, '(/,a,i4)') 'JS = ',js
-         DO lk = 1, nznt
-            WRITE(33,1230) lk, brho(js,lk),  kp2(lk),  jxb(lk)
-         END DO
-
-      END DO check_fb
-
+               WRITE (33, '(/,a,i4)') 'JS = ',js
+               DO lk = 1, nznt
+                  WRITE(33,1230) lk, brho(js,lk),  kp2(lk),  jxb(lk)
+               END DO
+            END DO check_fb
+         end if ! lprint
+      end if ! lbsubs
  1230 FORMAT (i9,5x, 1p,3e14.4)
-
- 1500 CONTINUE
 
       DEALLOCATE (bsubs_s, bsubs_a, bsubu_s,
      1            bsubu_a, bsubv_s, bsubv_a, stat=lk)
@@ -504,7 +501,7 @@
 !     Itheta = sqrt(g) * Ksupu
 !     Izeta  = sqrt(g) * Ksupv
 !     Ksupx  = K dot grad(x)                          x=(u,v)
-!     jxb    = (K X B) dot (grad-u X grad-v) sqrt(g)  
+!     jxb    = (K X B) dot (grad-u X grad-v) sqrt(g)
 !     bdotk  = sigma*sqrt(g)*K dot B
 !     kperpx = (B X gradp) dot grad(x) / |B|**2       x=(u,v)
 !     sqgb2  = sigma*sqrt(g)*|B|**2
@@ -519,19 +516,19 @@
 !           TWOPI*TWOPI factor incorporated in vp (thru ovp factor below), so V' = (2pi)**2*vp
 !
       ALLOCATE(
-     1     bsubs3(ns,nzeta,ntheta3), bsubv3(ns,nzeta,ntheta3), 
-     2     bsubu3(ns,nzeta,ntheta3), jxb_gradp(ns,nzeta,ntheta3), 
-     3     jcrossb(ns,nzeta,ntheta3), bsupv3(ns,nzeta,ntheta3), 
-     4     bsupu3(ns,nzeta,ntheta3), jsups3(ns,nzeta,ntheta3), 
+     1     bsubs3(ns,nzeta,ntheta3), bsubv3(ns,nzeta,ntheta3),
+     2     bsubu3(ns,nzeta,ntheta3), jxb_gradp(ns,nzeta,ntheta3),
+     3     jcrossb(ns,nzeta,ntheta3), bsupv3(ns,nzeta,ntheta3),
+     4     bsupu3(ns,nzeta,ntheta3), jsups3(ns,nzeta,ntheta3),
      5     jsupv3(ns,nzeta,ntheta3), jsupu3(ns,nzeta,ntheta3),
-     6     jdotb_sqrtg(ns,nzeta,ntheta3), sqrtg3(ns,nzeta,ntheta3), 
+     6     jdotb_sqrtg(ns,nzeta,ntheta3), sqrtg3(ns,nzeta,ntheta3),
      7     phin(ns), toroidal_angle(nzeta), stat=j)
 
       bsubs3=0; bsubv3=0; bsubu3=0; jxb_gradp=0
       jcrossb=0 ; bsupv3=0; bsupu3=0; jsups3=0
       jsupv3=0; jsupu3=0; phin=0; phin(ns)=1
-      jdotb_sqrtg=0; sqrtg3=0 
- 
+      jdotb_sqrtg=0; sqrtg3=0
+
       ALLOCATE (pprime(nznt), pprim(ns),stat=j)
       pprim=0
 
@@ -551,7 +548,7 @@
      3                * (bsq(js  ,:nznt)-pres(js  ))
 
 !        TAKE THIS OUT: MAY BE POORLY CONVERGED AT THIS POINT....
-!         IF (ANY(sqgb2(:nznt)*signgs .le. zero)) 
+!         IF (ANY(sqgb2(:nznt)*signgs .le. zero))
 !     1       STOP ' SQGB2 <= 0 in JXBFORCE'
          pprime(:) = ohs*(pres(js+1)-pres(js))/mu0              !dp/ds here
 
@@ -594,7 +591,7 @@
      1                               / sigma_an(js,:nznt))
          bdotb(js) = dnorm1*tjnorm*SUM(sqgb2(:nznt)*wint(2:nrzt:ns)
      1                               / sigma_an(js,:nznt))
-              
+
          bdotgradv(js) = p5*dnorm1*tjnorm*(phip(js) + phip(js+1))
          jpar2(js) = dnorm1*tjnorm*
      1            SUM(bdotk(js,:nznt)**2*wint(2:nrzt:ns)
@@ -610,14 +607,14 @@
                   lk = lz + nzeta*(lt-1)
 C                 lu (js,lz,lt ) =  lt
                   jsupu3 (js,lz,lt) = ovp*itheta(js,lk)
-                  jsupv3 (js,lz,lt) = ovp*izeta(js,lk) 
+                  jsupv3 (js,lz,lt) = ovp*izeta(js,lk)
                   jsups3 (js,lz,lt) = ovp*(bsubuv(js,lk)
      1					          -      bsubvu(js,lk))/mu0
                   bsupu3 (js,lz,lt) = bsupu1(lk)
                   bsupv3 (js,lz,lt) = bsupv1(lk)
                   jcrossb (js,lz,lt) = jxb(lk)
                   jxb_gradp (js,lz,lt) = (jxb(lk) - pprime(lk))
-                  jdotb_sqrtg (js,lz,lt) = ovp*bdotk(js,lk) 
+                  jdotb_sqrtg (js,lz,lt) = ovp*bdotk(js,lk)
                   sqrtg3(js,lz,lt) = sqrtg(lk)*ovp
                   bsubu3(js,lz,lt) = bsubu(js,lk,0)
                   bsubv3(js,lz,lt) = bsubv(js,lk,0)
@@ -650,7 +647,7 @@ C                 lu (js,lz,lt ) =  lt
       CALL cdf_define(njxbout,vn_toroidal_grid_points,nzeta)
       CALL cdf_define(njxbout,vn_avforce,avforce)
       CALL cdf_define(njxbout,vn_jdotb,jdotb)
- 
+
       CALL cdf_define(njxbout,vn_sqg_bdotk,jdotb_sqrtg)
       CALL cdf_define(njxbout,vn_sqrtg,sqrtg3)
 
@@ -696,18 +693,18 @@ C                 lu (js,lz,lt ) =  lt
       CALL cdf_write(njxbout,vn_bsubu,bsubu3)
       CALL cdf_write(njxbout,vn_bsubv,bsubv3)
       CALL cdf_write(njxbout,vn_bsubs,bsubs3)
- 
+
       CALL cdf_close(njxbout)
 
       DEALLOCATE(
-     1     bsubs3, bsubv3, bsubu3, jxb_gradp, jcrossb, bsupv3, 
-     2     bsupu3, jsups3, jsupv3, jsupu3, jdotb_sqrtg, phin, 
+     1     bsubs3, bsubv3, bsubu3, jxb_gradp, jcrossb, bsupv3,
+     2     bsupu3, jsups3, jsupv3, jsupu3, jdotb_sqrtg, phin,
      3     toroidal_angle, sqrtg3, stat=j)
 
       END IF
-      
-      DEALLOCATE (kperpu, kperpv, sqgb2, sqrtg, kp2, brhomn, bsubsmn, 
-     1    jxb, jxb2, bsupu1, bsupv1, bsubu1, bsubv1, avforce, aminfor, 
+
+      DEALLOCATE (kperpu, kperpv, sqgb2, sqrtg, kp2, brhomn, bsubsmn,
+     1    jxb, jxb2, bsupu1, bsupv1, bsubu1, bsubv1, avforce, aminfor,
      2    amaxfor, pprim, stat=j)
 !
 !     COMPUTE MERCIER CRITERION

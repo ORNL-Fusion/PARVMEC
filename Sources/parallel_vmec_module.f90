@@ -101,7 +101,7 @@ CONTAINS
   !--------------------------------------------------------------------------
     SUBROUTINE InitSurfaceComm(ns, nzeta, ntheta3, ntmax, ntor, mpol1)
 
-INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
+    INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     INTEGER, INTENT(IN) :: ntmax, ntor, mpol1
     INTEGER :: i
     LOGICAL :: FIRSTPASS = .TRUE.
@@ -961,7 +961,6 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     DO i = 2,nranks
       disps(i)= disps(i - 1) +counts(i - 1)
     END DO
-
 
     CALL MPI_Allgatherv(MPI_IN_PLACE, numjs, MPI_REAL8, arr, counts,           &
                         disps, MPI_REAL8, NS_COMM, MPI_ERR)

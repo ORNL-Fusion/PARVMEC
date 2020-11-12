@@ -1,7 +1,7 @@
 !> \file gmres_mod.f
 
       MODULE gmres_mod
-      USE vmec_main, ONLY: dp, rprec, neqs, ns, nthreed, 
+      USE vmec_main, ONLY: dp, rprec, neqs, ns, nthreed,
      1                     one, fsqr, fsqz, fsql
       USE parallel_include_module
       USE parallel_vmec_module, ONLY: CopyLastNtype, SaxpbyLastNtype,
@@ -28,9 +28,9 @@ C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       INTEGER, INTENT(IN)   :: nloc
-      REAL(dp), INTENT(IN)  :: 
+      REAL(dp), INTENT(IN)  ::
      &   ploc(ntmaxblocksize,tlglob:trglob)
-      REAL(dp), INTENT(OUT) :: 
+      REAL(dp), INTENT(OUT) ::
      &   Ap(ntmaxblocksize,tlglob:trglob)
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
@@ -64,7 +64,7 @@ C-----------------------------------------------
       END IF LACTIVE0
 
       CALL funct3d_par(lscreen0, ier_flag_res)
-      
+
       IF (lactive) THEN
          CALL last_ns_par
          CALL GetDerivLastNs(pgc, pgc0, delta, Ap)
@@ -74,7 +74,6 @@ C-----------------------------------------------
          PRINT *,'IN MATVEC_PAR, IER_FLAG = ', ier_flag_res
       END IF
 
- 90   CONTINUE
       nfcn = nfcn + 1
 
       END SUBROUTINE matvec_par
@@ -103,9 +102,9 @@ C-----------------------------------------------
 
       END SUBROUTINE GetNLForce_par
   !------------------------------------------------
-  ! 
+  !
   !------------------------------------------------
-      SUBROUTINE last_ns_par 
+      SUBROUTINE last_ns_par
          USE xstuff
 
          REAL(dp), ALLOCATABLE, DIMENSION(:)  :: tmp
@@ -129,7 +128,7 @@ C-----------------------------------------------
   !------------------------------------------------
 
   !------------------------------------------------
-      SUBROUTINE last_ntype_par 
+      SUBROUTINE last_ntype_par
          USE xstuff
 
          REAL(dp), ALLOCATABLE, DIMENSION(:)  :: tmp
@@ -171,7 +170,7 @@ C-----------------------------------------------
       INTEGER              :: icntl(9), info(3)
       REAL(dp)             :: cntl(5), fact, fact_min, fsq_min, fsq2,
      &                        fsqr_min, fsqz_min, fsql_min
-      CHARACTER(LEN=*), PARAMETER :: qmr_message = 
+      CHARACTER(LEN=*), PARAMETER :: qmr_message =
      &                              'Beginning GMRES iterations'
       INTEGER, PARAMETER   :: noPrec=0, leftPrec=1, rightPrec=2
 !-----------------------------------------------
@@ -180,7 +179,7 @@ C-----------------------------------------------
 !
 !     CHOOSE TYPE OF SOLVER
 !
-c       ! these pull in (serial) funct3d via matvec --> comment out for now
+c       ! jons: these pull in (serial) funct3d via matvec --> comment out for now
 c       IF (itype == 2) THEN
 c          CALL gmresr_fun (ier_flag)
 c          RETURN
@@ -188,7 +187,6 @@ c       ELSE IF (itype == 3) THEN
 c          CALL qmr_fun
 c          RETURN
 c       END IF
-
 
       IF (lfirst) THEN
          lfirst = .FALSE.
@@ -219,8 +217,8 @@ c       END IF
       icntl(3) = 20
 ! No preconditioning
       icntl(4) = noPrec
-! Left preconditioning (doesn't work well with no col-scaling)     
-!      icntl(4) = leftPrec 
+! Left preconditioning (doesn't work well with no col-scaling)
+!      icntl(4) = leftPrec
 ! ICGS orthogonalization
       icntl(5) = 3
 !      icntl(5) = 0
@@ -231,7 +229,7 @@ c       END IF
 !      icntl(7) = 15
       icntl(7) = 20
 ! Stops to peek at progress during rev com loop
-      icntl(9) = 1             
+      icntl(9) = 1
 
 
 !********************************
@@ -274,10 +272,10 @@ c       END IF
 
 !STORE INITIAL POINT AND INITIAL FORCE (AT INIT PT)
 !SO DEVIATIONS FROM THEM CAN BE COMPUTED REPEATEDLY
-      CALL CopyLastNtype(pxc, pxsave) 
+      CALL CopyLastNtype(pxc, pxsave)
       CALL CopyLastNtype(pgc, pxcdot)
 
-!RHS: RETURN RESULT OF SOLVING LINEARIZED A*x = -gc IN XCDOT 
+!RHS: RETURN RESULT OF SOLVING LINEARIZED A*x = -gc IN XCDOT
 !     AND IS DISTRIBUTED OVER ALL PROCESSORS
       CALL CopyLastNtype(pgc, pgc, -one)
 
@@ -300,14 +298,14 @@ c       END IF
  1010 FORMAT(1x,'LINE SEARCH - SCAN ||X|| FOR MIN FSQ_NL',/,
      &       '-------------',/,
      &       1x,'ITER',7x,'FSQ_NL',10x,'||X||',9x,'MAX|X|')
-     
-      CALL MPI_BCAST(fsq_min, 1, MPI_REAL8, 0, RUNVMEC_COMM_WORLD, 
+
+      CALL MPI_BCAST(fsq_min, 1, MPI_REAL8, 0, RUNVMEC_COMM_WORLD,
      &               MPI_ERR)
 
       DO m = 1, 5
          fact = fact*SQRT(0.5_dp)
          CALL SaxpbyLastNtype(fact, pxcdot, one, pxsave, pxc)
- 
+
          CALL funct3d_par(lscreen0, ier_flag_res)
 
          fsq2 = fsqr+fsqz+fsql
