@@ -13,3 +13,9 @@ add_dependencies (xvmec vmec)
 target_link_libraries (xvmec vmec)
 
 add_subdirectory (Sources)
+
+################################################################################
+#  Testing                                                                     #
+################################################################################
+
+add_subdirectory (Testing)
