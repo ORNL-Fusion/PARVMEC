@@ -20,9 +20,9 @@ add_subdirectory (Sources)
 ################################################################################
 
 #  Build test utilities.
-add_executable (xdiff_wout)
-add_dependencies (xdiff_wout stell)
+add_executable (xwout_diff)
+add_dependencies (xwout_diff stell)
 
-target_link_libraries (xdiff_wout stell)
+target_link_libraries (xwout_diff stell)
 
 add_subdirectory (Testing)
