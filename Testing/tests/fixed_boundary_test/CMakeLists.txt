@@ -33,3 +33,13 @@ add_test (NAME    vmec_fixed_boundary_check_betaxis_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=betaxis -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_bmnc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bmnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_bsubsmns_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsubsmns -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_bsubumnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsubumnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_bsubvmnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsubvmnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_bsupumnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsupumnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_bsupvmnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsupvmnc -tol=1.0E-20)
