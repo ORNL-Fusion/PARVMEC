@@ -77,7 +77,7 @@ namespace vmec_test {
         commandline_parser(const size_t argc,
                            const char * argv[],
                            const std::function<void(void)> help) :
-        commands(parse_commands(argc, argv)) {}
+        commands(parse_commands(argc, argv, help)) {}
 
 //------------------------------------------------------------------------------
 ///  @brief Check if command arg was set.
