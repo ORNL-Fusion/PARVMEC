@@ -45,12 +45,12 @@
 ///  @param[in] argv Array of arguments strings.
 //------------------------------------------------------------------------------
 int main(int argc, const char * argv[]) {
-    const wout_test::commandline_parser args(argc, argv, []() -> void {
+    const vmec_test::commandline_parser args(argc, argv, []() -> void {
 //                   "                                        ''                                      "
         std::cout << "                                                                                " << std::endl;
-        std::cout << "                                     DIFF WOUT                                  " << std::endl;
+        std::cout << "                                     WOUT DIFF                                  " << std::endl;
         std::cout << "                                                                                " << std::endl;
-        std::cout << "Usage: xdiff_wout [-arg][=option] ...                                           " << std::endl;
+        std::cout << "Usage: xwout_diff [-arg][=option] ...                                           " << std::endl;
         std::cout << "                                                                                " << std::endl;
         std::cout << "Options:                                                                        " << std::endl;
         std::cout << "All options are displayes as [arg][takesoption][Discription]                    " << std::endl;

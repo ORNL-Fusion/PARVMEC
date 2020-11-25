@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 3.14)
 
-project (parvmec C Fortran)
+project (parvmec C C++ Fortran)
+set (CMAKE_CXX_STANDARD 11)
 
 add_library (vmec)
 add_dependencies (vmec stell)
