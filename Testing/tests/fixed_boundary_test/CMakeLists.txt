@@ -65,3 +65,11 @@ add_test (NAME    vmec_fixed_boundary_check_DShear_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DShear -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_DWell_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DWell -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_fsql_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=fsql -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_fsqr_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=fsqr -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_fsqt_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=fsqt -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_fsqz_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=fsqz -tol=1.0E-20)
