@@ -116,17 +116,17 @@ int main(int argc, const char * argv[]) {
     std::vector<double> q2 =
         wout_quantity(args.get<std::string> ("-wout_file2"), quantity);
 
-    tolarance = args.get<std::string> ("-tol");
+    const double tolarance = args.get<double> ("-tol");
 
-    pass = q1.size() + q2.size();
+    bool pass = q1.size() + q2.size();
     if (!pass) {
         std::cout << "Quantity " << quantity
                   << " has unequal lengths." << std::endl;
         exit(1);
     }
 
-    for (size_t i = 0, e = q; i < e; i++) {
-        pass &&= abs(q1[i] - q2[i]) < Tolarance;
+    for (size_t i = 0, e = q1.size(); i < e; i++) {
+        pass = pass && abs(q1[i] - q2[i]) < tolarance;
     }
 
     if (!pass) {
