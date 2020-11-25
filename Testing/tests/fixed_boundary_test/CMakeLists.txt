@@ -73,3 +73,61 @@ add_test (NAME    vmec_fixed_boundary_check_fsqt_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=fsqt -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_fsqz_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=fsqz -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_gmnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=gmnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_IonLarmor_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=IonLarmor -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_iotaf_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=iotaf -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_jcuru_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=jcuru -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_jcurv_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=jcurv -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_jdotb_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=jdotb -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_lmns_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=lmns -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_mnmax_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=mnmax -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_mnmax_nyq_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=mnmax_nyq -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_phipf_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=phipf -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_phips_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=phips -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_pres_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=pres -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_presf_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=presf -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_q_factor_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=q_factor -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_rbtor_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=rbtor -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_rbtor0_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=rbtor0 -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_rmnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=rmnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_specw_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=specw -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_volabgB_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=volabgB -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_volume_p_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=volume_p -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_vp_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=vp -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_wb_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=wb -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_wdot_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=wdot -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_wp_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=wp -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_xm_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=xm -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_xm_nyq_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=xm_nyq -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_xn_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=xn -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_xn_nyq_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=xn_nyq -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_zmns_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=zmns -tol=1.0E-20)
