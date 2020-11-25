@@ -26,7 +26,7 @@ namespace vmec_test {
 ///  Parsed commands.
         const arg_map commands;
 ///  Help callback function.
-        const std::function<void(void)> help
+        const std::function<void(void)> help;
 
 //------------------------------------------------------------------------------
 ///  @brief Factory method to parse the commandline and produce the arguments.
