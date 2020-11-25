@@ -43,3 +43,25 @@ add_test (NAME    vmec_fixed_boundary_check_bsupumnc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsupumnc -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_bsupvmnc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bsupvmnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_buco_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=buco -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_bvco_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=bvco -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_chi_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=chi -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_chipf_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=chipf -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_currumnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=currumnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_currvmnc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=currvmnc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_DCurr_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DCurr -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_DGeod_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DGeod -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_DMerc_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DMerc -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_DShear_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DShear -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_DWell_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=input.test_serial.vmec -wout_file2=input.test_parallel.vmec -quantity=DWell -tol=1.0E-20)
