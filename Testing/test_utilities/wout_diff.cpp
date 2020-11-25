@@ -35,8 +35,48 @@
 //******************************************************************************
 
 #include <iostream>
+#include <vector>
+#include <netcdf.h>
 
 #include "vmec_test_commandline_parser.hpp"
+
+//------------------------------------------------------------------------------
+///  @brief Load a quantity from a wout file.
+///
+///  Quantites are loaded into a flat vector for rapid comparison.
+///
+///  @param[in] wout_file Wout file name.
+///  @param[in] name      Name of the wout file quantity.
+//------------------------------------------------------------------------------
+std::vector<double> wout_quantity(const std::string wout_file,
+                                  const std::string name) {
+    int ncid;
+    nc_open(wout_file.c_str(), NC_NOWRITE, &ncid);
+
+    int varid;
+    nc_inq_varid(ncid, name.c_str(), &varid);
+
+    int ndims;
+    nc_inq_varndims(ncid, varid, &ndims);
+
+    std::vector<int> dimids(ndims);
+    nc_inq_vardimid(ncid, varid, dimids.data());
+
+    size_t total_length = 0;
+    for (int dimid: dimids) {
+        size_t dim_length;
+        nc_inq_dimlen(ncid, dimid, &dim_length);
+
+        total_length += dim_length;
+    }
+
+    std::vector<double> buffer(total_length);
+    nc_get_var(ncid, varid, buffer.data());
+
+    nc_close(ncid);
+
+    return buffer;
+}
 
 //------------------------------------------------------------------------------
 ///  @brief Main test program.
@@ -62,8 +102,38 @@ int main(int argc, const char * argv[]) {
         std::cout << "                                                                                " << std::endl;
         std::cout << "  -quantity   Y Wout quantity to check.                                         " << std::endl;
         std::cout << "                                                                                " << std::endl;
+        std::cout << "  -tol        Y Tolarance value.                                                " << std::endl;
+        std::cout << "                                                                                " << std::endl;
         std::cout << std::endl;
 
-        exit(0);
+        exit(1);
     });
+
+    std::string quantity = args.get<std::string> ("-quantity");
+
+    std::vector<double> q1 =
+        wout_quantity(args.get<std::string> ("-wout_file1"), quantity);
+    std::vector<double> q2 =
+        wout_quantity(args.get<std::string> ("-wout_file2"), quantity);
+
+    tolarance = args.get<std::string> ("-tol");
+
+    pass = q1.size() + q2.size();
+    if (!pass) {
+        std::cout << "Quantity " << quantity
+                  << " has unequal lengths." << std::endl;
+        exit(1);
+    }
+
+    for (size_t i = 0, e = q; i < e; i++) {
+        pass &&= abs(q1[i] - q2[i]) < Tolarance;
+    }
+
+    if (!pass) {
+        std::cout << "Quantity " << quantity
+                  << " has unequal values." << std::endl;
+        exit(1);
+    }
+
+    exit(0);
 }
