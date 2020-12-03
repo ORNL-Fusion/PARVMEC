@@ -129,6 +129,9 @@ int main(int argc, const char * argv[]) {
 
     for (size_t i = 0, e = q1.size(); i < e; i++) {
         pass = pass && abs(q1[i] - q2[i]) < tolarance;
+        if (!pass) {
+            std::cout << abs(q1[i] - q2[i]) << std::endl;
+        }
     }
 
     if (!pass) {
