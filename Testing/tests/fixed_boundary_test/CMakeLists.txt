@@ -10,7 +10,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/input.test.vmec
 add_test (NAME    vmec_fixed_boundary_serial_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xvmec input.test_serial.vmec)
 add_test (NAME    vmec_fixed_boundary_parallel_test
-          COMMAND $<TARGET_PROPERTY:xvmec,MPIEXEC_EXECUTABLE> $<TARGET_PROPERTY:xvmec,MPIEXEC_NUMPROC_FLAG> 4 $<TARGET_PROPERTY:xvmec,MPI_OVERSUBSCRIBE_FLAG> $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xvmec input.test_parallel.vmec)
+          COMMAND $<TARGET_PROPERTY:stell,MPIEXEC_EXECUTABLE> $<TARGET_PROPERTY:stell,MPIEXEC_NUMPROC_FLAG> 4 $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xvmec input.test_parallel.vmec)
 
 #  Check woutfile to ensure that values match.
 add_test (NAME    vmec_fixed_boundary_check_aspect_test
