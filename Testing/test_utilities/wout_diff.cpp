@@ -63,14 +63,13 @@ std::vector<double> wout_quantity(const std::string wout_file,
     std::vector<int> dimids(ndims);
     nc_inq_vardimid(ncid, varid, dimids.data());
 
-    size_t total_length = 0;
+    size_t total_length = 1;
     for (int dimid: dimids) {
         size_t dim_length;
         nc_inq_dimlen(ncid, dimid, &dim_length);
 
-        total_length += dim_length;
+        total_length *= dim_length;
     }
-    total_length = std::max(total_length, static_cast<size_t> (1));
 
     std::vector<double> buffer(total_length);
     nc_get_var(ncid, varid, buffer.data());
