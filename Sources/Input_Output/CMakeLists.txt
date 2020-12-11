@@ -1,0 +1,25 @@
+target_sources(vmec
+               PRIVATE
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bss.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dump_output.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/elongation.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/eqfor.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fileout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/freeb_data.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fsym_fft.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fsym_invfft.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getbrho.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getcurmid.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/jxbforce.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mercier.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/perf2likwid.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/printout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/read_indata.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/readin.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/TestWout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/timer_sub.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_io.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmercier.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/write_dcon.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/wrout.f>
+)

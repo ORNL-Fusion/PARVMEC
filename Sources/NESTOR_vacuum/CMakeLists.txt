@@ -1,0 +1,20 @@
+target_sources(vmec
+               PRIVATE
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/analysum.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/analysum2.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/analyt.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/becoil.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/belicu.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bextern.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fouri.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fourp.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/greenf.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precal.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/scalpot.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/surface.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tolicu.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vac_persistent.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vacmod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vacmod0.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vacuum.f>
+)

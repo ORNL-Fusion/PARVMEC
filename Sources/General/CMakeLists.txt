@@ -1,0 +1,34 @@
+target_sources(vmec
+               PRIVATE
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/add_fluxes.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/alias.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/angle_constraints.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/aspectratio.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bcovar.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/blocktridiagonalsolver_bst.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/blocktridiagonalsolver.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/convert.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/csplinx.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/directaccess.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fbal.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/forces.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/funct3d.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/getfsq.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/jacobian.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lamcal.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precondn.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/realspace.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/residue.f90>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/scalfor.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/spectrum.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/symforce.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/symrzl.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tomnsp_mod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/totzsp_mod.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vforces.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_dim.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_main.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_params.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmec_persistent.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/xstuff.f>
+)
