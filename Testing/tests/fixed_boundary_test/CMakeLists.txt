@@ -109,8 +109,8 @@ add_test (NAME    vmec_fixed_boundary_check_rmnc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=rmnc -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_specw_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=specw -tol=1.0E-20)
-add_test (NAME    vmec_fixed_boundary_check_volabgB_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=volabgB -tol=1.0E-20)
+add_test (NAME    vmec_fixed_boundary_check_volavgB_test
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=volavgB -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_volume_p_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=volume_p -tol=1.0E-20)
 add_test (NAME    vmec_fixed_boundary_check_vp_test
