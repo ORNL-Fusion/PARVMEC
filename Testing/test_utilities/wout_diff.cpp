@@ -123,6 +123,7 @@ int main(int argc, const char * argv[]) {
     if (!pass) {
         std::cout << "Quantity " << quantity
                   << " has unequal lengths." << std::endl;
+        std::cout << q1.size() << " " << q2.size() << std::endl;
         exit(1);
     }
 
