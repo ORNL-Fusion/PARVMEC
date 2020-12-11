@@ -37,7 +37,7 @@ add_test (NAME    vmec_free_boundary_check_betatotal_test
 add_test (NAME    vmec_free_boundary_check_betaxis_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betaxis -tol=7.0E-17)
 add_test (NAME    vmec_free_boundary_check_bmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bmnc -tol=8.0E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bmnc -tol=2.0E-14)
 add_test (NAME    vmec_free_boundary_check_bsubsmns_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bsubsmns -tol=5.0E-14)
 add_test (NAME    vmec_free_boundary_check_bsubumnc_test
