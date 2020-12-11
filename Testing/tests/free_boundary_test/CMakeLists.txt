@@ -79,7 +79,7 @@ add_test (NAME    vmec_free_boundary_check_fsqt_test
 add_test (NAME    vmec_free_boundary_check_fsqz_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=fsqz -tol=1.0E-20)
 add_test (NAME    vmec_free_boundary_check_gmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=gmnc -tol=9.0E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=gmnc -tol=3.0E-14)
 add_test (NAME    vmec_free_boundary_check_IonLarmor_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=IonLarmor -tol=8.0E-17)
 add_test (NAME    vmec_free_boundary_check_iotaf_test
