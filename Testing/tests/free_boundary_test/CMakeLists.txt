@@ -47,7 +47,7 @@ add_test (NAME    vmec_free_boundary_check_bsubvmnc_test
 add_test (NAME    vmec_free_boundary_check_bsupumnc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bsupumnc -tol=4.0E-12)
 add_test (NAME    vmec_free_boundary_check_bsupvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bsupvmnc -tol=7.0E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bsupvmnc -tol=8.0E-14)
 add_test (NAME    vmec_free_boundary_check_buco_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=buco -tol=3.0E-17)
 add_test (NAME    vmec_free_boundary_check_bvco_test
