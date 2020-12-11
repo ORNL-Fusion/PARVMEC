@@ -70,7 +70,6 @@ std::vector<double> wout_quantity(const std::string wout_file,
 
         total_length *= dim_length;
     }
-    total_length = std::max(total_length, static_cast<size_t> (1));
 
     std::vector<double> buffer(total_length);
     nc_get_var(ncid, varid, buffer.data());
