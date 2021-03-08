@@ -113,6 +113,9 @@
 #endif
       REAL(dp) :: qfact(ns)
       LOGICAL :: lwrite
+      INTEGER :: max_ac_aux
+      INTEGER :: max_ai_aux
+      INTEGER :: max_am_aux
 !-----------------------------------------------
 !   L o c a l   P a r a m e t e r s
 !-----------------------------------------------
@@ -401,25 +404,21 @@
       CALL cdf_define(nwout, vn_ai, ai(0:j),
      1                dimname=(/'preset'/))
      
-      j = SIZE(am_aux_s)
-      CALL cdf_define(nwout, vn_am_aux_s, am_aux_s(1:j),
-     1                dimname=(/'ndfmax'/))
-      j = SIZE(am_aux_f)
-      CALL cdf_define(nwout, vn_am_aux_f, am_aux_f(1:j),
-     1                dimname=(/'ndfmax'/))
-      j = SIZE(ai_aux_s)
-      CALL cdf_define(nwout, vn_ai_aux_s, ai_aux_s(1:j),
-     1                dimname=(/'ndfmax'/))
-      j = SIZE(ai_aux_f)
-      CALL cdf_define(nwout, vn_ai_aux_f, ai_aux_f(1:j),
-     1                dimname=(/'ndfmax'/))
-      j = SIZE(ac_aux_s)
-      CALL cdf_define(nwout, vn_ac_aux_s, ac_aux_s(1:j),
-     1                dimname=(/'ndfmax'/))
-      j = SIZE(ac_aux_f)
-      CALL cdf_define(nwout, vn_ac_aux_f, ac_aux_f(1:j),
-     1                dimname=(/'ndfmax'/))
-
+      max_am_aux = minloc(am_aux_s(2:),dim=1)
+      CALL cdf_define(nwout, vn_am_aux_s, am_aux_s(1:max_am_aux),
+     &                dimname=(/'max_am_aux'/))
+      CALL cdf_define(nwout, vn_am_aux_f, am_aux_f(1:max_am_aux),
+     &                dimname=(/'max_am_aux'/))
+      max_ai_aux = minloc(ai_aux_s(2:),dim=1)
+      CALL cdf_define(nwout, vn_ai_aux_s, ai_aux_s(1:max_ai_aux),
+     &                dimname=(/'max_ai_aux'/))
+      CALL cdf_define(nwout, vn_ai_aux_f, ai_aux_f(1:max_ai_aux),
+     &                dimname=(/'max_ai_aux'/))
+      max_ac_aux = minloc(ac_aux_s(2:),dim=1)
+      CALL cdf_define(nwout, vn_ac_aux_s, ac_aux_s(1:max_ac_aux),
+     &                dimname=(/'max_ac_aux'/))
+      CALL cdf_define(nwout, vn_ac_aux_f, ac_aux_f(1:max_ac_aux),
+     &                dimname=(/'max_ac_aux'/))
 
       CALL cdf_define(nwout, vn_iotaf, iotaf(1:ns), 
      1                dimname=r1dim)
@@ -1253,18 +1252,12 @@
       j = SIZE(ai)-1
       CALL cdf_write(nwout, vn_ai, ai(0:j))
 
-      j = SIZE(am_aux_s)
-      CALL cdf_write(nwout, vn_am_aux_s, am_aux_s(1:j))
-      j = SIZE(am_aux_f)
-      CALL cdf_write(nwout, vn_am_aux_f, am_aux_f(1:j))
-      j = SIZE(ac_aux_s)
-      CALL cdf_write(nwout, vn_ac_aux_s, ac_aux_s(1:j))
-      j = SIZE(ac_aux_f)
-      CALL cdf_write(nwout, vn_ac_aux_f, ac_aux_f(1:j))
-      j = SIZE(ai_aux_s)
-      CALL cdf_write(nwout, vn_ai_aux_s, ai_aux_s(1:j))
-      j = SIZE(ai_aux_f)
-      CALL cdf_write(nwout, vn_ai_aux_f, ai_aux_f(1:j))
+      CALL cdf_write(nwout, vn_am_aux_s, am_aux_s(1:max_am_aux))
+      CALL cdf_write(nwout, vn_am_aux_f, am_aux_f(1:max_am_aux))
+      CALL cdf_write(nwout, vn_ac_aux_s, ac_aux_s(1:max_ac_aux))
+      CALL cdf_write(nwout, vn_ac_aux_f, ac_aux_f(1:max_ac_aux))
+      CALL cdf_write(nwout, vn_ai_aux_s, ai_aux_s(1:max_ai_aux))
+      CALL cdf_write(nwout, vn_ai_aux_f, ai_aux_f(1:max_ai_aux))
 
       CALL cdf_write(nwout, vn_iotaf, iotaf(1:ns))
       CALL cdf_write(nwout, vn_qfact, qfact(1:ns))
@@ -1295,12 +1288,12 @@
       CALL cdf_write(nwout, vn_overr, overr(1:ns))
 
 !     MERCIER_CRITERION
-      CALL cdf_write(nwout, vn_merc, Dmerc)
-      CALL cdf_write(nwout, vn_mshear, Dshear)
-      CALL cdf_write(nwout, vn_mwell, Dwell)
-      CALL cdf_write(nwout, vn_mcurr, Dcurr)
-      CALL cdf_write(nwout, vn_mgeo, Dgeod)
-      CALL cdf_write(nwout, vn_equif, equif)
+      CALL cdf_write(nwout, vn_merc, Dmerc(1:ns))
+      CALL cdf_write(nwout, vn_mshear, Dshear(1:ns))
+      CALL cdf_write(nwout, vn_mwell, Dwell(1:ns))
+      CALL cdf_write(nwout, vn_mcurr, Dcurr(1:ns))
+      CALL cdf_write(nwout, vn_mgeo, Dgeod(1:ns))
+      CALL cdf_write(nwout, vn_equif, equif(1:ns))
 
       CALL cdf_write(nwout, vn_fsq, fsqt(1:nstore_seq))
       CALL cdf_write(nwout, vn_wdot, wdot(1:nstore_seq))  
