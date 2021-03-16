@@ -299,7 +299,7 @@ C-----------------------------------------------
 !     b poloidals (cylindrical estimates)
 !
 !      rcen = p5*(router + rinner)               !geometric center
-      rcen = 0.0 !  MRC: Zero this for now so it has an initalized value.
+      rcen = 1.0 !  MRC: Zero this for now so it has an initalized value.
                  !       Eventuall we should figure out the correct value for
                  !       this.
       n = 0
@@ -638,7 +638,7 @@ C-----------------------------------------------
       er = sigr1 + sigz1
       rlao = volume_p/(twopi*cross_area_p)       !LAO, NUCL.FUS.25(1985)1421
       flao = rshaf/rlao
-!      fgeo = rshaf/rcen
+      fgeo = rshaf/rcen
 
       smaleli = factor*sumbpol
       vvc_smaleli = smaleli ! Save result for v3fit.
