@@ -192,12 +192,20 @@ C-----------------------------------------------
       DO i = nsmin, nsmax
          si = hs*ABS(i - 1.5_dp)
          pshalf(:,i) = SQRT(si)
+         shalf(i:nrzt:ns) = SQRT(si)
          si = hs*(i - 1)
          psqrts(:,i) = SQRT(si)
+         sqrts(i:nrzt:ns) = SQRT(si)
          bdamp(i) = 2*pdamp*(1 - si)
       END DO
 
       psqrts(:,ns) = 1     !!Avoid round-off
+
+      sqrts(ns:nrzt:ns) = 1     !!Avoid round-off
+      shalf(nrzt + 1) = 1
+      sqrts(nrzt + 1) = 1
+      CALL Gather1XArray(shalf)
+      CALL Gather1XArray(sqrts)
 
       nsmin = MAX(2, t1lglob)
       nsmax = t1rglob
