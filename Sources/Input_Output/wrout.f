@@ -32,31 +32,31 @@
 #ifdef NETCDF      
       USE ezcdf
       USE read_wout_mod, ONLY: Compute_Currents,
-	1  vn_version, vn_extension, vn_mgrid,
-     1  vn_magen, vn_therm, vn_gam, vn_maxr, vn_minr, vn_maxz, vn_fp,
-     2  vn_radnod, vn_polmod, vn_tormod, vn_maxmod, vn_maxit, vn_actit,
-     3  vn_asym, vn_recon, vn_free, vn_error, vn_aspect, vn_beta, 
-     4  vn_pbeta, vn_tbeta, vn_abeta, vn_b0, vn_rbt0, vn_maxmod_nyq,
-     5  vn_rbt1, vn_sgs, vn_lar, vn_modB, vn_ctor, vn_amin, vn_Rmaj, 
-     5  vn_potsin, vn_potcos, vn_maxpot, vn_xmpot, vn_xnpot,             !diagno/extender output (SPH071414)
-     6  vn_vol, vn_mse, vn_thom, vn_ac, vn_ai, vn_am, vn_rfp, 
-     6  vn_pmass_type, vn_pcurr_type, vn_piota_type,
-     6  vn_am_aux_s, vn_am_aux_f, vn_ac_aux_s, vn_ac_aux_f, 
-     6  vn_ai_aux_s, vn_ai_aux_f, 
-     6  vn_ftolv, vn_fsqr, vn_fsqz, vn_fsql,
-     7  vn_pmod, vn_tmod, vn_pmod_nyq, vn_tmod_nyq,
-     7  vn_racc, vn_zacs, vn_racs, vn_zacc, vn_iotaf, vn_qfact,
-     8  vn_presf, vn_phi, vn_phipf, vn_jcuru, vn_jcurv, vn_iotah,
-     8  vn_chi, vn_chipf, 
-     9  vn_mass, vn_presh, vn_betah, vn_buco, vn_bvco, vn_vp, vn_specw, 
-     A  vn_phip, vn_jdotb, vn_bdotb, vn_overr, vn_bgrv, vn_merc, 
-     B  vn_mshear, vn_mwell, vn_mcurr, vn_mgeo, vn_equif, vn_fsq, 
-     C  vn_wdot, vn_extcur, vn_curlab, vn_rmnc, vn_zmns, vn_lmns,  
-     D  vn_gmnc, vn_bmnc, vn_bsubumnc, vn_bsubvmnc, vn_bsubsmns, 
-     E  vn_bsupumnc, vn_bsupvmnc, vn_rmns, vn_zmnc, vn_lmnc, vn_gmns,
-     F  vn_bmns, vn_bsubumns, vn_bsubvmns, vn_bsubsmnc, vn_bsupumns, 
-     G  vn_bsupvmns, vn_rbc, vn_zbs, vn_rbs, vn_zbc,
-     H  ln_version, ln_extension, ln_mgrid,
+     &  vn_version, vn_extension, vn_mgrid,
+     &  vn_magen, vn_therm, vn_gam, vn_maxr, vn_minr, vn_maxz, vn_fp,
+     &  vn_radnod, vn_polmod, vn_tormod, vn_maxmod, vn_maxit, vn_actit,
+     &  vn_asym, vn_recon, vn_free, vn_error, vn_aspect, vn_beta,
+     &  vn_pbeta, vn_tbeta, vn_abeta, vn_b0, vn_rbt0, vn_maxmod_nyq,
+     &  vn_rbt1, vn_sgs, vn_lar, vn_modB, vn_ctor, vn_amin, vn_Rmaj,
+     &  vn_potsin, vn_potcos, vn_maxpot, vn_xmpot, vn_xnpot,             !diagno/extender output (SPH071414)
+     &  vn_vol, vn_mse, vn_thom, vn_ac, vn_ai, vn_am, vn_rfp,
+     &  vn_pmass_type, vn_pcurr_type, vn_piota_type,
+     &  vn_am_aux_s, vn_am_aux_f, vn_ac_aux_s, vn_ac_aux_f,
+     &  vn_ai_aux_s, vn_ai_aux_f,
+     &  vn_ftolv, vn_fsqr, vn_fsqz, vn_fsql,
+     &  vn_pmod, vn_tmod, vn_pmod_nyq, vn_tmod_nyq,
+     &  vn_racc, vn_zacs, vn_racs, vn_zacc, vn_iotaf, vn_qfact,
+     &  vn_presf, vn_phi, vn_phipf, vn_jcuru, vn_jcurv, vn_iotah,
+     &  vn_chi, vn_chipf, vn_moveaxis,
+     &  vn_mass, vn_presh, vn_betah, vn_buco, vn_bvco, vn_vp, vn_specw,
+     &  vn_phip, vn_jdotb, vn_bdotb, vn_overr, vn_bgrv, vn_merc,
+     &  vn_mshear, vn_mwell, vn_mcurr, vn_mgeo, vn_equif, vn_fsq,
+     &  vn_wdot, vn_extcur, vn_curlab, vn_rmnc, vn_zmns, vn_lmns,
+     &  vn_gmnc, vn_bmnc, vn_bsubumnc, vn_bsubvmnc, vn_bsubsmns,
+     &  vn_bsupumnc, vn_bsupvmnc, vn_rmns, vn_zmnc, vn_lmnc, vn_gmns,
+     &  vn_bmns, vn_bsubumns, vn_bsubvmns, vn_bsubsmnc, vn_bsupumns,
+     &  vn_bsupvmns, vn_rbc, vn_zbs, vn_rbs, vn_zbc,
+     &  ln_version, ln_extension, ln_mgrid,
 
      &  vn_bsubumnc_sur, vn_bsubvmnc_sur,                      !MRC 10-15-15
      &  vn_bsupumnc_sur, vn_bsupvmnc_sur,
@@ -331,6 +331,7 @@
       CALL cdf_define(nwout, vn_asym, lasym)
       CALL cdf_define(nwout, vn_recon, lrecon)
       CALL cdf_define(nwout, vn_free, lfreeb)
+      CALL cdf_define(nwout, vn_moveaxis, lmove_axis)
       CALL cdf_define(nwout, vn_rfp, lrfp)
       CALL cdf_define(nwout, vn_error, ier_flag)
       CALL cdf_define(nwout, vn_aspect, aspect)
@@ -648,6 +649,7 @@
       CALL cdf_write(nwout, vn_asym, lasym)
       CALL cdf_write(nwout, vn_recon, lrecon)
       CALL cdf_write(nwout, vn_free, lfreeb)
+      CALL cdf_write(nwout, vn_moveaxis, lmove_axis)
       CALL cdf_write(nwout, vn_rfp, lrfp)
       CALL cdf_write(nwout, vn_error, ier_flag)
 !

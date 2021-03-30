@@ -402,6 +402,7 @@ INTEGER, INTENT(IN) :: ns, nzeta, ntheta3
     IF (ALLOCATED(blkdisp))      DEALLOCATE(blkdisp)
     IF (ALLOCATED(nsrcounts))    DEALLOCATE(nsrcounts)
     IF (ALLOCATED(nsdisp))       DEALLOCATE(nsdisp)
+    NS_RESLTN = 0
 #endif
     END SUBROUTINE FinalizeSurfaceComm
   !--------------------------------------------------------------------------

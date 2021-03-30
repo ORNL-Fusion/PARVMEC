@@ -82,7 +82,9 @@ C-----------------------------------------------
       rmncc => rzl_array(:,:,:,rcc)
       zmnsc => rzl_array(:,:,:,zsc+ntmax) 
       IF (lasym) THEN
-         rmaga => rzl_array(1,:,0,rcs)
+         IF (lthreed) THEN
+            rmaga => rzl_array(1,:,0,rcs)
+         END IF
          zmaga => rzl_array(1,:,0,zcc+ntmax)
       END IF
 
@@ -574,8 +576,13 @@ C-----------------------------------------------
          tz = t1
          IF (.NOT.lthreed) tz = 0
          IF (lasym) THEN
-             WRITE (nthreed, 820) n, t1*rmags(n1),
-     1          tz*zmags(n1), tz*rmaga(n1), t1*zmaga(n1)
+            IF (lthreed) THEN
+                WRITE (nthreed, 820) n, t1*rmags(n1),
+     1             tz*zmags(n1), tz*rmaga(n1), t1*zmaga(n1)
+            ELSE
+                WRITE (nthreed, 820) n, t1*rmags(n1),
+     1             tz*zmags(n1), 0.0, t1*zmaga(n1)
+            END IF
          ELSE
              WRITE (nthreed, 820) n, t1*rmags(n1),
      1          tz*zmags(n1)
