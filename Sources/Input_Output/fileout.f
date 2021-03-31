@@ -108,7 +108,7 @@ C-----------------------------------------------
          CALL Parallel2Serial4X(pscalxc,scalxc)
          CALL second0(tfileoff)
       END IF
-      fo_prepare_time = fo_prepare_time + (tfileoff-tfileon)
+!      fo_prepare_time = fo_prepare_time + (tfileoff-tfileon)
 
 !      ORIGPARVMEC=PARVMEC
 !      PARVMEC=.FALSE.
