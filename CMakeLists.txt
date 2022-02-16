@@ -5,6 +5,12 @@ project (parvmec C CXX Fortran)
 add_library (vmec)
 
 target_link_libraries (vmec PUBLIC stell)
+target_include_directories (vmec
+
+                            PUBLIC
+
+                            $<TARGET_PROPERTY:vmec,BINARY_DIR>
+)
 
 add_executable (xvmec)
 target_link_libraries (xvmec PUBLIC vmec)
