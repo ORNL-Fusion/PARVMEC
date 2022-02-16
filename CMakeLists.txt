@@ -1,17 +1,19 @@
 cmake_minimum_required (VERSION 3.14)
 
 project (parvmec C CXX Fortran)
-set (CMAKE_CXX_STANDARD 11)
 
 add_library (vmec)
-add_dependencies (vmec stell)
 
-target_link_libraries (vmec stell)
-target_include_directories (vmec PUBLIC $<TARGET_PROPERTY:stell,BINARY_DIR>)
+target_link_libraries (vmec PUBLIC stell)
+target_include_directories (vmec
+
+                            PUBLIC
+
+                            $<TARGET_PROPERTY:vmec,BINARY_DIR>
+)
 
 add_executable (xvmec)
-add_dependencies (xvmec vmec)
-target_link_libraries (xvmec vmec)
+target_link_libraries (xvmec PUBLIC vmec)
 
 add_subdirectory (Sources)
 
@@ -21,8 +23,8 @@ add_subdirectory (Sources)
 
 #  Build test utilities.
 add_executable (xwout_diff)
-add_dependencies (xwout_diff stell)
 
-target_link_libraries (xwout_diff stell)
+target_link_libraries (xwout_diff PUBLIC stell)
+target_compile_features (xwout_diff PRIVATE cxx_std_11)
 
 add_subdirectory (Testing)
