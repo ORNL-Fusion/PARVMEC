@@ -57,7 +57,11 @@ C-----------------------------------------------
       END IF
 
       dnorm  = one/(nzeta*(ntheta2 - 1))
-      dnorm3 = one/(nzeta*ntheta3)
+      if (lasym) then
+         dnorm3 = one/(nzeta*ntheta1)
+      else
+         dnorm3 = one/(nzeta*(ntheta2 - 1))
+      end if
 
       mscale(0) = 1;  nscale(0) = 1
 !     mscale(0) = osqrt2;  nscale(0) = osqrt2    !versions < 6.9, incorrectly used osqrt2
