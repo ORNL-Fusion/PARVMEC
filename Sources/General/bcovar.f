@@ -878,7 +878,7 @@
      &                    ABS(azd(js,1)/aznorm))*tcon_mul*(32*hs)**2
          END DO
          tcon(ns) = p5*tcon(ns-1)
-         IF (lasym) tcon = p5*tcon
+         !IF (lasym) tcon = p5*tcon
 #endif
       ENDIF
 
