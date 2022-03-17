@@ -56,7 +56,41 @@ C-----------------------------------------------
          STOP 'allocation error in fixaray: istat2'
       END IF
 
+      ! dnorm is the normalization factor for Fourier integrals
+      ! on the reduced poloidal interval [0, pi].
+      !
+      ! All forward Fourier transforms in VMEC are performed as follows:
+      ! 1. Decompose the function to be transformed into
+      !    an even-parity contribution and an odd-parity contribution (symforce).
+      ! 2. Fourier-transform the two definite-parity contributions
+      !    separately over the reduced poloidal interval [0, pi] (tomnsp*).
+      !
+      ! Inverse Fourier transforms are performed as follows:
+      ! 1. Inverse-Fourier-transform the even-parity and odd-parity
+      !    contributions separately (totzsp*)
+      !    into the reduced poloidal interval [0, pi].
+      ! 2. Combine the definite-parity contributions into
+      !    the full poloidal interval [0, 2 pi[ (symrzl).
+      !
+      ! In the symmetric case, only contributions with that parity
+      ! which a given quantity has under the assumption of symmetry,
+      ! are transformed. This allows to skip the sym* routines
+      ! in the symmetric case.
       dnorm  = one/(nzeta*(ntheta2 - 1))
+
+      ! dnorm3 is the normalization factor for the surface-averaging integrals.
+      ! These integrals are always performed in realspace
+      ! and thus, they need to adapt to the number of poloidal grid points.
+      ! In the asymmetric case, there are ntheta1 grid points spanning [0, 2 pi[.
+      ! In the  symmetric case, there are ntheta2 grid points spanning [0,   pi].
+      !
+      ! In the asymmetric case, the integral is performed
+      ! over the full period of the poloidal interval.
+      ! Thus, the trapezoidal rule applied here does not need
+      ! the factors of 1/2 at the endpoints.
+      ! In the symmetric case, the integral is performed
+      ! over the reduced poloidal interval, which is not a periodic domain anymore.
+      ! Thus, the factors 1/2 have to be taken into account at the endpoints.
       if (lasym) then
          dnorm3 = one/(nzeta*ntheta1)
       else
