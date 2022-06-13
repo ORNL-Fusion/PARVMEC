@@ -119,7 +119,7 @@ int main(int argc, const char * argv[]) {
 
     const double tolarance = args.get<double> ("-tol");
 
-    bool pass = q1.size() + q2.size();
+    bool pass = q1.size() == q2.size();
     if (!pass) {
         std::cout << "Quantity " << quantity
                   << " has unequal lengths." << std::endl;
