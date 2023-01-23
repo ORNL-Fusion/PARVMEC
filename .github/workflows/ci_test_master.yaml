@@ -1,4 +1,4 @@
-name: Continuous Integration Test
+name: Continuous Integration Test Master
 on:
     workflow_dispatch:
     push:
