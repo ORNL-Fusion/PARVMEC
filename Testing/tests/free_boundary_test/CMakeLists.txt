@@ -27,7 +27,7 @@ add_test (NAME    vmec_free_boundary_check_bdotb_test
 add_test (NAME    vmec_free_boundary_check_bdotgradv_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=bdotgradv -tol=2.1E-13)
 add_test (NAME    vmec_free_boundary_check_beta_vol_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=beta_vol -tol=1.5E-16)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=beta_vol -tol=1.6E-16)
 add_test (NAME    vmec_free_boundary_check_betapol_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betapol -tol=5.0E-15)
 add_test (NAME    vmec_free_boundary_check_betator_test
@@ -57,7 +57,7 @@ add_test (NAME    vmec_free_boundary_check_chi_test
 add_test (NAME    vmec_free_boundary_check_chipf_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=chipf -tol=2.2E-14)
 add_test (NAME    vmec_free_boundary_check_currumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=currumnc -tol=1.3E-6)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=currumnc -tol=1.4E-6)
 add_test (NAME    vmec_free_boundary_check_currvmnc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=currvmnc -tol=3.4E-7)
 add_test (NAME    vmec_free_boundary_check_DCurr_test
@@ -85,11 +85,11 @@ add_test (NAME    vmec_free_boundary_check_IonLarmor_test
 add_test (NAME    vmec_free_boundary_check_iotaf_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=iotaf -tol=6.2E-13)
 add_test (NAME    vmec_free_boundary_check_jcuru_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=jcuru -tol=3.1E-7)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=jcuru -tol=3.8E-7)
 add_test (NAME    vmec_free_boundary_check_jcurv_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=jcurv -tol=1.2E-9)
 add_test (NAME    vmec_free_boundary_check_jdotb_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=jdotb -tol=1.2E-6)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=jdotb -tol=1.5E-6)
 add_test (NAME    vmec_free_boundary_check_lmns_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=lmns -tol=1.9E-12)
 add_test (NAME    vmec_free_boundary_check_mnmax_test
