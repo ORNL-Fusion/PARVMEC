@@ -1,0 +1,69 @@
+name: Continuous Integration Test
+on:
+    workflow_dispatch:
+    push:
+    pull_request:
+jobs:
+    ci_test:
+        strategy:
+            matrix:
+                os: [macos-latest, unbuntu-latest]
+                mode: [Release, Debug]
+        runs-on: ${{matrix.os}}
+        step:
+            - name: CPU Info Mac
+              if: ${{matrix.os == 'macos-latest'}}
+              run: |
+                sysctl -n machdep.cpu.brand_string
+                sysctl -n machdep.cpu.features
+                (echo "Number of Cores:"; sysctl -n machdep.cpu.core_count) |tr '\n' '\t' && echo ''
+            - name CPI Info Linux
+              if: ${{matrix.os == 'unbuntu-latest'}}
+              run: awk '{if ($0=="") exit; print $0}' /proc/cpuinfo
+            - name: Clone Repo
+              shell: bash
+              working-directory: ${{runner.workspace}}
+              run: git clone https://github.com/ORNL-Fusion/Stellarator-Tools.git ${{runner.workspace}}/Stellarator-Tools
+            - name: Create build directory.
+              working-directory: ${{runner.workspace}}/Stellarator-Tools
+              run: cmake -E make_directory build
+            - name: Install Libraries Mac
+              if: ${{matrix.os == 'macos-latest'}}
+              shell: bash
+              run: |
+                brew install netcdf
+                brew install netcdf-fortran
+                brew install open-mpi
+                brew install scalapack
+            - name: Install Libraries Linux
+              if: ${{matrix.os == 'unbuntu-latest'}}
+              shell: bash
+              run: |
+                sudo apt update
+                sudo apt-get install libnetcdf-dev
+                sudo apt-get install libnetcdff-dev
+                sudo apt-get install libopenmpi-dev
+                sudo apt-get install libscalapack-openmpi-dev
+            - name: Configure CMake Mac
+              if: ${{matrix.os == 'macos-latest'}}
+              shell: bash
+              working-directory: ${{runner.workspace}}/Stellarator-Tools/build
+              run: cmake -DCMAKE_BUILD_TYPE=${{matrix.node}} -DCMAKE_Fortran_COMPILER=/usr/local/opt/gfortran/bin/gfortran -DBUILD_TAG_PARVMEC=${{github.ref_name}} -DUSE_FAST_COPY=ON -DUSE_PROFILER=ON ${{runner.workspace}}/Stellarator-Tools/
+            - name: Configure CMake Linux
+              shell: bash
+              working-directory: ${{runner.workspace}}/Stellarator-Tools/build
+              run: cmake -DCMAKE_BUILD_TYPE=${{matrix.node}} -DBUILD_TAG_PARVMEC=${{github.ref_name}} -DUSE_FAST_COPY=ON -DUSE_PROFILER=ON ${{runner.workspace}}/Stellarator-Tools/
+            - name: Build
+              shell: bash
+              working-directory: ${{runner.workspace}}/Stellarator-Tools/build
+              run: make VERBOSE=1
+            - name: Test
+              shell: bash
+              working-directory: ${{runner.workspace}}/Stellarator-Tools/build
+              run: make test
+            - name: Show Log
+              if: failure()
+              shell: bash
+              working-directory: ${{runner.workspace}}/Stellarator-Tools/build/Testing/Temporary
+              run: cat LastTest.log
+
