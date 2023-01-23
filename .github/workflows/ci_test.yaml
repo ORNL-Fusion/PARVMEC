@@ -2,13 +2,13 @@ name: Continuous Integration Test
 on:
     workflow_dispatch:
     push:
-    pull_request:
 jobs:
     ci_test:
         strategy:
             matrix:
                 os: [macos-latest, unbuntu-latest]
                 mode: [Release, Debug]
+                branch: [master, master_dev]
         runs-on: ${{matrix.os}}
         steps:
             - name: CPU Info Mac
@@ -17,7 +17,7 @@ jobs:
                 sysctl -n machdep.cpu.brand_string
                 sysctl -n machdep.cpu.features
                 (echo "Number of Cores:"; sysctl -n machdep.cpu.core_count) |tr '\n' '\t' && echo ''
-            - name: CPI Info Linux
+            - name: CPU Info Linux
               if: ${{matrix.os == 'unbuntu-latest'}}
               run: awk '{if ($0=="") exit; print $0}' /proc/cpuinfo
             - name: Clone Repo
@@ -48,12 +48,12 @@ jobs:
               if: ${{matrix.os == 'macos-latest'}}
               shell: bash
               working-directory: ${{runner.workspace}}/Stellarator-Tools/build
-              run: cmake -DCMAKE_BUILD_TYPE=${{matrix.mode}} -DCMAKE_Fortran_COMPILER=/usr/local/opt/gfortran/bin/gfortran -DBUILD_BOOZ_XFORM=ON -DBUILD_V3FIT=ON -DBUILD_V3RFUN=ON -DBUILD_SIESTA=ON -DBUILD_LGRID=ON -DBUILD_SURFACE=ON -DBUILD_BMW=ON -DBUILD_PARVMEC=ON -DBUILD_DESCUR=ON -DBUILD_TAG_PARVMEC=${{github.ref_name}} -DUSE_FAST_COPY=ON -DUSE_PROFILER=ON ${{runner.workspace}}/Stellarator-Tools/
+              run: cmake -DCMAKE_BUILD_TYPE=${{matrix.mode}} -DCMAKE_Fortran_COMPILER=/usr/local/opt/gfortran/bin/gfortran -DBUILD_BOOZ_XFORM=ON -DBUILD_V3FIT=ON -DBUILD_V3RFUN=ON -DBUILD_SIESTA=ON -DBUILD_LGRID=ON -DBUILD_SURFACE=ON -DBUILD_BMW=ON -DBUILD_PARVMEC=ON -DBUILD_DESCUR=ON -DBUILD_TAG_BOOZ_XFORM=${{matrix.branch}} -DBUILD_TAG_V3FIT=${{matrix.branch}} -DBUILD_TAG_V3RFUN=${{matrix.branch}} -DBUILD_TAG_SIESTA=${{matrix.branch}} -DBUILD_TAG_LGRID=${{github.ref_name}} -DBUILD_TAG_SURFACE=${{matrix.branch}} -DBUILD_TAG_BMW=${{matrix.branch}} -DBUILD_TAG_LIBSTELL=${{matrix.branch}} -DBUILD_TAG_MAKEGRID=${{matrix.branch}} -DBUILD_TAG_PARVMEC=${{github.ref_name}} -DBUILD_TAG_DESCUR=${{matrix.branch}} -DUSE_FAST_COPY=ON -DUSE_PROFILER=ON ${{runner.workspace}}/Stellarator-Tools/
             - name: Configure CMake Linux
               if: ${{matrix.os == 'unbuntu-latest'}}
               shell: bash
               working-directory: ${{runner.workspace}}/Stellarator-Tools/build
-              run: cmake -DCMAKE_BUILD_TYPE=${{matrix.mode}} -DBUILD_BOOZ_XFORM=ON -DBUILD_V3FIT=ON -DBUILD_V3RFUN=ON -DBUILD_SIESTA=ON -DBUILD_LGRID=ON -DBUILD_SURFACE=ON -DBUILD_BMW=ON -DBUILD_PARVMEC=ON -DBUILD_DESCUR=ON -DBUILD_TAG_PARVMEC=${{github.ref_name}} -DUSE_FAST_COPY=ON -DUSE_PROFILER=ON ${{runner.workspace}}/Stellarator-Tools/
+              run: cmake -DCMAKE_BUILD_TYPE=${{matrix.mode}} -DBUILD_BOOZ_XFORM=ON -DBUILD_V3FIT=ON -DBUILD_V3RFUN=ON -DBUILD_SIESTA=ON -DBUILD_LGRID=ON -DBUILD_SURFACE=ON -DBUILD_BMW=ON -DBUILD_PARVMEC=ON -DBUILD_DESCUR=ON -DBUILD_TAG_BOOZ_XFORM=${{matrix.branch}} -DBUILD_TAG_V3FIT=${{matrix.branch}} -DBUILD_TAG_V3RFUN=${{matrix.branch}} -DBUILD_TAG_SIESTA=${{matrix.branch}} -DBUILD_TAG_LGRID=${{github.ref_name}} -DBUILD_TAG_SURFACE=${{matrix.branch}} -DBUILD_TAG_BMW=${{matrix.branch}} -DBUILD_TAG_LIBSTELL=${{matrix.branch}} -DBUILD_TAG_MAKEGRID=${{matrix.branch}} -DBUILD_TAG_PARVMEC=${{github.ref_name}} -DBUILD_TAG_DESCUR=${{matrix.branch}} -DUSE_FAST_COPY=ON -DUSE_PROFILER=ON ${{runner.workspace}}/Stellarator-Tools/
             - name: Build
               shell: bash
               working-directory: ${{runner.workspace}}/Stellarator-Tools/build
