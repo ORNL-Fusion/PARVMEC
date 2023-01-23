@@ -10,7 +10,7 @@ jobs:
                 os: [macos-latest, unbuntu-latest]
                 mode: [Release, Debug]
         runs-on: ${{matrix.os}}
-        step:
+        steps:
             - name: CPU Info Mac
               if: ${{matrix.os == 'macos-latest'}}
               run: |
