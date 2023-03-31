@@ -102,7 +102,7 @@ C-----------------------------------------------
       info = 0
       call dgetrs('No transpose', mnpd2, 1, amatrix, mnpd2, 
      &            ipiv, potvac, mnpd2, info)
-      IF (info .ne. 0) PRINT *, ' dgetrf error in scalpot'
+      IF (info .ne. 0) PRINT *, ' dgetrs error in scalpot'
       CALL second0(toff)
       timer_vac(tsolver) = timer_vac(tsolver) + (toff-ton)
       solver_time = solver_time + (toff - ton)
