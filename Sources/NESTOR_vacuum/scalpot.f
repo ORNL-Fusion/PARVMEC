@@ -15,6 +15,9 @@ C-----------------------------------------------
       REAL(dp), ALLOCATABLE :: grpmn(:), green(:), gstore(:)
       REAL(dp), ALLOCATABLE :: greenp(:,:)
       REAL(dp) :: ton, toff, tonscal
+
+      integer :: info
+
 C-----------------------------------------------
       CALL second0(tonscal)
 
@@ -108,6 +111,10 @@ C-----------------------------------------------
          CALL fouri (grpmn, gstore, amatrix, amatsav, bvec, 
      &               bvecsav, ndim)
          DEALLOCATE (green, greenp, gstore)
+
+         info = 0
+         call dgetrf(mnpd2, mnpd2, amatsav, mnpd2, ipiv, info)
+         IF (info .ne. 0) PRINT *, ' dgetrf error in scalpot'
 
       END IF
 
