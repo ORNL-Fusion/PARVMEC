@@ -1,4 +1,4 @@
-      SUBROUTINE vacuum_par (rmnc, rmns, zmns, zmnc, xm, xn, 
+      SUBROUTINE vacuum_par (rmnc, rmns, zmns, zmnc, xm, xn,
      &                       plascur, rbtor, wint, ns, ivac_skip,
      &                       ivac, mnmax, ier_flag, lscreen)
       USE vacmod
@@ -100,7 +100,7 @@ C-----------------------------------------------
 
       ton = toff
       info = 0
-      call dgetrs('No transpose', mnpd2, 1, amatrix, mnpd2, 
+      CALL dgetrs('No transpose', mnpd2, 1, amatrix, mnpd2,
      &            ipiv, potvac, mnpd2, info)
       IF (info .ne. 0) PRINT *, ' dgetrs error in scalpot'
       CALL second0(toff)
@@ -147,7 +147,7 @@ C-----------------------------------------------
          det = one/(guu_b(i)*hvv-huv*huv)
          bsupu_sur(i) = (hvv*bsubu_sur(i)-huv*bsubv_sur(i))*det         !Contravariant components
          bsupv_sur(i) = ((-huv*bsubu_sur(i))+guu_b(i)*bsubv_sur(i))*det
-         bsqvac(i) = p5*(bsubu_sur(i)*bsupu_sur(i) 
+         bsqvac(i) = p5*(bsubu_sur(i)*bsupu_sur(i)
      &             +     bsubv_sur(i)*bsupv_sur(i))                     !.5*|Bvac|**2
          brv(i) = rub(i)*bsupu_sur(i) + rvb(i)*bsupv_sur(i)
          bphiv(i) = r1b(i)*bsupv_sur(i)
@@ -233,7 +233,7 @@ C-----------------------------------------------
 
       DEALLOCATE (amatrix, potu, potv, stat=i)
       IF (i .NE. 0) STOP 'Deallocation error in vacuum'
-      
+
       CALL second0(ton)
 
       IF (vlactive) THEN
@@ -251,7 +251,7 @@ C-----------------------------------------------
       END SUBROUTINE vacuum_par
 
 
-      SUBROUTINE vacuum(rmnc, rmns, zmns, zmnc, xm, xn, 
+      SUBROUTINE vacuum(rmnc, rmns, zmns, zmnc, xm, xn,
      &                  plascur, rbtor, wint, ns, ivac_skip, ivac,
      &                  mnmax, ier_flag, lscreen)
       USE vacmod
@@ -280,7 +280,7 @@ C-----------------------------------------------
 
       tmpwint(:) = wint(ns, :)
 
-      CALL vacuum_par (rmnc, rmns, zmns, zmnc, xm, xn, 
+      CALL vacuum_par (rmnc, rmns, zmns, zmnc, xm, xn,
      &                 plascur, rbtor, tmpwint, ns, ivac_skip,
      &                 ivac, mnmax, ier_flag, lscreen)
 
