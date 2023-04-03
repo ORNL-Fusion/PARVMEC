@@ -17,7 +17,7 @@ C-----------------------------------------------
      1    DEALLOCATE (rmn_bdy, zmn_bdy, stat=istat2)
 
       IF (ALLOCATED(amatsav)) THEN
-     &    DEALLOCATE (amatsav, bvecsav, potvac, bsqsav,
+          DEALLOCATE (amatsav, bvecsav, potvac, bsqsav,
      &                raxis_nestor, zaxis_nestor, stat=istat3)
           DEALLOCATE (ipiv, stat=istat4)
       END IF
