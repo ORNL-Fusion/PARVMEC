@@ -17,7 +17,7 @@ target_link_libraries (xvmec PUBLIC vmec)
 
 add_subdirectory (Sources)
 
-install (TARGETS vmec)
+install (TARGETS xvmec)
 
 ################################################################################
 #  Testing                                                                     #
