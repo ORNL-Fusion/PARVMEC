@@ -32,7 +32,7 @@ jobs:
               run: |
                 brew install netcdf
                 brew install netcdf-fortran
-                brew install open-mpi@4.1.4
+                brew install mpich
                 brew install scalapack
             - name: Install Libraries Linux
               if: ${{matrix.os == 'ubuntu-latest'}}
