@@ -30,7 +30,7 @@ jobs:
               if: ${{matrix.os == 'macos-latest'}}
               shell: bash
               run: |
-                brew install netcdf
+                brew install gcc@12
                 brew install netcdf-fortran
                 brew install scalapack
             - name: Install Libraries Linux
