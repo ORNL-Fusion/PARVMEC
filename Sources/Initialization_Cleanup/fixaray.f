@@ -115,9 +115,9 @@ C-----------------------------------------------
 !  Special case the Pi angle.
             IF (i .eq. ntheta2) THEN
                 IF (MOD(m, 2) .eq. 0) THEN
-                   cosmu(i,m) = 1*mscale(m)
+                   cosmu(i,m) = mscale(m)
                 ELSE
-                   cosmu(i,m) = -1*mscale(m)
+                   cosmu(i,m) = -mscale(m)
                 END IF
                 sinmu(i,m) = 0
             ELSE IF (i .gt. ntheta2) THEN
