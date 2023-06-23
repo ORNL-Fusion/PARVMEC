@@ -111,8 +111,24 @@ C-----------------------------------------------
          argi = twopi*(i - 1)/ntheta1
          DO m = 0, mnyq
             arg = argi*m
-            cosmu(i,m) = COS(arg)*mscale(m)
-            sinmu(i,m) = SIN(arg)*mscale(m)
+
+!  Special case the Pi angle.
+            IF (i .eq. ntheta2) THEN
+                IF (MOD(m, 2) .eq. 0) THEN
+                   cosmu(i,m) = 1*mscale(m)
+                ELSE
+                   cosmu(i,m) = -1*mscale(m)
+                END IF
+                sinmu(i,m) = 0
+            ELSE IF (i .gt. ntheta2) THEN
+!  Force symmetry for angles indices over ntheta2
+                cosmu(i,m) = cosmu(2*ntheta2 - i,m)
+                sinmu(i,m) = -sinmu(2*ntheta2 - i,m)
+            ELSE
+                cosmu(i,m) = COS(arg)*mscale(m)
+                sinmu(i,m) = SIN(arg)*mscale(m)
+            END IF
+
             cosmui(i,m) = dnorm*cosmu(i,m)
             sinmui(i,m) = dnorm*sinmu(i,m)
             IF (i.EQ.1 .OR. i.EQ.ntheta2) THEN
@@ -136,7 +152,7 @@ C-----------------------------------------------
       DO j = 1, nzeta
          argj = twopi*(j - 1)/nzeta
          DO n = 0, nnyq
-            arg = argj*(n)
+            arg = argj*n
             cosnv(j,n) = COS(arg)*nscale(n)
             sinnv(j,n) = SIN(arg)*nscale(n)
             cosnvn(j,n) = cosnv(j,n)*(n*nfp)
