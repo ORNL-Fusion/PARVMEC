@@ -901,7 +901,7 @@
 !SPH: FIXED THIS 03-05-07 TO CALL symmetrization routine
       IF (lasym) THEN
 !Changed integration norm in fixaray, SPH012314
-         tmult = 2*tmult
+!         tmult = 2*tmult
          bsubs(1,:) = 0
          CALL symoutput (bsq,   gsqrt,  bsubu,  bsubv,  bsupu,
      1                   bsupv,  bsubs,
