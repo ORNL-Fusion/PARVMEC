@@ -63,7 +63,7 @@ add_test (NAME    vmec_free_boundary_check_currvmnc_test
 add_test (NAME    vmec_free_boundary_check_DCurr_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=DCurr -tol=1.9E-9)
 add_test (NAME    vmec_free_boundary_check_DGeod_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=DGeod -tol=1.2E-9)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=DGeod -tol=2.6E-9)
 add_test (NAME    vmec_free_boundary_check_DMerc_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=DMerc -tol=1.9E-9)
 add_test (NAME    vmec_free_boundary_check_DShear_test

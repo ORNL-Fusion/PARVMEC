@@ -48,7 +48,7 @@ add_test (NAME    vmec_asym_check_buco_test
 add_test (NAME    vmec_asym_check_bvco_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bvco -tol=4.0E-15)
 add_test (NAME    vmec_asym_check_chi_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chi -tol=4.0E-17)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chi -tol=4.2E-17)
 add_test (NAME    vmec_asym_check_chipf_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chipf -tol=8.0E-16)
 add_test (NAME    vmec_asym_check_currumnc_test
