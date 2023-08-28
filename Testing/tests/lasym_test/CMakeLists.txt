@@ -26,7 +26,6 @@ set_tests_properties (vmec_asym_check_aspect_test
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_b0_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=b0 -tol=2.0E-15)
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=aspect -tol=5.0E-16)
 set_tests_properties (vmec_asym_check_b0_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")

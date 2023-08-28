@@ -11,7 +11,7 @@ add_test (NAME    vmec_fixed_boundary_serial_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xvmec input.test_serial.vmec)
 add_test (NAME    vmec_fixed_boundary_parallel_test
           COMMAND $<TARGET_PROPERTY:stell,MPIEXEC_EXECUTABLE> $<TARGET_PROPERTY:stell,MPIEXEC_NUMPROC_FLAG> $<TARGET_PROPERTY:stell,MPIEXEC_MAX_NUMPROCS> $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xvmec input.test_parallel.vmec)
-set_tests_properties (vmec_free_boundary_serial_test
+set_tests_properties (vmec_fixed_boundary_parallel_test
                       PROPERTIES
                       PROCESSORS $<TARGET_PROPERTY:stell,MPIEXEC_MAX_NUMPROCS>)
 
