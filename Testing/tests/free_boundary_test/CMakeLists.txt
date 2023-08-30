@@ -12,9 +12,6 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/input.test.vmec
 #  Test Free boundary equilibrium.
 add_test (NAME    vmec_mgrid_test
           COMMAND $<TARGET_PROPERTY:mgrid,BINARY_DIR>/mgrid coils.test)
-set_tests_properties (vmec_mgrid_test
-                      PROPERTIES
-                      PROCESSORS $<TARGET_PROPERTY:stell,MPIEXEC_MAX_NUMPROCS>)
 add_test (NAME    vmec_free_boundary_serial_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xvmec input.test_serial.vmec)
 set_tests_properties (vmec_free_boundary_serial_test
