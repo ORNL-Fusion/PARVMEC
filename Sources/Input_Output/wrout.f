@@ -4,7 +4,7 @@
      2                ,tau_an, sigma_an, ppar, pperp, onembc, pbprim,
      3                 ppprim, densit
 #endif
-     4                 )
+     4                )
 ! ... from SPH 2009-10-05; changes for modB sine-harmonics included
       USE vmec_input, ONLY: ns_array, ftol_array, lwouttxt, lnyquist
       USE vmec_params
@@ -64,33 +64,37 @@
      &  vn_bsupumns_sur, vn_bsupvmns_sur,
      &  vn_currumnc, vn_currumns, vn_currvmnc, vn_currvmns,    !MRC 8-12-16
 
-     1  ln_magen, ln_therm, ln_gam, ln_maxr, ln_minr, ln_maxz, ln_fp,
-     2  ln_radnod, ln_polmod, ln_tormod, ln_maxmod, ln_maxit, ln_actit,
-     2  ln_maxpot, ln_potsin, ln_potcos,
-     3  ln_asym, ln_recon, ln_free, ln_error, ln_aspect, ln_beta,
-     4  ln_pbeta, ln_tbeta, ln_abeta, ln_b0, ln_rbt0, ln_maxmod_nyq,
-     5  ln_rbt1, ln_sgs, ln_lar, ln_modB, ln_ctor, ln_amin, ln_Rmaj,
-     6  ln_mse, ln_thom, ln_flp, ln_nobd, ln_nbset, ln_next, ln_nbfld,
-     7  ln_pmod, ln_tmod, ln_pmod_nyq, ln_tmod_nyq, ln_racc, ln_zacs,
-     7  ln_racs, ln_zacc, ln_iotaf, ln_qfact, ln_am, ln_ac, ln_ai,
-     7  ln_pmass_type, ln_pcurr_type, ln_piota_type,
-     7  ln_am_aux_s, ln_am_aux_f, ln_ac_aux_s, ln_ac_aux_f,
-     7  ln_ai_aux_s, ln_ai_aux_f, ln_chi, ln_chipf,
-     8  ln_presf, ln_phi, ln_phipf, ln_jcuru, ln_jcurv, ln_iotah,
-     9  ln_mass, ln_presh, ln_betah, ln_buco, ln_bvco, ln_vp, ln_specw,
-     A  ln_vol, ln_phip, ln_jdotb, ln_bdotb, ln_bgrv, ln_merc,
-     B  ln_mshear, ln_mwell, ln_mcurr, ln_mgeo, ln_equif, ln_fsq,
-     C  ln_wdot, ln_extcur, ln_curlab, ln_rmnc, ln_zmns, ln_lmns,
-     D  ln_gmnc, ln_bmnc, ln_bsubumnc, ln_bsubvmnc, ln_bsubsmns,
-     E  ln_bsupumnc, ln_bsupvmnc, ln_rmns, ln_zmnc, ln_lmnc, ln_gmns,
-     F  ln_bmns, ln_bsubumns, ln_bsubvmns, ln_bsubsmnc, ln_bsupumns,
-     G  ln_bsupvmns, ln_rbc, ln_zbs, ln_rbs, ln_zbc, ln_mnyq, ln_nnyq,
+     &  vn_xc,
+
+     &  ln_magen, ln_therm, ln_gam, ln_maxr, ln_minr, ln_maxz, ln_fp,
+     &  ln_radnod, ln_polmod, ln_tormod, ln_maxmod, ln_maxit, ln_actit,
+     &  ln_maxpot, ln_potsin, ln_potcos,
+     &  ln_asym, ln_recon, ln_free, ln_error, ln_aspect, ln_beta,
+     &  ln_pbeta, ln_tbeta, ln_abeta, ln_b0, ln_rbt0, ln_maxmod_nyq,
+     &  ln_rbt1, ln_sgs, ln_lar, ln_modB, ln_ctor, ln_amin, ln_Rmaj,
+     &  ln_mse, ln_thom, ln_flp, ln_nobd, ln_nbset, ln_next, ln_nbfld,
+     &  ln_pmod, ln_tmod, ln_pmod_nyq, ln_tmod_nyq, ln_racc, ln_zacs,
+     &  ln_racs, ln_zacc, ln_iotaf, ln_qfact, ln_am, ln_ac, ln_ai,
+     &  ln_pmass_type, ln_pcurr_type, ln_piota_type,
+     &  ln_am_aux_s, ln_am_aux_f, ln_ac_aux_s, ln_ac_aux_f,
+     &  ln_ai_aux_s, ln_ai_aux_f, ln_chi, ln_chipf,
+     &  ln_presf, ln_phi, ln_phipf, ln_jcuru, ln_jcurv, ln_iotah,
+     &  ln_mass, ln_presh, ln_betah, ln_buco, ln_bvco, ln_vp, ln_specw,
+     &  ln_vol, ln_phip, ln_jdotb, ln_bdotb, ln_bgrv, ln_merc,
+     &  ln_mshear, ln_mwell, ln_mcurr, ln_mgeo, ln_equif, ln_fsq,
+     &  ln_wdot, ln_extcur, ln_curlab, ln_rmnc, ln_zmns, ln_lmns,
+     &  ln_gmnc, ln_bmnc, ln_bsubumnc, ln_bsubvmnc, ln_bsubsmns,
+     &  ln_bsupumnc, ln_bsupvmnc, ln_rmns, ln_zmnc, ln_lmnc, ln_gmns,
+     &  ln_bmns, ln_bsubumns, ln_bsubvmns, ln_bsubsmnc, ln_bsupumns,
+     &  ln_bsupvmns, ln_rbc, ln_zbs, ln_rbs, ln_zbc, ln_mnyq, ln_nnyq,
 
      &  ln_bsubumnc_sur, ln_bsubvmnc_sur,          !MRC 10-15-15
      &  ln_bsupumnc_sur, ln_bsupvmnc_sur,
      &  ln_bsubumns_sur, ln_bsubvmns_sur,
      &  ln_bsupumns_sur, ln_bsupvmns_sur,
-     &  ln_currumnc, ln_currumns, ln_currvmnc, ln_currvmns
+     &  ln_currumnc, ln_currumns, ln_currvmnc, ln_currvmns,
+
+     &  ln_xc
 
 !------------------DEC$ ELSE !to use safe_open_mod in any case (J.Geiger)
 #endif
