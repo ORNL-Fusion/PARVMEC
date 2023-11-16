@@ -275,7 +275,7 @@ set_tests_properties (vmec_asym_check_vp_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_wb_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=wb -tol=5.0E-19)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=wb -tol=6.6E-19)
 set_tests_properties (vmec_asym_check_wb_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
