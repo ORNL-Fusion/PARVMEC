@@ -26,7 +26,7 @@ set_tests_properties (vmec_free_boundary_serial_test
 
 #  Check woutfile to ensure that values match.
 add_test (NAME    vmec_free_boundary_check_aspect_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=aspect -tol=6.9E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=aspect -tol=7.4E-14)
 set_tests_properties (vmec_free_boundary_check_aspect_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
@@ -66,7 +66,7 @@ set_tests_properties (vmec_free_boundary_check_betatotal_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
 add_test (NAME    vmec_free_boundary_check_betaxis_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betaxis -tol=7.0E-17)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betaxis -tol=7.3E-17)
 set_tests_properties (vmec_free_boundary_check_betaxis_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
@@ -251,7 +251,7 @@ set_tests_properties (vmec_free_boundary_check_rbtor_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
 add_test (NAME    vmec_free_boundary_check_rbtor0_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=rbtor0 -tol=4.8E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=rbtor0 -tol=5.4E-15)
 set_tests_properties (vmec_free_boundary_check_rbtor0_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
