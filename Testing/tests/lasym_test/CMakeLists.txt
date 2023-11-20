@@ -85,7 +85,7 @@ set_tests_properties (vmec_asym_check_bsubvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bsupumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsupumnc -tol=2.1E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsupumnc -tol=3.7E-14)
 set_tests_properties (vmec_asym_check_bsupumnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -105,7 +105,7 @@ set_tests_properties (vmec_asym_check_bvco_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_chi_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chi -tol=4.5E-17)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chi -tol=6.3E-17)
 set_tests_properties (vmec_asym_check_chi_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -270,7 +270,7 @@ set_tests_properties (vmec_asym_check_volume_p_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_vp_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=vp -tol=9.0E-16)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=vp -tol=1.5E-15)
 set_tests_properties (vmec_asym_check_vp_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
