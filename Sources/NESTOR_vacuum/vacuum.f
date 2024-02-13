@@ -172,7 +172,7 @@ C-----------------------------------------------
             bsubvvac = bsubvvac + bsubv_sur(i)*wint(i)
          END DO
          tmp1(1) = bsubuvac
-         tmp1(2)=bsubvvac
+         tmp1(2) = bsubvvac
          CALL second0(ton)
 
          IF (vlactive) THEN
