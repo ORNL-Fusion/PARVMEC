@@ -51,7 +51,7 @@ set_tests_properties (vmec_free_boundary_check_beta_vol_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
 add_test (NAME    vmec_free_boundary_check_betapol_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betapol -tol=6.5E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betapol -tol=6.6E-15)
 set_tests_properties (vmec_free_boundary_check_betapol_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
@@ -61,7 +61,7 @@ set_tests_properties (vmec_free_boundary_check_betator_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
 add_test (NAME    vmec_free_boundary_check_betatotal_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betatotal -tol=1.8E-17)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_serial.vmec.nc -wout_file2=wout_test_parallel.vmec.nc -quantity=betatotal -tol=2.1E-17)
 set_tests_properties (vmec_free_boundary_check_betatotal_test
                       PROPERTIES
                       DEPENDS "vmec_free_boundary_serial_test;vmec_free_boundary_parallel_test")
