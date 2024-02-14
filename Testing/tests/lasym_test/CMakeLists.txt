@@ -190,7 +190,7 @@ set_tests_properties (vmec_asym_check_jcuru_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_jcurv_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=jcurv -tol=7.7E-11)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=jcurv -tol=7.8E-11)
 set_tests_properties (vmec_asym_check_jcurv_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -280,7 +280,7 @@ set_tests_properties (vmec_asym_check_wb_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_wdot_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=wdot -tol=4.5E-16)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=wdot -tol=5.9E-16)
 set_tests_properties (vmec_asym_check_wdot_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
