@@ -18,7 +18,7 @@ set_tests_properties (niter_test
                       PROCESSORS $<TARGET_PROPERTY:stell,MPIEXEC_MAX_NUMPROCS>)
 
 add_test (NAME niter_check_wout_test
-          COMMAND ${PYTHON_EXECUTABLE} ${TEST_SCRIPT_DIR}/check_file.py --file=${CMAKE_CURRENT_BINARY_DIR}/wout_test.vmec.nc)
+          COMMAND ${Python3_EXECUTABLE} ${TEST_SCRIPT_DIR}/check_file.py --file=${CMAKE_CURRENT_BINARY_DIR}/wout_test.vmec.nc)
 set_tests_properties (niter_check_wout_test
                       PROPERTIES
                       DEPENDS niter_test)
