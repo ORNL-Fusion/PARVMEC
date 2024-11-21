@@ -223,8 +223,6 @@ C-----------------------------------------------
 
       IF (PARVMEC) THEN
          IF (lactive) THEN
-            WRITE (*,*) MAXVAL(pxcdot), MINVAL(pxcdot), MAXVAL(pgc),           &
-     &                  MINVAL(pgc)
             CALL SaxpbyLastNtype(fac*time_step, pgc, fac*b1, pxcdot,
      &                           pxcdot)
             CALL SaxpbyLastNtype(time_step, pxcdot, one, pxc, pxc)
