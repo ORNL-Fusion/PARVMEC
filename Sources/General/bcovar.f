@@ -1,3 +1,35 @@
+!-------------------------------------------------------------------------------
+!>  @brief Compute the covariant magnetic field.
+!>
+!>  The contravariant magnetic field are defined as.
+!>
+!>    B^u = 1/sqrt(g)(χ' - φ'dλ/dv)                                          (1)
+!>
+!>    B^v = 1/sqrt(g)(φ' + φ'dλ/du)                                          (2)
+!>
+!>  This can be converted to covariant components using the metric tensors.
+!>
+!>    g_uu = dr/du*dr/du + dz/du*dz/du                                       (3)
+!>
+!>    g_uv = dr/du*dr/dv + dz/du*dz/dv                                       (4)
+!>
+!>    g_uu = dr/dv*dr/dv + R^2 + dz/dv*dz/dv                                 (5)
+!>
+!>  The covariant magnetic field are
+!>
+!>    B_u = guu*B^u + guv*B^v                                                (6)
+!>
+!>    B_v = guv*B^u + gvv*B^v                                                (7)
+!>
+!>  On exit the parameter lu contains the quantity.
+!>
+!>   P = R(p + |B^2|/(2μ0))
+!>
+!>  @param[inout] lu       Poloidal derivative of lambda.
+!>  @param[inout] lv       Toroidal derivative of lambda.
+!>  @param[in]    tpxc
+!>  @param[inout] ier_flag Error status.
+!-------------------------------------------------------------------------------
       SUBROUTINE bcovar_par(lu, lv, tpxc, ier_flag)
       USE vmec_main, fpsi => bvco, p5 => cp5
       USE vmec_params, ONLY: ns4, signgs, pdamp, lamscale, ntmax,
