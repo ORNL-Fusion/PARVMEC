@@ -9,7 +9,7 @@
       USE vparams, ONLY: one, zero, rprec
       USE vmec_input, ONLY: lasym
       USE vmec_main, ONLY: lthreed, p5 => cp5, sp, sm, phipf
-      USE parallel_include_module, ONLY: rank
+      USE parallel_include_module, ONLY: rank, t1lglob, t1rglob, PARVMEC
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -25,6 +25,8 @@ C-----------------------------------------------
       INTEGER :: ierr, mn, m, n, n1, js
       REAL(rprec) :: t1, t2
       REAL(rprec), ALLOCATABLE :: temp(:,:)
+      INTEGER :: nsmin
+      INTEGER :: nsmax
 C-----------------------------------------------
 
 !
@@ -50,6 +52,14 @@ C-----------------------------------------------
       IF (ntor_in  .ne. ntor ) STOP 'ntor_in != ntor in load_xc'
       IF (mpol1_in .ne. mpol1) STOP 'mpol1_in != mpol1 in load_xc'
       IF (nfp .eq. 0) STOP 'nfp = 0 in load_xc'
+
+      IF (PARVMEC) THEN
+         nsmin = t1lglob
+         nsmax = t1rglob
+      ELSE
+         nsmin = 1
+         nsmax = ns
+      END IF
 
       lreset = .false.               !Signals profil3d NOT to overwrite axis values
 
@@ -121,23 +131,25 @@ C-----------------------------------------------
 !     START ITERATION AT JS=1
 !
       lmn(1,:,0,:) = lmn(2,:,0,:)
-      lmn(1,:,1,:) = 2*lmn(2,:,1,:)/(sm(2) + sp(1))
+      IF (nsmin .eq. 1) THEN
+         lmn(1,:,1,:) = 2*lmn(2,:,1,:)/(sm(2) + sp(1))
+      END IF
       lmn(1,:,2:,:) = 0
       
       DO m = 0, mpol1, 2
-         DO js = 2, ns
+         DO js = nsmin + 1, nsmax
             lmn(js,:,m,:) = 2*lmn(js,:,m,:) - lmn(js-1,:,m,:)
          END DO
       END DO
 
       DO m = 1, mpol1, 2
-         DO js = 2, ns
-            lmn(js,:,m,:) = (2*lmn(js,:,m,:) 
+         DO js = nsmin + 1, nsmax
+            lmn(js,:,m,:) = (2*lmn(js,:,m,:)
      1                    - sp(js-1)*lmn(js-1,:,m,:))/sm(js)
          END DO
       END DO
 
-      DO js = 2, ns
+      DO js = nsmin + 1, nsmax
          lmn(js,:,:,:) = phipf(js)*lmn(js,:,:,:)
       END DO
 
