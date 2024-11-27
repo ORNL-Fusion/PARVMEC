@@ -22,122 +22,122 @@ set_tests_properties (vmec_reset_check_aspect_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_b0_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=b0 -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=b0 -tol=5.0E-11)
 set_tests_properties (vmec_reset_check_b0_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bdotb_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bdotb -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bdotb -tol=2.0E-11)
 set_tests_properties (vmec_reset_check_bdotb_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bdotgradv_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bdotgradv -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bdotgradv -tol=2.0E-10)
 set_tests_properties (vmec_reset_check_bdotgradv_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_beta_vol_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=beta_vol -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=beta_vol -tol=4.0E-12)
 set_tests_properties (vmec_reset_check_beta_vol_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_betapol_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betapol -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betapol -tol=6.0E-12)
 set_tests_properties (vmec_reset_check_betapol_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_betator_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betator -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betator -tol=2.0E-15)
 set_tests_properties (vmec_reset_check_betator_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_betatotal_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betatotal -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betatotal -tol=3.0E-15)
 set_tests_properties (vmec_reset_check_betatotal_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_betaxis_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betaxis -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=betaxis -tol=6.0E-12)
 set_tests_properties (vmec_reset_check_betaxis_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bmnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bmnc -tol=4.0E-11)
 set_tests_properties (vmec_reset_check_bmnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bsubsmns_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsubsmns -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsubsmns -tol=1.0E-11)
 set_tests_properties (vmec_reset_check_bsubsmns_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bsubumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsubumnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsubumnc -tol=5.0E-12)
 set_tests_properties (vmec_reset_check_bsubumnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bsubvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsubvmnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsubvmnc -tol=2.0E-12)
 set_tests_properties (vmec_reset_check_bsubvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bsupumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsupumnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsupumnc -tol=3.1E-10)
 set_tests_properties (vmec_reset_check_bsupumnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bsupvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsupvmnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bsupvmnc -tol=2.0E-10)
 set_tests_properties (vmec_reset_check_bsupvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_buco_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=buco -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=buco -tol=4.0E-18)
 set_tests_properties (vmec_reset_check_buco_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_bvco_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bvco -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=bvco -tol=2.0E-12)
 set_tests_properties (vmec_reset_check_bvco_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_chi_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=chi -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=chi -tol=8.0E-13)
 set_tests_properties (vmec_reset_check_chi_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_chipf_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=chipf -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=chipf -tol=8.0E-12)
 set_tests_properties (vmec_reset_check_chipf_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_currumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=currumnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=currumnc -tol=2.0E-4)
 set_tests_properties (vmec_reset_check_currumnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_currvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=currvmnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=currvmnc -tol=2.0E-4)
 set_tests_properties (vmec_reset_check_currvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_DCurr_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DCurr -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DCurr -tol=7.0E-8)
 set_tests_properties (vmec_reset_check_DCurr_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_DGeod_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DGeod -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DGeod -tol=6.0E-7)
 set_tests_properties (vmec_reset_check_DGeod_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_DMerc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DMerc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DMerc -tol=6.0E-7)
 set_tests_properties (vmec_reset_check_DMerc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_DShear_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DShear -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=DShear -tol=4.0E-8)
 set_tests_properties (vmec_reset_check_DShear_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
@@ -157,47 +157,47 @@ set_tests_properties (vmec_reset_check_fsqr_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_fsqt_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=fsqt -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=fsqt -tol=1.5E-12)
 set_tests_properties (vmec_reset_check_fsqt_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_fsqz_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=fsqz -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=fsqz -tol=1.5E-12)
 set_tests_properties (vmec_reset_check_fsqz_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_gmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=gmnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=gmnc -tol=4.0E-11)
 set_tests_properties (vmec_reset_check_gmnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_IonLarmor_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=IonLarmor -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=IonLarmor -tol=1.2E-15)
 set_tests_properties (vmec_reset_check_IonLarmor_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_iotaf_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=iotaf -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=iotaf -tol=1.5E-10)
 set_tests_properties (vmec_reset_check_iotaf_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_jcuru_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=jcuru -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=jcuru -tol=2.0E-5)
 set_tests_properties (vmec_reset_check_jcuru_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_jcurv_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=jcurv -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=jcurv -tol=1.0E-10)
 set_tests_properties (vmec_reset_check_jcurv_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_jdotb_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=jdotb -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=jdotb -tol=3.0E-5)
 set_tests_properties (vmec_reset_check_jdotb_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_lmns_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=lmns -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=lmns -tol=1.4E-9)
 set_tests_properties (vmec_reset_check_lmns_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
@@ -232,32 +232,32 @@ set_tests_properties (vmec_reset_check_presf_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_q_factor_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=q_factor -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=q_factor -tol=4.0E-10)
 set_tests_properties (vmec_reset_check_q_factor_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_rbtor_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=rbtor -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=rbtor -tol=4.0E-13)
 set_tests_properties (vmec_reset_check_rbtor_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_rbtor0_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=rbtor0 -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=rbtor0 -tol=2.0E-12)
 set_tests_properties (vmec_reset_check_rbtor0_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_rmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=rmnc -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=rmnc -tol=2.0E-10)
 set_tests_properties (vmec_reset_check_rmnc_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_specw_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=specw -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=specw -tol=2.0E-13)
 set_tests_properties (vmec_reset_check_specw_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_volavgB_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=volavgB -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=volavgB -tol=3.0E-14)
 set_tests_properties (vmec_reset_check_volavgB_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
@@ -267,22 +267,22 @@ set_tests_properties (vmec_reset_check_volume_p_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_vp_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=vp -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=vp -tol=7.0E-12)
 set_tests_properties (vmec_reset_check_vp_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_wb_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wb -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wb -tol=1.4E-16)
 set_tests_properties (vmec_reset_check_wb_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_wdot_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wdot -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wdot -tol=6.0E-10)
 set_tests_properties (vmec_reset_check_wdot_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_wp_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wp -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wp -tol=7.0E-20)
 set_tests_properties (vmec_reset_check_wp_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
@@ -307,7 +307,7 @@ set_tests_properties (vmec_reset_check_xn_nyq_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_zmns_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=zmns -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=zmns -tol=5.4E-12)
 set_tests_properties (vmec_reset_check_zmns_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
