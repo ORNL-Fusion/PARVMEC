@@ -1,3 +1,30 @@
+!-------------------------------------------------------------------------------
+!  The @header2, @begin_table, @item3 and @end_table commands are custom defined
+!  commands in Doxygen.in. They are defined under ALIASES. For the page created
+!  here, the 80 column limit is exceeded. Arguments of aliases are separated by
+!  ','. If you intended ',' to be a string you must use an escaped comma '\,'.
+!
+!>  @page vmec_cl_parsing_sec Command Line Arguments
+!>
+!>  @section vmec_cl_parsing_intro Introduction
+!>  This contains a description of the command line arguments. All arguments
+!>  take the form of
+!>
+!>  @fixed_width{xvmec <namelist_input> [<option>=<value>]}
+!>
+!>  @section vmec_cl_parsing_arg_sec Command Line Arguments
+!>  @header2{Argument, Takes Value, Discription}
+!>  @begin_table
+!>     @item3{@fixed_width{-h},      N, Show help info.}
+!>     @item3{@fixed_width{reset},   Y, Reset from the wout file.}
+!>     @item3{@fixed_width{restart}, Y, Restart from the restart file.}
+!>  @end_table
+!>
+!>  @section vmec_cl_pasring_prog_ref_sec Programmers Reference
+!>  Reference material for the coding to implement commandline parsing is found
+!>  in the @ref vmec.f.
+!-------------------------------------------------------------------------------
+
       PROGRAM vmec
       USE vmec_input
       USE vmec_seq
@@ -13,6 +40,7 @@
       USE parallel_vmec_module, ONLY: MyEnvVariables, 
      &                                InitializeParallel,
      &                                FinalizeParallel
+      USE profiler
       IMPLICIT NONE
 C-----------------------------------------------
 C   L o c a l   P a r a m e t e r s
@@ -31,6 +59,7 @@ C-----------------------------------------------
      &   index_dat, iunit, ncount, nsteps, i
       INTEGER :: ictrl(5)
       CHARACTER(LEN=120) :: input_file, seq_ext, reset_file_name, arg
+      CHARACTER(LEN=120) :: restart_file_name
       CHARACTER(LEN=120) :: log_file
       CHARACTER(LEN=120), DIMENSION(10) :: command_arg
       LOGICAL :: lscreen
@@ -139,14 +168,16 @@ C-----------------------------------------------
 !     screen display information, and restart information
 !
       INTERFACE
-         SUBROUTINE runvmec(ictrl_array, input_file0, 
-     &                      lscreen, RVC_COMM, reset_file_name)
+         SUBROUTINE runvmec(ictrl_array, input_file0,                          &
+     &                      lscreen, RVC_COMM, reset_file_name,                &
+     &                      restart_file_name)
          IMPLICIT NONE
          INTEGER, INTENT(inout), TARGET :: ictrl_array(5)
          LOGICAL, INTENT(in) :: lscreen
          CHARACTER(LEN=*), INTENT(in) :: input_file0
          INTEGER, INTENT(in), OPTIONAL :: RVC_COMM
          CHARACTER(LEN=*), OPTIONAL :: reset_file_name
+         CHARACTER(LEN=*), OPTIONAL :: restart_file_name
          END SUBROUTINE runvmec
       END INTERFACE
 
@@ -155,6 +186,8 @@ C-----------------------------------------------
       CALL MPI_COMM_DUP(MPI_COMM_WORLD,RVC_COMM,MPI_ERR)
       CALL second0(totalton)
       ton = totalton
+
+      CALL profiler_construct
 
       CALL getcarg(1, command_arg(1), numargs)
       DO iseq = 2, numargs
@@ -189,6 +222,7 @@ C-----------------------------------------------
      &           ' allowed:'
          PRINT *
          PRINT *,'  xvmec <filename> [noscreen] [reset=reset_wout_file]'
+         PRINT *,'                              [restart=restart_file] '
          PRINT *
          PRINT *,' noscreen: supresses all output to screen ',
      &           ' (default, or "screen", displays output)'
@@ -196,6 +230,8 @@ C-----------------------------------------------
 
          STOP
       ELSE
+         reset_file_name = ''
+         restart_file_name = ''
          DO iseq = 2, MIN(numargs,10)
             arg = command_arg(iseq)
             IF (TRIM(arg) .eq. 'noscreen' .or.                                 &
@@ -205,7 +241,16 @@ C-----------------------------------------------
             index_end = INDEX(arg, "reset=")
             index_seq = MAX(INDEX(arg, "RESET="), index_end)
             IF (index_seq .gt. 0) reset_file_name = arg(index_seq+6:)
+            index_end = INDEX(arg, "restart=")
+            index_seq = MAX(INDEX(arg, "RESTART="), index_end)
+            IF (index_seq .gt. 0) restart_file_name = arg(index_seq+8:)
          END DO
+
+         IF (LEN(TRIM(reset_file_name)) .gt. 0 .and.                                 &
+     &       LEN(TRIM(restart_file_name)) .gt. 0 ) THEN
+            WRITE (*,*) LEN(reset_file_name), LEN(restart_file_name)
+            STOP 'Cannot restart from both wout and restart files.'
+         END IF
       END IF
 
 !
@@ -331,7 +376,7 @@ C-----------------------------------------------
 
          RVCCALLNUM = 1
          CALL runvmec(ictrl, extension(index_seq), lscreen, RVC_COMM,
-     &                reset_file_name)
+     &                reset_file_name, restart_file_name)
 
          ierr_vmec = ictrl(2)
 
@@ -440,6 +485,12 @@ C-----------------------------------------------
       total_time = total_time + (totaltoff - totalton)
       toff = totaltoff
       IF (.NOT.LV3FITCALL .AND. lactive) CALL WriteTimes('timings.txt')
+
+      IF (grank .EQ. 0) THEN
+         CALL profiler_write(6)
+      END IF
+      CALL profiler_destruct
+
       CALL FinalizeParallel
 
       END PROGRAM vmec

@@ -1,11 +1,13 @@
       SUBROUTINE runvmec(ictrl_array, input_file0, 
-     &                   lscreen, COMM_WORLD, reset_file_name)
+     &                   lscreen, COMM_WORLD, reset_file_name,
+     &                   restart_file_name)
       USE vmec_main
       USE vmec_params, ONLY: bad_jacobian_flag, more_iter_flag,
      &                       norm_term_flag, successful_term_flag,
      &                       restart_flag, readin_flag,
      &                       timestep_flag, ns_error_flag,
      &                       reset_jacdt_flag, lamscale
+      USE restart
       USE realspace
       USE vmec_params, ONLY: ntmax
       USE vacmod, ONLY: nuv, nuv3
@@ -29,6 +31,7 @@ C-----------------------------------------------
       LOGICAL, INTENT(in)            :: lscreen
       CHARACTER(LEN=*), INTENT(in)   :: input_file0
       CHARACTER(LEN=*), OPTIONAL     :: reset_file_name
+      CHARACTER(LEN=*), OPTIONAL     :: restart_file_name
       INTEGER, INTENT(IN), OPTIONAL  :: COMM_WORLD
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
@@ -50,6 +53,7 @@ C-----------------------------------------------
       INTEGER                        :: blklength, grid_id, i, js,
      &                                  nsmin, nsmax
       CHARACTER(LEN=20)              :: fname
+      CLASS (restart_class), POINTER :: restart_obj
 
 C-----------------------------------------------
 !
@@ -110,6 +114,13 @@ C-----------------------------------------------
          LOGICAL, INTENT(in) :: lscreen
          REAL(rprec), INTENT(out) :: delt0
          END SUBROUTINE initialize_radial
+
+         SUBROUTINE eqsolve(ier_flag, lscreen, restart_obj)
+         USE restart
+         INTEGER, INTENT(inout)            :: ier_flag
+         LOGICAL, INTENT(in)               :: lscreen
+         CLASS (restart_class), INTENT(in) :: restart_obj
+         END SUBROUTINE
       END INTERFACE
 
       RUNVMEC_PASS = RUNVMEC_PASS + 1
@@ -319,7 +330,7 @@ C-----------------------------------------------
 
          grid_size(grid_id) = nsval
          grid_procs(grid_id) = nranks
-         
+
 !  JDH 2012-06-20. V3FIT fix, inserted with change from VMEC 8.48 -> 8.49
 !  (Not sure just what in initialize_radial messes up convergence - happens slowly)
 !  Logical l_v3fit is declared in vmec_input, available via vmec_main
@@ -339,7 +350,29 @@ C-----------------------------------------------
             niter = numsteps + iter2 - 1
          END IF
 
-         CALL eqsolve (ier_flag, lscreen)
+         IF (PRESENT(restart_file_name)         .and.                       &
+     &       LEN_TRIM(restart_file_name) .ne. 0 .and.                       &
+     &       .not. (ns_old .ne. nsval)) THEN
+            IF (grank .EQ. 0) THEN
+               restart_obj => restart_construct_open(restart_file_name)
+               CALL restart_obj%read()
+               CALL Serial2Parallel4X(xc,pxc)
+            END IF
+            IF (PARVMEC) THEN
+               CALL MPI_Bcast(pxc, SIZE(pxc), MPI_REAL8, 0,
+     &                        RUNVMEC_COMM_WORLD, MPI_ERR)
+            END IF
+         ELSE
+            IF (grank .EQ. 0) THEN
+               restart_obj => restart_construct_new('restart.nc')
+            END IF
+         END IF
+
+         CALL eqsolve (ier_flag, lscreen, restart_obj)
+
+         IF (grank .EQ. 0) THEN
+            DEALLOCATE(restart_obj)
+         END IF
 
          IF (numsteps .GT. 0) THEN
             niter = niter_store

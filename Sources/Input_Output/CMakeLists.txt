@@ -22,4 +22,5 @@ target_sources(vmec
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vmercier.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/write_dcon.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/wrout.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/restart.f>
 )

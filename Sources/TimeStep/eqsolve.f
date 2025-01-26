@@ -1,4 +1,4 @@
-      SUBROUTINE eqsolve(ier_flag, lscreen)
+      SUBROUTINE eqsolve(ier_flag, lscreen, restart_obj)
       USE vmec_main
       USE vmec_params, ONLY: ntmax, ns4, jac75_flag, norm_term_flag,
      &                       bad_jacobian_flag, more_iter_flag,
@@ -11,14 +11,17 @@
 ! Add below JDH 2010-08-03
       USE vmec_history
       USE parallel_include_module
-      USE parallel_vmec_module, ONLY: ZeroLastNType
+      USE parallel_vmec_module, ONLY: ZeroLastNType, Parallel2Serial4X
       USE vacmod, ONLY: nuv, nuv3
+      USE restart
+
       IMPLICIT NONE
 !-----------------------------------------------
 !   D u m m y   A r g u m e n t s
 !-----------------------------------------------
-      INTEGER :: ier_flag
-      LOGICAL :: lscreen
+      INTEGER, INTENT(inout)            :: ier_flag
+      LOGICAL, INTENT(in)               :: lscreen
+      CLASS (restart_class), INTENT(in) :: restart_obj
 !-----------------------------------------------
 !   L o c a l   P a r a m e t e r s
 !-----------------------------------------------
@@ -177,6 +180,14 @@ C-----------------------------------------------
      &       iter2            .eq. 1 .or.
      &       .not.liter_flag) THEN
             CALL printout(iter2, delt0r, w0, lscreen)
+
+            IF (PARVMEC) THEN
+               CALL Gather4XArray(pxc)
+            END IF
+            IF (grank .EQ. 0) THEN
+               CALL Parallel2Serial4X(pxc, xc)
+               CALL restart_obj%write()
+            END IF
          END IF
          iter2 = iter2 + 1
          iterc = iterc + 1
