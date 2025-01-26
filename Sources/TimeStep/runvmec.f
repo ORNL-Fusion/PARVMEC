@@ -364,7 +364,7 @@ C-----------------------------------------------
             END IF
          ELSE
             IF (grank .EQ. 0) THEN
-               restart_obj => restart_construct_new('restart.nc')
+               restart_obj => restart_construct_new('vmec.restart.nc')
             END IF
          END IF
 
