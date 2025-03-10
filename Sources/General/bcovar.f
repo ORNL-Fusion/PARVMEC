@@ -116,49 +116,71 @@
 !     FIRST, GIJ = EVEN PART (ON FULL MESH), LIJ = ODD PART (ON FULL MESH)
 !     THEN, GIJ(HALF) = < GIJ(even)> + SHALF < GIJ(odd) >
 
+!! 23_04-03 JDH Reorder statements
+!!          Use phipog to accumulate the even (odd times odd) pieces of the GIJ
+
       DO l = nsmin, nsmax
-         r12sq(:,l) = psqrts(:,l)*psqrts(:,l)
+         r12sq(:,l) = psqrts(:,l)*psqrts(:,l)          !! Use r12sq as temporary storage
+                                                       !! Note psqrts is on the full mesh
          pguu(:,l) = pru(:,l,0)*pru(:,l,0) + pzu(:,l,0)*pzu(:,l,0)
-     &             + r12sq(:,l)*(pru(:,l,1)*pru(:,l,1)
-     &             + pzu(:,l,1)*pzu(:,l,1))
+         phipog(:,l) = pru(:,l,1)*pru(:,l,1) + pzu(:,l,1)*pzu(:,l,1)
          luu(:,l) = (pru(:,l,0)*pru(:,l,1) +  pzu(:,l,0)*pzu(:,l,1))*2
-         phipog(:,l) = 2*pr1(:,l,0)*pr1(:,l,1)
+      END DO
+
+      DO l = t1rglob, MAX(t1lglob,2), -1
+         pguu(:,l) = p5*(pguu(:,l) + pguu(:,l-1) 
+     &             + pshalf(:,l)*(luu(:,l) + luu(:,l-1))
+     &             + r12sq(:,l)*phipog(:,l) 
+     &             + r12sq(:,l-1)*phipog(:,l-1))
       END DO
 
       IF (lthreed) THEN
          DO l = nsmin, nsmax
             pguv(:,l) = pru(:,l,0) * prv(:,l,0) + pzu(:,l,0)*pzv(:,l,0)
-     &                + r12sq(:,l) * (pru(:,l,1)*prv(:,l,1)
-     &                + pzu(:,l,1)*pzv(:,l,1))
+            phipog(:,l) = pru(:,l,1)*prv(:,l,1) + pzu(:,l,1)*pzv(:,l,1)
             luv(:,l) = pru(:,l,0) * prv(:,l,1) + pru(:,l,1)*prv(:,l,0)
      &               + pzu(:,l,0)*pzv(:,l,1) + pzu(:,l,1)*pzv(:,l,0)
-            pgvv(:,l) = prv(:,l,0) * prv(:,l,0) + pzv(:,l,0)*pzv(:,l,0)
-     &                + r12sq(:,l) * (prv(:,l,1)*prv(:,l,1)
-     &                + pzv(:,l,1)*pzv(:,l,1) )
-            lvv(:,l) = (prv(:,l,0) * prv(:,l,1) +
-     &                  pzv(:,l,0)*pzv(:,l,1))*2
+         END DO
+         DO l = t1rglob, MAX(t1lglob,2), -1
+            pguv(:,l) = p5*(pguv(:,l) + pguv(:,l-1) 
+     &                + pshalf(:,l)*(luv(:,l) + luv(:,l-1))
+     &                + r12sq(:,l)*phipog(:,l) 
+     &                + r12sq(:,l-1)*phipog(:,l-1))
+         END DO
+                 
+         DO l = nsmin, nsmax         
+            pgvv(:,l) = prv(:,l,0)*prv(:,l,0) + pzv(:,l,0)*pzv(:,l,0)
+            phipog(:,l) = prv(:,l,1)*prv(:,l,1) + pzv(:,l,1)*pzv(:,l,1)
+            lvv(:,l) = 2 * (prv(:,l,0)*prv(:,l,1) 
+     &                    + pzv(:,l,0)*pzv(:,l,1))
+         END DO
+         
+         DO l = t1rglob, MAX(t1lglob,2), -1
+            pgvv(:,l) = p5*(pgvv(:,l) + pgvv(:,l-1) 
+     &             + pshalf(:,l)*(lvv(:,l) + lvv(:,l-1))
+     &             + r12sq(:,l)*phipog(:,l)
+     &             + r12sq(:,l-1)*phipog(:,l-1))
          END DO
       END IF
 
-      r12sq(:,nsmin:nsmax) = pr1(:,nsmin:nsmax,0)*pr1(:,nsmin:nsmax,0)
-     &                     + r12sq(:,nsmin:nsmax)*pr1(:,nsmin:nsmax,1)*
-     &                       pr1(:,nsmin:nsmax,1)
+!! Form r12sq. Use luu to accumulate the even (even*even) terms
+!!             Use phipbog to accumulate the even (odd*odd terms)
+!!             Use luv to accumulate the odd (odd*even) terms
 
-      DO l = t1rglob, MAX(t1lglob,2), -1
-         pguu(:,l) = p5*(pguu(:,l) + pguu(:,l-1) +
-     &             + pshalf(:,l)*(luu(:,l) + luu(:,l-1)))
-         r12sq(:,l) = p5*(r12sq(:,l)+r12sq(:,l-1)+pshalf(:,l)*  !Comment: r12sq = r12**2
-     &                    (phipog(:,l) + phipog(:,l-1)))
+      DO l = nsmin, nsmax
+         luu(:,l) = pr1(:,l,0)*pr1(:,l,0)
+         phipog(:,l) = pr1(:,l,1)*pr1(:,l,1)
+         luv(:,l) =  2*pr1(:,l,0)*pr1(:,l,1)        
       END DO
 
-      IF (lthreed) THEN
-         DO l = t1rglob, MAX(t1lglob,2), -1
-            pguv(:,l) = p5*(pguv(:,l) + pguv(:,l-1) +
-     &                      pshalf(:,l)*(luv(:,l) + luv(:,l-1)))
-            pgvv(:,l) = p5*(pgvv(:,l) + pgvv(:,l-1) +
-     &                      pshalf(:,l)*(lvv(:,l) + lvv(:,l-1)))
-         END DO
-      END IF
+      DO l = t1rglob, MAX(t1lglob,2), -1
+         r12sq(:,l) = p5*(luu(:,l) + luu(:,l-1) 
+     &             + pshalf(:,l)*(luv(:,l) + luv(:,l-1))
+     &             + r12sq(:,l)*phipog(:,l)
+     &             + r12sq(:,l-1)*phipog(:,l-1))
+      END DO
+
+!! 23_04-03 JDH End Reorder statements
 
       pguv(:,1)=0
       pgvv(:,1)=0
@@ -614,53 +636,77 @@
 !     FIRST, GIJ = EVEN PART (ON FULL MESH), LIJ = ODD PART (ON FULL MESH)
 !     THEN, GIJ(HALF) = < GIJ(even)> + SHALF < GIJ(odd) >
 !
+!! 23_04-03 JDH Reorder statements
+!!          Use phipog to accumulate the even (odd times odd) pieces of the GIJ
 
-      r12sq(1:nrzt) = sqrts(1:nrzt)*sqrts(1:nrzt)
+
+      r12sq(1:nrzt) = sqrts(1:nrzt)*sqrts(1:nrzt)   !! Use r12sq as temporary storage
+                                                    !! Note sqrts is on the full mesh
+      
       guu(1:nrzt)   = ru(1:nrzt,0)*ru(1:nrzt,0) 
-     &              + zu(1:nrzt,0)*zu(1:nrzt,0) + r12sq(1:nrzt)*
-     &              ( ru(1:nrzt,1)*ru(1:nrzt,1)
-     &            +   zu(1:nrzt,1)*zu(1:nrzt,1))
+     &              + zu(1:nrzt,0)*zu(1:nrzt,0)
+      phipog(1:nrzt) = ru(1:nrzt,1)*ru(1:nrzt,1) + 
+     &                 zu(1:nrzt,1)*zu(1:nrzt,1)
+      luu(1:nrzt) = 2 * (ru(1:nrzt,0)*ru(1:nrzt,1)
+     &                +  zu(1:nrzt,0)*zu(1:nrzt,1))
 
-      luu(1:nrzt) = (ru(1:nrzt,0)*ru(1:nrzt,1)
-     &            +  zu(1:nrzt,0)*zu(1:nrzt,1))*2
-      phipog(1:nrzt) = 2*r1(1:nrzt,0)*r1(1:nrzt,1)
+!DIR$ IVDEP
+      DO l = nrzt, 2, -1
+         guu(l) = p5*(guu(l) + guu(l-1) + shalf(l)*(luu(l) + luu(l-1))
+     &      + r12sq(l) * phipog(l) + r12sq(l-1) * phipog(l-1))
+      END DO
 
       IF (lthreed) THEN
          guv(1:nrzt) = ru(1:nrzt,0)*rv(1:nrzt,0)
      &               + zu(1:nrzt,0)*zv(1:nrzt,0)
-     &               + r12sq(1:nrzt)*(ru(1:nrzt,1)*rv(1:nrzt,1) +
-     &                                zu(1:nrzt,1)*zv(1:nrzt,1))
+         phipog(1:nrzt) = ru(1:nrzt,1)*rv(1:nrzt,1)
+     &                  + zu(1:nrzt,1)*zv(1:nrzt,1)
          luv(1:nrzt) = ru(1:nrzt,0)*rv(1:nrzt,1)
      &               + ru(1:nrzt,1)*rv(1:nrzt,0)
      &               + zu(1:nrzt,0)*zv(1:nrzt,1)
      &               + zu(1:nrzt,1)*zv(1:nrzt,0)
-         gvv(1:nrzt) = rv(1:nrzt,0)*rv(1:nrzt,0)
-     &               + zv(1:nrzt,0)*zv(1:nrzt,0)
-     &               + r12sq(1:nrzt)*(rv(1:nrzt,1)*rv(1:nrzt,1) +
-     &                                zv(1:nrzt,1)*zv(1:nrzt,1))
-         lvv(1:nrzt) =(rv(1:nrzt,0)*rv(1:nrzt,1) +
-     &                 zv(1:nrzt,0)*zv(1:nrzt,1))*2
-      END IF
 
-      r12sq(1:nrzt) = r1(1:nrzt,0)*r1(1:nrzt,0)
-     &              + r12sq(1:nrzt)*r1(1:nrzt,1)*r1(1:nrzt,1)
-
-!DIR$ IVDEP
-      DO l = nrzt, 2, -1
-         guu(l) = p5*(guu(l) + guu(l-1) + shalf(l)*(luu(l) + luu(l-1)))
-         r12sq(l) = p5*(r12sq(l) + r12sq(l-1) +               !Comment: r12sq = r12**2
-     &                  shalf(l)*(phipog(l) + phipog(l-1)))
-      END DO
-
-      IF (lthreed) THEN
 !DIR$ IVDEP
          DO l = nrzt, 2, -1
-            guv(l) = p5*(guv(l) + guv(l-1) +
-     &                   shalf(l)*(luv(l) + luv(l-1)))
+            guv(l) = p5*(guv(l) + guv(l-1)
+     &                 + shalf(l)*(luv(l) + luv(l-1))
+     &                 + r12sq(l) * phipog(l)
+     &                 + r12sq(l-1) * phipog(l-1))
+         END DO
+
+         gvv(1:nrzt) = rv(1:nrzt,0)*rv(1:nrzt,0)
+     &               + zv(1:nrzt,0)*zv(1:nrzt,0)
+         phipog(1:nrzt) = rv(1:nrzt,1)*rv(1:nrzt,1)
+     &                  + zv(1:nrzt,1)*zv(1:nrzt,1)
+         lvv(1:nrzt) =(rv(1:nrzt,0)*rv(1:nrzt,1) +
+     &                 zv(1:nrzt,0)*zv(1:nrzt,1))*2
+
+!DIR$ IVDEP
+         DO l = nrzt, 2, -1
             gvv(l) = p5*(gvv(l) + gvv(l-1) +
-     &                   shalf(l)*(lvv(l) + lvv(l-1)))
+     &                 + shalf(l)*(lvv(l) + lvv(l-1))
+     &                 + r12sq(l) * phipog(l)
+     &                 + r12sq(l-1) * phipog(l-1))
          END DO
       END IF
+
+!! Form r12sq. Previous temporary of r12sq (= sqrts ** 2) is used, 
+!! and overwritten in the DO l loop
+!!     Use luu to accumulate the even (even*even) terms
+!!     Use phipbog to accumulate the even (odd*odd terms)
+!!     Use luv to accumulate the odd (odd*even) terms
+      luu(1:nrzt) = r1(1:nrzt,0)*r1(1:nrzt,0)
+      phipog(1:nrzt) = r1(1:nrzt,1)*r1(1:nrzt,1)       
+      lvv(1:nrzt) = 2*r1(1:nrzt,0)*r1(1:nrzt,1)       
+!DIR$ IVDEP
+      DO l = nrzt, 2, -1
+         r12sq(l) = p5*(luu(l) + luu(l-1)               !Comment: r12sq = r12**2
+     &                + shalf(l)*(lvv(l) + lvv(l-1))
+     &                + r12sq(l) * phipog(l)
+     &                + r12sq(l-1) * phipog(l-1))
+      END DO
+
+!! 23_04-03 JDH End Reorder statements
 
       tau(1:nrzt) = gsqrt(1:nrzt)
       gsqrt(1:nrzt) = r12(1:nrzt)*tau(1:nrzt)      
