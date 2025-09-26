@@ -52,6 +52,7 @@
      &  vn_phip, vn_jdotb, vn_bdotb, vn_overr, vn_bgrv, vn_merc,
      &  vn_mshear, vn_mwell, vn_mcurr, vn_mgeo, vn_equif, vn_fsq,
      &  vn_wdot, vn_extcur, vn_curlab, vn_rmnc, vn_zmns, vn_lmns,
+     &  vn_lmnsf, vn_lmncf,
      &  vn_gmnc, vn_bmnc, vn_bsubumnc, vn_bsubvmnc, vn_bsubsmns,
      &  vn_bsupumnc, vn_bsupvmnc, vn_rmns, vn_zmnc, vn_lmnc, vn_gmns,
      &  vn_bmns, vn_bsubumns, vn_bsubvmns, vn_bsubsmnc, vn_bsupumns,
@@ -64,27 +65,28 @@
      &  vn_bsupumns_sur, vn_bsupvmns_sur,
      &  vn_currumnc, vn_currumns, vn_currvmnc, vn_currvmns,    !MRC 8-12-16
 
-     1  ln_magen, ln_therm, ln_gam, ln_maxr, ln_minr, ln_maxz, ln_fp,
-     2  ln_radnod, ln_polmod, ln_tormod, ln_maxmod, ln_maxit, ln_actit,
-     2  ln_maxpot, ln_potsin, ln_potcos,
-     3  ln_asym, ln_recon, ln_free, ln_error, ln_aspect, ln_beta,
-     4  ln_pbeta, ln_tbeta, ln_abeta, ln_b0, ln_rbt0, ln_maxmod_nyq,
-     5  ln_rbt1, ln_sgs, ln_lar, ln_modB, ln_ctor, ln_amin, ln_Rmaj,
-     6  ln_mse, ln_thom, ln_flp, ln_nobd, ln_nbset, ln_next, ln_nbfld,
-     7  ln_pmod, ln_tmod, ln_pmod_nyq, ln_tmod_nyq, ln_racc, ln_zacs,
-     7  ln_racs, ln_zacc, ln_iotaf, ln_qfact, ln_am, ln_ac, ln_ai,
-     7  ln_pmass_type, ln_pcurr_type, ln_piota_type,
-     7  ln_am_aux_s, ln_am_aux_f, ln_ac_aux_s, ln_ac_aux_f,
-     7  ln_ai_aux_s, ln_ai_aux_f, ln_chi, ln_chipf,
-     8  ln_presf, ln_phi, ln_phipf, ln_jcuru, ln_jcurv, ln_iotah,
-     9  ln_mass, ln_presh, ln_betah, ln_buco, ln_bvco, ln_vp, ln_specw,
-     A  ln_vol, ln_phip, ln_jdotb, ln_bdotb, ln_bgrv, ln_merc,
-     B  ln_mshear, ln_mwell, ln_mcurr, ln_mgeo, ln_equif, ln_fsq,
-     C  ln_wdot, ln_extcur, ln_curlab, ln_rmnc, ln_zmns, ln_lmns,
-     D  ln_gmnc, ln_bmnc, ln_bsubumnc, ln_bsubvmnc, ln_bsubsmns,
-     E  ln_bsupumnc, ln_bsupvmnc, ln_rmns, ln_zmnc, ln_lmnc, ln_gmns,
-     F  ln_bmns, ln_bsubumns, ln_bsubvmns, ln_bsubsmnc, ln_bsupumns,
-     G  ln_bsupvmns, ln_rbc, ln_zbs, ln_rbs, ln_zbc, ln_mnyq, ln_nnyq,
+     &  ln_magen, ln_therm, ln_gam, ln_maxr, ln_minr, ln_maxz, ln_fp,
+     &  ln_radnod, ln_polmod, ln_tormod, ln_maxmod, ln_maxit, ln_actit,
+     &  ln_maxpot, ln_potsin, ln_potcos,
+     &  ln_asym, ln_recon, ln_free, ln_error, ln_aspect, ln_beta,
+     &  ln_pbeta, ln_tbeta, ln_abeta, ln_b0, ln_rbt0, ln_maxmod_nyq,
+     &  ln_rbt1, ln_sgs, ln_lar, ln_modB, ln_ctor, ln_amin, ln_Rmaj,
+     &  ln_mse, ln_thom, ln_flp, ln_nobd, ln_nbset, ln_next, ln_nbfld,
+     &  ln_pmod, ln_tmod, ln_pmod_nyq, ln_tmod_nyq, ln_racc, ln_zacs,
+     &  ln_racs, ln_zacc, ln_iotaf, ln_qfact, ln_am, ln_ac, ln_ai,
+     &  ln_pmass_type, ln_pcurr_type, ln_piota_type,
+     &  ln_am_aux_s, ln_am_aux_f, ln_ac_aux_s, ln_ac_aux_f,
+     &  ln_ai_aux_s, ln_ai_aux_f, ln_chi, ln_chipf,
+     &  ln_presf, ln_phi, ln_phipf, ln_jcuru, ln_jcurv, ln_iotah,
+     &  ln_mass, ln_presh, ln_betah, ln_buco, ln_bvco, ln_vp, ln_specw,
+     &  ln_vol, ln_phip, ln_jdotb, ln_bdotb, ln_bgrv, ln_merc,
+     &  ln_mshear, ln_mwell, ln_mcurr, ln_mgeo, ln_equif, ln_fsq,
+     &  ln_wdot, ln_extcur, ln_curlab, ln_rmnc, ln_zmns, ln_lmns,
+     &  ln_lmnsf, ln_lmncf,
+     &  ln_gmnc, ln_bmnc, ln_bsubumnc, ln_bsubvmnc, ln_bsubsmns,
+     &  ln_bsupumnc, ln_bsupvmnc, ln_rmns, ln_zmnc, ln_lmnc, ln_gmns,
+     &  ln_bmns, ln_bsubumns, ln_bsubvmns, ln_bsubsmnc, ln_bsupumns,
+     &  ln_bsupvmns, ln_rbc, ln_zbs, ln_rbs, ln_zbc, ln_mnyq, ln_nnyq,
 
      &  ln_bsubumnc_sur, ln_bsubvmnc_sur,          !MRC 10-15-15
      &  ln_bsupumnc_sur, ln_bsupvmnc_sur,
@@ -163,16 +165,18 @@
 #ifdef _ANIMEC
      2  ,sigmn  , taumn  , pparmn , ppermn , pbprmn , ppprmn , hotdmn
 #endif
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsubumnc_sur  !MRC 10-15-15
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsubvmnc_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsupumnc_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsupvmnc_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsubumns_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsubvmns_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsupumns_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsupvmns_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsubua_sur, bsubva_sur
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: bsupua_sur, bsupva_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsubumnc_sur  !MRC 10-15-15
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsubvmnc_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsupumnc_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsupvmnc_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsubumns_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsubvmns_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsupumns_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsupvmns_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsubua_sur, bsubva_sur
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: bsupua_sur, bsupva_sur
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: lmns_save
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: lmnc_save
 
       CHARACTER(LEN=120) :: wout_file, wout2_file         ! wout2_file by J.Geiger
       CHARACTER(LEN=120) :: fort_file   ! fort_file for diagno 1.5
@@ -531,6 +535,8 @@
       CALL cdf_setatt(nwout, vn_zmns, ln_zmns, units='m')
       CALL cdf_define(nwout, vn_lmns, lmns, dimname=r2dim)
       CALL cdf_setatt(nwout, vn_lmns, ln_lmns)
+      CALL cdf_define(nwout, vn_lmnsf, lmns, dimname=r2dim)
+      CALL cdf_setatt(nwout, vn_lmnsf, ln_lmnsf)
       CALL cdf_define(nwout, vn_gmnc, gmnc, dimname=r3dim)
       CALL cdf_setatt(nwout, vn_gmnc, ln_gmnc)
       CALL cdf_define(nwout, vn_bmnc, bmnc, dimname=r3dim)
@@ -588,6 +594,8 @@
       CALL cdf_setatt(nwout, vn_zmnc, ln_zmnc, units='m')
       CALL cdf_define(nwout, vn_lmnc, lmnc, dimname=r2dim)
       CALL cdf_setatt(nwout, vn_lmnc, ln_lmnc)
+      CALL cdf_define(nwout, vn_lmncf, lmnc, dimname=r2dim)
+      CALL cdf_setatt(nwout, vn_lmncf, ln_lmncf)
       CALL cdf_define(nwout, vn_gmns, gmns, dimname=r3dim)
       CALL cdf_setatt(nwout, vn_gmns, ln_gmns)
       CALL cdf_define(nwout, vn_bmns, bmns, dimname=r3dim)
@@ -800,11 +808,18 @@
 
       DEALLOCATE (xfinal)
 
+!  Save the lmns and lmnc arrays.
+      ALLOCATE (lmns_save(SIZE(lmns, 1), SIZE(lmns, 2)))
+      lmns_save = lmns
+      IF (lasym) THEN
+         ALLOCATE (lmnc_save(SIZE(lmnc, 1), SIZE(lmnc, 2)))
+         lmnc_save = lmnc
+      END IF
+
 !
 !     INTERPOLATE LAMBDA ONTO HALF-MESH FOR BACKWARDS CONSISTENCY WITH EARLIER VERSIONS OF VMEC
 !     AND SMOOTHS POSSIBLE UNPHYSICAL "WIGGLE" ON RADIAL MESH
 !
-
       WHERE (NINT(xm) .le. 1) lmns(:,1) = lmns(:,2)
       DO js = ns,2,-1
          WHERE (MOD(NINT(xm),2) .eq. 0)
@@ -1229,6 +1244,8 @@
       CALL cdf_write(nwout, vn_rmnc, rmnc)
       CALL cdf_write(nwout, vn_zmns, zmns)
       CALL cdf_write(nwout, vn_lmns, lmns)
+      CALL cdf_write(nwout, vn_lmnsf, lmns_save)
+      DEALLOCATE (lmns_save)
       CALL cdf_write(nwout, vn_gmnc, gmnc)              !Half mesh
       CALL cdf_write(nwout, vn_bmnc, bmnc)              !Half mesh
       CALL cdf_write(nwout, vn_bsubumnc, bsubumnc)      !Half mesh
@@ -1579,6 +1596,8 @@
          CALL cdf_write(nwout, vn_rmns, rmns)
          CALL cdf_write(nwout, vn_zmnc, zmnc)
          CALL cdf_write(nwout, vn_lmnc, lmnc)
+         CALL cdf_write(nwout, vn_lmncf, lmnc_save)
+         DEALLOCATE (lmnc_save)
          CALL cdf_write(nwout, vn_gmns, gmns)
          CALL cdf_write(nwout, vn_bmns, bmns)
          CALL cdf_write(nwout, vn_bsubumns, bsubumns)
