@@ -1,6 +1,6 @@
       SUBROUTINE load_xc_from_wout(rmn, zmn, lmn, lreset, 
      1    ntor_in, mpol1_in, ns_in, reset_file)
-      USE read_wout_mod, ONLY: rmnc, zmns, lmns, rmns, zmnc, lmnc,
+      USE read_wout_mod, ONLY: rmnc, zmns, lmnsf, rmns, zmnc, lmncf,
      1    xm, xn, ntor, ns,
      2    nfp, mnmax, read_wout_file, read_wout_deallocate
       USE vmec_params, ONLY: mscale, nscale, ntmax,
@@ -77,20 +77,20 @@ C-----------------------------------------------
          IF (n .eq. 0) t2 = zero
          rmn(:ns,n1,m,rcc) = rmn(:ns,n1,m,rcc) + t1*rmnc(mn,:ns)
          zmn(:ns,n1,m,zsc) = zmn(:ns,n1,m,zsc) + t1*zmns(mn,:ns)
-         lmn(:ns,n1,m,zsc) = lmn(:ns,n1,m,zsc) + t1*lmns(mn,:ns)
+         lmn(:ns,n1,m,zsc) = lmn(:ns,n1,m,zsc) + t1*lmnsf(mn,:ns)
          IF (lthreed) THEN
          rmn(:ns,n1,m,rss) = rmn(:ns,n1,m,rss) + t2*rmnc(mn,:ns)
          zmn(:ns,n1,m,zcs) = zmn(:ns,n1,m,zcs) - t2*zmns(mn,:ns)
-         lmn(:ns,n1,m,zcs) = lmn(:ns,n1,m,zcs) - t2*lmns(mn,:ns)
+         lmn(:ns,n1,m,zcs) = lmn(:ns,n1,m,zcs) - t2*lmnsf(mn,:ns)
          END IF
          IF (lasym) THEN
          rmn(:ns,n1,m,rsc) = rmn(:ns,n1,m,rsc) + t1*rmns(mn,:ns)
          zmn(:ns,n1,m,zcc) = zmn(:ns,n1,m,zcc) + t1*zmnc(mn,:ns)
-         lmn(:ns,n1,m,zcc) = lmn(:ns,n1,m,zcc) + t1*lmnc(mn,:ns)
+         lmn(:ns,n1,m,zcc) = lmn(:ns,n1,m,zcc) + t1*lmncf(mn,:ns)
          IF (lthreed) THEN
          rmn(:ns,n1,m,rcs) = rmn(:ns,n1,m,rcs) - t2*rmns(mn,:ns)
          zmn(:ns,n1,m,zss) = zmn(:ns,n1,m,zss) + t2*zmnc(mn,:ns)
-         lmn(:ns,n1,m,zss) = lmn(:ns,n1,m,zss) + t2*lmnc(mn,:ns)
+         lmn(:ns,n1,m,zss) = lmn(:ns,n1,m,zss) + t2*lmncf(mn,:ns)
          END IF
          END IF
          IF (m .eq. 0) THEN
@@ -125,6 +125,9 @@ C-----------------------------------------------
 
       IF (ALLOCATED(temp)) DEALLOCATE (temp)
 
+!  It appears that the last loop was a major contributer which affected the poor
+!  restarting of VMEC. 
+#if 0
 !
 !     CONVERT lambda TO INTERNAL FULL MESH REPRESENTATION
 !
@@ -152,6 +155,7 @@ C-----------------------------------------------
       DO js = nsmin + 1, nsmax
          lmn(js,:,:,:) = phipf(js)*lmn(js,:,:,:)
       END DO
+#endif
 
       CALL read_wout_deallocate
 
