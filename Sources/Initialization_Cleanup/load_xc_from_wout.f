@@ -1,15 +1,12 @@
       SUBROUTINE load_xc_from_wout(rmn, zmn, lmn, lreset, 
-     1    ntor_in, mpol1_in, ns_in, reset_file)
-      USE read_wout_mod, ONLY: rmnc, zmns, lmnsf, rmns, zmnc, lmncf,
-     1    xm, xn, ntor, ns, lmns, lmnc,
-     2    nfp, mnmax, read_wout_file, read_wout_deallocate, version_
-      USE vmec_params, ONLY: mscale, nscale, ntmax, lamscale,
-     1                       rcc, rss, rsc, rcs, zsc, zcs, zcc, zss
+     &    ntor_in, mpol1_in, ns_in, reset_file)
       USE vmec_dim, ONLY: mpol1
-      USE vparams, ONLY: one, zero, rprec
-      USE vmec_input, ONLY: lasym
-      USE vmec_main, ONLY: lthreed, p5 => cp5, sp, sm, phipf
-      USE parallel_include_module, ONLY: rank, t1lglob, t1rglob, PARVMEC
+      USE vparams, ONLY: rprec
+      USE vmec_params, ONLY: ntmax
+      USE read_wout_mod, ONLY: nfp, read_wout_deallocate,
+     &                         read_wout_file, ns, ntor, mpol, version_
+      USE parallel_include_module, ONLY: rank
+
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -22,11 +19,8 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER :: ierr, mn, m, n, n1, js
-      REAL(rprec) :: t1, t2
-      REAL(rprec), ALLOCATABLE :: temp(:,:)
-      INTEGER :: nsmin
-      INTEGER :: nsmax
+      INTEGER :: ierr
+
 C-----------------------------------------------
 
 !
@@ -53,6 +47,77 @@ C-----------------------------------------------
       IF (mpol1_in .ne. mpol1) STOP 'mpol1_in != mpol1 in load_xc'
       IF (nfp .eq. 0) STOP 'nfp = 0 in load_xc'
 
+      IF (version_ .lt. 10.0) THEN
+         CALL rebuild_xc(rmn, zmn, lmn, lreset, ntor_in, mpol1_in,
+     &                   ns_in)
+      ELSE
+         CALL set_xc(lreset)
+      END IF
+
+      CALL read_wout_deallocate
+
+      END SUBROUTINE load_xc_from_wout
+
+!-------------------------------------------------------------------------------
+!>  @brief Reset the xc array from the wout file.
+!>
+!>  @param[out] lreset Flag to mark that profil3d should not overwrite axis.
+!-------------------------------------------------------------------------------
+      SUBROUTINE set_xc(lreset)
+      USE xstuff, ONLY: xc
+      USE read_wout_mod, ONLY: xc_reset
+
+      IMPLICIT NONE
+
+!  Arguments
+      LOGICAL, INTENT(out) :: lreset
+
+!  Start of executable code.
+      xc = xc_reset
+      lreset = .false. !Signals profil3d NOT to overwrite axis values
+
+      END SUBROUTINE
+
+!-------------------------------------------------------------------------------
+!>  @brief Rebuild the xc array from quantities in the woutfile.
+!>
+!>  @param[out] rmn      The radial modes spectrum.
+!>  @param[out] zmn      The vertical mode spectrum.
+!>  @param[out] lmn      The lambda mode spectrum.
+!>  @param[out] lreset   Flag to mark that profil3d should not overwrite axis.
+!>  @param[in]  ntor_in  Max toroidal mode.
+!>  @param[in]  mpol1_in Max poloidal mode.
+!>  @param[in]  ns_in    Number of radial surfaces.
+!-------------------------------------------------------------------------------
+      SUBROUTINE rebuild_xc(rmn, zmn, lmn, lreset,
+     &    ntor_in, mpol1_in, ns_in)
+      USE parallel_include_module, ONLY: t1lglob, t1rglob, PARVMEC
+      USE vparams, ONLY: one, zero, rprec
+      USE vmec_main, ONLY: lthreed, p5 => cp5, sp, sm, phipf
+      USE vmec_input, ONLY: lasym
+      USE vmec_dim, ONLY: mpol1
+      USE vmec_params, ONLY: mscale, nscale, ntmax, lamscale,
+     &                       rcc, rss, rsc, rcs, zsc, zcs, zcc, zss
+      USE read_wout_mod, ONLY: rmnc, zmns, lmnsf, rmns, zmnc, lmncf,
+     &    xm, xn, ntor, ns, lmns, lmnc,
+     &    nfp, mnmax, version_
+
+      IMPLICIT NONE
+
+!  Arguments
+      INTEGER :: ns_in, mpol1_in, ntor_in
+      REAL(rprec), DIMENSION(ns_in,0:ntor_in,0:mpol1_in,ntmax),
+     &   INTENT(out) :: rmn, zmn, lmn
+      LOGICAL, INTENT(out) :: lreset
+
+!  Local Veriables.
+      REAL(rprec), ALLOCATABLE :: temp(:,:)
+      INTEGER :: mn, m, n, n1, js
+      REAL(rprec) :: t1, t2
+      INTEGER :: nsmin
+      INTEGER :: nsmax
+
+!  Start of executable code.
       IF (PARVMEC) THEN
          nsmin = t1lglob
          nsmax = t1rglob
@@ -163,9 +228,6 @@ C-----------------------------------------------
 
       IF (ALLOCATED(temp)) DEALLOCATE (temp)
 
-!  It appears that the last loop was a major contributer which affected the poor
-!  restarting of VMEC. 
-
 !
 !     CONVERT lambda TO INTERNAL FULL MESH REPRESENTATION
 !
@@ -177,7 +239,7 @@ C-----------------------------------------------
             lmn(1,:,1,:) = 2*lmn(2,:,1,:)/(sm(2) + sp(1))
          END IF
          lmn(1,:,2:,:) = 0
-      
+
          DO m = 0, mpol1, 2
             DO js = nsmin + 1, nsmax
                lmn(js,:,m,:) = 2*lmn(js,:,m,:) - lmn(js-1,:,m,:)
@@ -187,7 +249,7 @@ C-----------------------------------------------
          DO m = 1, mpol1, 2
             DO js = nsmin + 1, nsmax
                lmn(js,:,m,:) = (2*lmn(js,:,m,:)
-     1                       - sp(js-1)*lmn(js-1,:,m,:))/sm(js)
+     &                       - sp(js-1)*lmn(js-1,:,m,:))/sm(js)
             END DO
          END DO
       END IF
@@ -196,6 +258,4 @@ C-----------------------------------------------
          lmn(js,:,:,:) = phipf(js)*lmn(js,:,:,:)/lamscale
       END DO
 
-      CALL read_wout_deallocate
-
-      END SUBROUTINE load_xc_from_wout
+      END SUBROUTINE
