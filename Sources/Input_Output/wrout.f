@@ -57,6 +57,7 @@
      &  vn_bsupumnc, vn_bsupvmnc, vn_rmns, vn_zmnc, vn_lmnc, vn_gmns,
      &  vn_bmns, vn_bsubumns, vn_bsubvmns, vn_bsubsmnc, vn_bsupumns,
      &  vn_bsupvmns, vn_rbc, vn_zbs, vn_rbs, vn_zbc, vn_mnyq, vn_nnyq,
+     &  vn_xc,
      &  ln_version, ln_extension, ln_mgrid,
 
      &  vn_bsubumnc_sur, vn_bsubvmnc_sur,                      !MRC 10-15-15
@@ -92,7 +93,7 @@
      &  ln_bsupumnc_sur, ln_bsupvmnc_sur,
      &  ln_bsubumns_sur, ln_bsubvmns_sur,
      &  ln_bsupumns_sur, ln_bsupvmns_sur,
-     &  ln_currumnc, ln_currumns, ln_currvmnc, ln_currvmns
+     &  ln_currumnc, ln_currumns, ln_currvmnc, ln_currvmns, ln_xc
 
 !------------------DEC$ ELSE !to use safe_open_mod in any case (J.Geiger)
 #endif
@@ -585,6 +586,8 @@
 !    1                dimname=(/'n_mode','m_mode'/))
 !        END IF
 !     END IF
+      CALL cdf_define(nwout, vn_xc, xc)
+      CALL cdf_setatt(nwout, vn_xc, ln_xc)
 
       IF (.NOT. lasym) GO TO 800
 
@@ -686,6 +689,7 @@
       CALL cdf_write(nwout, vn_fsql, fsql)
       CALL cdf_write(nwout, vn_fsqr, fsqr)
       CALL cdf_write(nwout, vn_fsqz, fsqz)
+      CALL cdf_write(nwout, vn_xc, xc)
 
       CALL cdf_write(nwout, vn_nextcur, nextcur)
       IF (nextcur .gt. 0) THEN

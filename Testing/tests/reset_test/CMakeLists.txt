@@ -156,11 +156,6 @@ add_test (NAME    vmec_reset_check_fsqr_test
 set_tests_properties (vmec_reset_check_fsqr_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
-#add_test (NAME    vmec_reset_check_fsqt_test
-#          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=fsqt -tol=1.6E-12)
-#set_tests_properties (vmec_reset_check_fsqt_test
-#                      PROPERTIES
-#                      DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_fsqz_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=fsqz -tol=1.5E-12)
 set_tests_properties (vmec_reset_check_fsqz_test
@@ -276,11 +271,6 @@ add_test (NAME    vmec_reset_check_wb_test
 set_tests_properties (vmec_reset_check_wb_test
                       PROPERTIES
                       DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
-#add_test (NAME    vmec_reset_check_wdot_test
-#          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wdot -tol=6.0E-10)
-#set_tests_properties (vmec_reset_check_wdot_test
-#                      PROPERTIES
-#                      DEPENDS "vmec_reset_test_init;vmec_reset_test_reset")
 add_test (NAME    vmec_reset_check_wp_test
           COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_init.vmec.nc -wout_file2=wout_test_reset.vmec.nc -quantity=wp -tol=7.0E-20)
 set_tests_properties (vmec_reset_check_wp_test
