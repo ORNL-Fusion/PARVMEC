@@ -416,8 +416,8 @@ C-----------------------------------------------
          END IF
 
          IF (bloat .ne. one) THEN
+!  Need to set phiedge for all processors so do it outside of this if statement.
             WRITE (nthreed,'(" Profile Bloat Factor: ",1pe11.4)') bloat
-            phiedge = phiedge*bloat
          END IF
 
          IF (pres_scale .ne. one) THEN
@@ -533,6 +533,11 @@ C-----------------------------------------------
      &       '    raxis(c)    raxis(s)    zaxis(c)    zaxis(s)')
 
       END IF PROC0
+
+      IF (bloat .ne. one) THEN
+!  Set phiedge with bloat parameter on all processors.
+         phiedge = phiedge*bloat
+      END IF
 
 1000  CONTINUE
 

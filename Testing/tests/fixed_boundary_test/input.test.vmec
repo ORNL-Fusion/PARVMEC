@@ -19,7 +19,7 @@ LASYM = F,
 ! Fitting parameters.
 GAMMA = 0.0,
 PHIEDGE = -0.05,
-BLOAT = 1.0,
+BLOAT = 1.1,
 
 ! Initial Position.
 RAXIS(0) = 0.75,
