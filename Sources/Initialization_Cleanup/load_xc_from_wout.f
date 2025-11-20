@@ -65,7 +65,8 @@ C-----------------------------------------------
 !-------------------------------------------------------------------------------
       SUBROUTINE set_xc(lreset)
       USE xstuff, ONLY: xc
-      USE read_wout_mod, ONLY: xc_reset
+      USE read_wout_mod, ONLY: xc_reset, reset_ivac => ivac
+      USE vmec_main, ONLY: ivac
 
       IMPLICIT NONE
 
@@ -74,6 +75,7 @@ C-----------------------------------------------
 
 !  Start of executable code.
       xc = xc_reset
+      ivac = reset_ivac
       lreset = .false. !Signals profil3d NOT to overwrite axis values
 
       END SUBROUTINE
