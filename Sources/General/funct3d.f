@@ -201,7 +201,11 @@ C-----------------------------------------------
             ENDIF
             CALL second0 (tvacon)
             ivacskip = MOD(iter2-iter1,nvacskip)
-            IF (ivac .LE. 2) ivacskip = 0
+
+!  Assume that ivac > 1 when iter2 is 2 as restarted from a wout file.
+            IF (ivac .LE. 2 .or. (iter2 .eq. 2 .and. ivac .gt. 1)) THEN
+               ivacskip = 0
+            END IF
 
 !           EXTEND NVACSKIP AS EQUILIBRIUM CONVERGES
             IF (ivacskip .EQ. 0) THEN
