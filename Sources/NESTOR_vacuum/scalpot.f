@@ -2,6 +2,7 @@
       USE vacmod
       USE parallel_include_module
       USE timer_sub
+      USE analytic, ONLY: analyt
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -38,7 +39,7 @@ C-----------------------------------------------
 !
 
       ndim = mnpd2/mnpd
-      CALL analyt (grpmn, bvec, ivacskip, ndim)
+      CALL analyt(grpmn, bvec, ivacskip, ndim)
 
       IF (ivacskip .NE. 0) THEN
          bvec = bvec + bvecsav
