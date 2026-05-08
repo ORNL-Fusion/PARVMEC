@@ -153,6 +153,12 @@
 
       IF (lthreed) THEN
          DO l = t1rglob, MAX(t1lglob,2), -1
+            IF (ANY(ISNAN(pshalf(:,l)))) THEN
+               WRITE(*,*) 'pshalf', pshalf(:,l), 'pshalf'
+            END IF
+            IF (ANY(ISNAN(luv(:,l)))) THEN
+               WRITE(*,*) 'luv', luv(:,l), 'luv'
+            END IF
             pguv(:,l) = p5*(pguv(:,l) + pguv(:,l-1) +
      &                      pshalf(:,l)*(luv(:,l) + luv(:,l-1)))
             pgvv(:,l) = p5*(pgvv(:,l) + pgvv(:,l-1) +

@@ -26,7 +26,7 @@ C-----------------------------------------------
          STOP 'AMATSAV: Allocation error in scalpot'
       END IF
 
-      ALLOCATE (grpmn(nuv3*mnpd2), stat=ip)
+      ALLOCATE (grpmn(nuv3*mnpd2), stat=ip);  grpmn=0
       IF (ip .NE. 0) STOP 'GRPMN: Allocation error in scalpot'
 
 !
@@ -114,6 +114,12 @@ C-----------------------------------------------
          DEALLOCATE (green, greenp, gstore)
 
          info = 0
+         IF (ANY(ISNAN(grpmn))) THEN
+            WRITE(*,*) 'grpmn', grpmn, 'grpmn'
+         END IF
+         IF (ANY(ISNAN(bexni))) THEN
+            WRITE(*,*) 'bexni', bexni, 'bexni'
+         END IF
          CALL dgetrf(mnpd2, mnpd2, amatsav, mnpd2, ipiv, info)
          IF (info .ne. 0) PRINT *, ' dgetrf error in scalpot'
 

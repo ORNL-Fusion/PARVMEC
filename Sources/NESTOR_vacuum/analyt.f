@@ -59,9 +59,10 @@
      &          adp(nuv3min:nuv3max), adm(nuv3min:nuv3max),
      &          cma(nuv3min:nuv3max), ra1p(nuv3min:nuv3max),
      &          ra1m(nuv3min:nuv3max), slpm(nuv3min:nuv3max),
-     &          tlpm(nuv3min:nuv3max), tlp(0:nf + mf,nuv3min:nuv3max),
-     &          tlm(0:nf + mf,nuv3min:nuv3max), slm(nuv3min:nuv3max),
-     &          slp(nuv3min:nuv3max), stat = l)
+     &          tlpm(nuv3min:nuv3max),
+     &          tlp(0:nf + mf + 1,nuv3min:nuv3max),
+     &          tlm(0:nf + mf + 1,nuv3min:nuv3max),
+     &          slm(nuv3min:nuv3max), slp(nuv3min:nuv3max), stat = l)
       IF (l .ne. 0) THEN
          STOP 'Allocation error in SUBROUTINE analyt'
       ENDIF
@@ -245,9 +246,9 @@
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: cma
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: sqrtc
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: sqrta
-      REAL(dp), DIMENSION(0:nf + mf,nuv3min:nuv3max), INTENT(out)
+      REAL(dp), DIMENSION(0:nf + mf + 1,nuv3min:nuv3max), INTENT(out)
      &   :: tlp
-      REAL(dp), DIMENSION(0:nf + mf,nuv3min:nuv3max), INTENT(out)
+      REAL(dp), DIMENSION(0:nf + mf + 1,nuv3min:nuv3max), INTENT(out)
      &   :: tlm
 
 !  local variables
@@ -381,21 +382,21 @@
       IMPLICIT NONE
 
 !  Declare Arguments
-      REAL(dp), INTENT(in)                          :: a
-      REAL(dp), INTENT(in)                          :: b
-      REAL(dp), INTENT(in)                          :: sqrtc
-      REAL(dp), INTENT(in)                          :: sqrta
-      REAL(dp), INTENT(in)                          :: cma
-      REAL(dp), INTENT(in)                          :: t0
-      REAL(dp), DIMENSION(0:nf + mf), INTENT(inout) :: tl
+      REAL(dp), INTENT(in)                              :: a
+      REAL(dp), INTENT(in)                              :: b
+      REAL(dp), INTENT(in)                              :: sqrtc
+      REAL(dp), INTENT(in)                              :: sqrta
+      REAL(dp), INTENT(in)                              :: cma
+      REAL(dp), INTENT(in)                              :: t0
+      REAL(dp), DIMENSION(0:nf + mf + 1), INTENT(inout) :: tl
 
 !  local variables
-      REAL(dp)                                      :: high
-      REAL(dp)                                      :: current
-      REAL(dp)                                      :: low
-      REAL(dp)                                      :: scale
-      REAL(dp)                                      :: sign1
-      INTEGER                                       :: l
+      REAL(dp)                                          :: high
+      REAL(dp)                                          :: current
+      REAL(dp)                                          :: low
+      REAL(dp)                                          :: scale
+      REAL(dp)                                          :: sign1
+      INTEGER                                           :: l
 
 !  local parameters
       INTEGER, PARAMETER :: kTailExtra = 50
@@ -424,12 +425,11 @@
 #endif
          low = 0
          sign1 = 1
-         DO l = 0, mf + nf - 1
+         DO l = 0, mf + nf
             sign1 = -sign1
-            current = recurrance(a, b, sqrtc, sqrta, sign1,
-     &                           l, l + 1, 2*l + 1, cma, low, tl(l))
+            tl(l + 1) = recurrance(a, b, sqrtc, sqrta, sign1,
+     &                             l, l + 1, 2*l + 1, cma, low, tl(l))
             low = tl(l)
-            tl(l + 1) = current
          END DO
 #if 0
       END IF
