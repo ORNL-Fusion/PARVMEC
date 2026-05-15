@@ -396,7 +396,7 @@
       INTEGER, PARAMETER :: kTailExtra = 50
 
 !  Start of executable code
-#define ENABLE 1
+#define ENABLE 0
 #if ENABLE
       IF (useBackward(a,b)) THEN
          high = 0.0
