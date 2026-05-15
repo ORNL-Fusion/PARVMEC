@@ -35,7 +35,7 @@
       INTEGER, INTENT(IN)   :: ndim
 
 !  local variables
-      INTEGER :: l, n, m, i, q, j, k, ll, blksize, mn
+      INTEGER :: l, n, m, k, mn
       REAL(dp), DIMENSION(:,:), ALLOCATABLE :: tlp, tlm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      &   r0p, r1p, r0m, r1m, sqrtc, sqrta, adp, adm, cma, ra1p, ra1m,
@@ -60,8 +60,8 @@
      &          cma(nuv3min:nuv3max), ra1p(nuv3min:nuv3max),
      &          ra1m(nuv3min:nuv3max), slpm(nuv3min:nuv3max),
      &          tlpm(nuv3min:nuv3max),
-     &          tlp(0:nf + mf + 1,nuv3min:nuv3max),
-     &          tlm(0:nf + mf + 1,nuv3min:nuv3max),
+     &          tlp(-1:nf + mf,nuv3min:nuv3max),
+     &          tlm(-1:nf + mf,nuv3min:nuv3max),
      &          slm(nuv3min:nuv3max), slp(nuv3min:nuv3max), stat = l)
       IF (l .ne. 0) THEN
          STOP 'Allocation error in SUBROUTINE analyt'
@@ -163,13 +163,13 @@
          IF (ivacskip .eq. 0) THEN
             DO k = nuv3min, nuv3max
                slp(k) = (r1p(k)*fl + ra1p(k))*tlp(l,k)
-     &                + r0p(k)*fl*tlp(l + 1,k)
-     &                - (r1p(k) + r0p(k))/sqrtc(k) + sign1*(r0p(k)
-     &                - r1p(k))/sqrta(k)
+     &                + r0p(k)*fl*tlp(l - 1,k)
+     &                - (r1p(k) + r0p(k))/sqrtc(k)
+     &                + sign1*(r0p(k) - r1p(k))/sqrta(k)
                slm(k) = (r1m(k)*fl + ra1m(k))*tlm(l,k)
-     &                + r0m(k)*fl*tlm(l + 1,k)
-     &                - (r1m(k) + r0m(k))/sqrtc(k) + sign1*(r0m(k)
-     &                - r1m(k))/sqrta(k)
+     &                + r0m(k)*fl*tlm(l - 1,k)
+     &                - (r1m(k) + r0m(k))/sqrtc(k)
+     &                + sign1*(r0m(k) - r1m(k))/sqrta(k)
                slpm(k) = slp(k) + slm(k)
             END DO
          ENDIF
@@ -246,9 +246,9 @@
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: cma
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: sqrtc
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: sqrta
-      REAL(dp), DIMENSION(0:nf + mf + 1,nuv3min:nuv3max), INTENT(out)
+      REAL(dp), DIMENSION(-1:nf + mf,nuv3min:nuv3max), INTENT(out)
      &   :: tlp
-      REAL(dp), DIMENSION(0:nf + mf + 1,nuv3min:nuv3max), INTENT(out)
+      REAL(dp), DIMENSION(-1:nf + mf,nuv3min:nuv3max), INTENT(out)
      &   :: tlm
 
 !  local variables
@@ -267,6 +267,8 @@
       DO k = nuv3min, nuv3max
          sqad1u = SQRT(adp(k))
          sqad2u = SQRT(adm(k))
+         tlp(-1,k) = 0
+         tlm(-1,k) = 0
          tlp(0,k)  = log((sqad1u*sqrtc(k) + adp(k) + cma(k)) /
      &                   (sqad1u*sqrta(k) - adp(k) + cma(k)))/sqad1u
          tlm(0,k)  = log((sqad2u*sqrtc(k) + adm(k) + cma(k)) /
@@ -310,9 +312,9 @@
       REAL(dp), PARAMETER  :: kLogGrowthThreshold = 23.0258509299 ! ln(1e10)
 
 !  Start of executable code
-      useBackward = a .gt. b      .and.
+      useBackward = a .gt. b   .and.
      &              b .gt. 0.0 .and.
-     &              (mf + nf + 1)*log(a/b) .gt. kLogGrowthThreshold
+     &              (mf + nf)*log(a/b) .gt. kLogGrowthThreshold
 
       END FUNCTION
 
@@ -374,27 +376,27 @@
       IMPLICIT NONE
 
 !  Declare Arguments
-      REAL(dp), INTENT(in)                              :: a
-      REAL(dp), INTENT(in)                              :: b
-      REAL(dp), INTENT(in)                              :: sqrtc
-      REAL(dp), INTENT(in)                              :: sqrta
-      REAL(dp), INTENT(in)                              :: cma
-      REAL(dp), INTENT(in)                              :: t0
-      REAL(dp), DIMENSION(0:nf + mf + 1), INTENT(inout) :: tl
+      REAL(dp), INTENT(in)                           :: a
+      REAL(dp), INTENT(in)                           :: b
+      REAL(dp), INTENT(in)                           :: sqrtc
+      REAL(dp), INTENT(in)                           :: sqrta
+      REAL(dp), INTENT(in)                           :: cma
+      REAL(dp), INTENT(in)                           :: t0
+      REAL(dp), DIMENSION(-1:nf + mf), INTENT(inout) :: tl
 
 !  local variables
-      REAL(dp)                                          :: high
-      REAL(dp)                                          :: current
-      REAL(dp)                                          :: low
-      REAL(dp)                                          :: scale
-      REAL(dp)                                          :: sign1
-      INTEGER                                           :: l
+      REAL(dp)                                       :: high
+      REAL(dp)                                       :: current
+      REAL(dp)                                       :: low
+      REAL(dp)                                       :: scale
+      REAL(dp)                                       :: sign1
+      INTEGER                                        :: l
 
 !  local parameters
       INTEGER, PARAMETER :: kTailExtra = 50
 
 !  Start of executable code
-#define ENABLE 0
+#define ENABLE 1
 #if ENABLE
       IF (useBackward(a,b)) THEN
          high = 0.0
@@ -408,23 +410,22 @@
      &                       l + 1, l, 2*l + 1, cma, high, current)
             high = current
             current = low
-            IF (l - 1 <= mf + nf + 1) THEN
+            IF (l - 1 <= mf + nf) THEN
                tl(l - 1) = low
             END IF
          END DO
          scale = t0/tl(0)
-         DO l = 0, mf + nf + 1
+         DO l = 0, mf + nf
             tl(l) = tl(l)*scale
          END DO
       ELSE
 #endif
-         low = 0
          sign1 = 1
-         DO l = 0, mf + nf
+         DO l = 0, mf + nf - 1
             sign1 = -sign1
             tl(l + 1) = recurrence(a, b, sqrtc, sqrta, sign1,
-     &                             l, l + 1, 2*l + 1, cma, low, tl(l))
-            low = tl(l)
+     &                             l, l + 1, 2*l + 1, cma,
+     &                             tl(l - 1), tl(l))
          END DO
 #if ENABLE
       END IF
