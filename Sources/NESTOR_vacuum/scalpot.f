@@ -114,12 +114,6 @@ C-----------------------------------------------
          DEALLOCATE (green, greenp, gstore)
 
          info = 0
-         IF (ANY(ISNAN(grpmn))) THEN
-            WRITE(*,*) 'grpmn', grpmn, 'grpmn'
-         END IF
-         IF (ANY(ISNAN(bexni))) THEN
-            WRITE(*,*) 'bexni', bexni, 'bexni'
-         END IF
          CALL dgetrf(mnpd2, mnpd2, amatsav, mnpd2, ipiv, info)
          IF (info .ne. 0) PRINT *, ' dgetrf error in scalpot'
 
