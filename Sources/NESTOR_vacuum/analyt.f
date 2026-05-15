@@ -272,9 +272,9 @@
          tlm(0,k)  = log((sqad2u*sqrtc(k) + adm(k) + cma(k)) /
      &                   (sqad2u*sqrta(k) - adm(k) + cma(k)))/sqad2u
 
-         CALL recurrance_sum(adm(k), adp(k), sqrtc(k), sqrta(k),
+         CALL recurrence_sum(adm(k), adp(k), sqrtc(k), sqrta(k),
      &                       cma(k), tlp(0,k), tlp(:,k))
-         CALL recurrance_sum(adp(k), adm(k), sqrtc(k), sqrta(k),
+         CALL recurrence_sum(adp(k), adm(k), sqrtc(k), sqrta(k),
      &                       cma(k), tlm(0,k), tlm(:,k))
       END DO
 
@@ -306,45 +306,37 @@
       REAL(dp), INTENT(in) :: a
       REAL(dp), INTENT(in) :: b
 
-!  local variables
-      REAL(dp)             :: logRatio
-
 !  local parameters
       REAL(dp), PARAMETER  :: kLogGrowthThreshold = 23.0258509299 ! ln(1e10)
 
 !  Start of executable code
-      logRatio = 0.0
-      IF (a > b .and. b .gt. 0.0) THEN
-         logRatio = log(a/b)
-      END IF
-
-      useBackward = (mf + nf)*logRatio .gt. kLogGrowthThreshold
+      useBackward = a .gt. b      .and.
+     &              b .gt. 0.0 .and.
+     &              (mf + nf + 1)*log(a/b) .gt. kLogGrowthThreshold
 
       END FUNCTION
 
 !-------------------------------------------------------------------------------
-!>  @brief Forward recurrance.
+!>  @brief Recurrence method.
 !>
-!>  @param[in] a      ad for m or p depending on what parity is computed
-!>  @param[in] b      Opposite ad parity to a.
-!>  @param[in] sqrtc  Sqrt(c) constant.
-!>  @param[in] sqrta  Sqrt(a) constant.
-!>  @param[in] sign1  Sign of the parity.
-!>  @param[in] fl      Reducent index.
-!>  @param[in] fl1     Next index.
-!>  @param[in] fl2     2fl1 + 1
+!>  @param[in] a       ad for m or p depending on what parity is computed
+!>  @param[in] b       Opposite ad parity to a.
+!>  @param[in] sqrtc   Sqrt(c) constant.
+!>  @param[in] sqrta   Sqrt(a) constant.
+!>  @param[in] sign1   Sign of the parity.
+!>  @param[in] fl      Recurrence index.
 !>  @param[in] cma
 !>  @param[in] current Current value.
 !>  @param[in] next    Next value.
 !-------------------------------------------------------------------------------
-      FUNCTION recurrance(a, b, sqrtc, sqrta, sign1, fl, fl1, fl2,
+      FUNCTION recurrence(a, b, sqrtc, sqrta, sign1, fl, fl1, fl2,
      &                    cma, current, next)
       USE stel_kinds
 
       IMPLICIT NONE
 
 !  Declare Arguments
-      REAL(dp)             :: recurrance
+      REAL(dp)             :: recurrence
       REAL(dp), INTENT(in) :: a
       REAL(dp), INTENT(in) :: b
       REAL(dp), INTENT(in) :: sqrtc
@@ -358,7 +350,7 @@
       REAL(dp), INTENT(in) :: next
 
 !  Start of executable code
-      recurrance = (sqrtc + sign1*sqrta - fl2*cma*next - fl*a*current)
+      recurrence = (sqrtc + sign1*sqrta - fl2*cma*next - fl*a*current)
      &           / (b*fl1)
 
       END FUNCTION
@@ -375,7 +367,7 @@
 !>  @param[in]    t0    Inital
 !>  @param[inout] tl    Final recurrence.
 !-------------------------------------------------------------------------------
-      SUBROUTINE recurrance_sum(a, b, sqrtc, sqrta, cma, t0, tl)
+      SUBROUTINE recurrence_sum(a, b, sqrtc, sqrta, cma, t0, tl)
       USE stel_kinds
       USE vacmod0, ONLY: mf, nf
 
@@ -402,23 +394,26 @@
       INTEGER, PARAMETER :: kTailExtra = 50
 
 !  Start of executable code
-#if 0
+#define ENABLE 0
+#if ENABLE
       IF (useBackward(a,b)) THEN
          high = 0.0
          current = 1.0E-300_dp
          DO l = mf + nf + kTailExtra, 1, -1
-            sign1 = 1.0
-            IF (MOD(l,2) == 0) THEN
+            sign1 = 1
+            IF (MOD(l,2) .eq. 0) THEN
                sign1 = -1
             ENDIF
-            low = recurrance(a, b, sqrtc, sqrta, sign1,
-     &                       l, l + 1, 2*l + 1, cma, high, current)
-            IF (l - 1 <= mf + nf) THEN
+            low = recurrence(b, a, sqrtc, sqrta, sign1,
+     &                       l + 1, l, 2*l + 1, cma, high, current)
+            high = current
+            current = low
+            IF (l - 1 <= mf + nf + 1) THEN
                tl(l - 1) = low
             END IF
          END DO
          scale = t0/tl(0)
-         DO l = 0, mf + nf
+         DO l = 0, mf + nf + 1
             tl(l) = tl(l)*scale
          END DO
       ELSE
@@ -427,11 +422,11 @@
          sign1 = 1
          DO l = 0, mf + nf
             sign1 = -sign1
-            tl(l + 1) = recurrance(a, b, sqrtc, sqrta, sign1,
+            tl(l + 1) = recurrence(a, b, sqrtc, sqrta, sign1,
      &                             l, l + 1, 2*l + 1, cma, low, tl(l))
             low = tl(l)
          END DO
-#if 0
+#if ENABLE
       END IF
 #endif
       END SUBROUTINE
