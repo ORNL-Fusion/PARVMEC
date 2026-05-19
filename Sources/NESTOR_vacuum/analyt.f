@@ -40,7 +40,7 @@
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      &   r0p, r1p, r0m, r1m, sqrtc, sqrta, adp, adm, cma, ra1p, ra1m,
      &   slm, slp, tlpm, slpm
-      REAL(dp) :: fl, fl1, fl2, sign1, tanalon, tanaloff
+      REAL(dp) :: sign1, tanalon, tanaloff
       REAL(dp) :: sqad1u
       REAL(dp) :: sqad2u
       REAL(dp) :: delt1u
@@ -152,22 +152,20 @@
 !     THUS, L BELOW IS THE INDEX OF THE T+- (S+-)
 !
       sign1 = 1
-      fl1 = 0
 
       LLOOP: DO l = 0, mf + nf
-         fl = fl1
 !
 !     COMPUTE SL+ and SL- , Eq (A17)
 !     SLP(M): SL+(-)
 !
          IF (ivacskip .eq. 0) THEN
             DO k = nuv3min, nuv3max
-               slp(k) = (r1p(k)*fl + ra1p(k))*tlp(l,k)
-     &                + r0p(k)*fl*tlp(l - 1,k)
+               slp(k) = (r1p(k)*l + ra1p(k))*tlp(l,k)
+     &                + r0p(k)*l*tlp(l - 1,k)
      &                - (r1p(k) + r0p(k))/sqrtc(k)
      &                + sign1*(r0p(k) - r1p(k))/sqrta(k)
-               slm(k) = (r1m(k)*fl + ra1m(k))*tlm(l,k)
-     &                + r0m(k)*fl*tlm(l - 1,k)
+               slm(k) = (r1m(k)*l + ra1m(k))*tlm(l,k)
+     &                + r0m(k)*l*tlm(l - 1,k)
      &                - (r1m(k) + r0m(k))/sqrtc(k)
      &                + sign1*(r0m(k) - r1m(k))/sqrta(k)
                slpm(k) = slp(k) + slm(k)
@@ -206,6 +204,7 @@
                ENDIF
             END DO
          END DO
+         sign1 = -sign1
       END DO LLOOP
 
       DEALLOCATE (r0p, r1p, r0m, r1m, sqrtc, sqrta, tlp, tlm, adp,
