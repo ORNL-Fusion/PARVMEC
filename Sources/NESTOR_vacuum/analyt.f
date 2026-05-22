@@ -143,7 +143,7 @@
 !
 !     INITIALIZE VECTORS
 !
-!      bvec = 0
+      bvec = 0
 !
       CALL initialize(adp, adm, cma, sqrtc, sqrta, tlp, tlm)
 !
@@ -198,8 +198,8 @@
 !
 !       2. n>=1  and  m>=1
 !
-                  CALL analysum2(grpmn, bvec, slm, tlm, slp, tlp,
-     &                           m, n, l, ivacskip, ndim)
+                  CALL analysum2(grpmn, bvec, slm, tlm(l,:), slp,
+     &                           tlp(l,:), m, n, l, ivacskip, ndim)
 
                ENDIF
             END DO
@@ -330,8 +330,8 @@
 !>  @param[in] current Current value.
 !>  @param[in] next    Next value.
 !-------------------------------------------------------------------------------
-      FUNCTION recurrence(a, b, sqrtc, sqrta, sign1, fl, fl1, fl2,
-     &                    cma, current, next)
+      PURE FUNCTION recurrence(a, b, sqrtc, sqrta, sign1, fl, fl1, fl2,
+     &                         cma, current, next)
       USE stel_kinds
 
       IMPLICIT NONE
