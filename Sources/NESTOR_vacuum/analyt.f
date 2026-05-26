@@ -395,30 +395,33 @@
       INTEGER, PARAMETER :: kTailExtra = 50
 
 !  Start of executable code
-#define ENABLE 0
-#if ENABLE
       IF (useBackward(a,b)) THEN
          high = 0.0
          current = 1.0E-300_dp
-         DO l = mf + nf + kTailExtra, 1, -1
+         IF (MOD(mf + nf + kTailExtra, 2) .eq. 0) THEN
+            sign1 = -1
+         ELSE
             sign1 = 1
-            IF (MOD(l,2) .eq. 0) THEN
-               sign1 = -1
-            ENDIF
+         ENDIF
+         DO l = mf + nf + kTailExtra, mf + nf + 2, -1
             low = recurrence(b, a, sqrtc, sqrta, sign1,
      &                       l + 1, l, 2*l + 1, cma, high, current)
             high = current
             current = low
-            IF (l - 1 <= mf + nf) THEN
-               tl(l - 1) = low
-            END IF
+            sign1 = -sign1
+         END DO
+         DO l = mf + nf + 1, 1, -1
+            tl(l - 1) = recurrence(b, a, sqrtc, sqrta, sign1,
+     &                       l + 1, l, 2*l + 1, cma, high, current)
+            high = current
+            current = tl(l - 1)
+            sign1 = -sign1
          END DO
          scale = t0/tl(0)
          DO l = 0, mf + nf
             tl(l) = tl(l)*scale
          END DO
       ELSE
-#endif
          sign1 = 1
          DO l = 0, mf + nf - 1
             sign1 = -sign1
@@ -426,9 +429,7 @@
      &                             l, l + 1, 2*l + 1, cma,
      &                             tl(l - 1), tl(l))
          END DO
-#if ENABLE
       END IF
-#endif
       END SUBROUTINE
 
       END MODULE
