@@ -156,7 +156,11 @@ C-----------------------------------------------
          END IF
 
 !       Store force residual, wdot for plotting
-         wdota = ABS(w0 - w1)/w0
+         If (w0 .ne. 0) THEN
+            wdota = ABS(w0 - w1)/w0
+         ELSE
+            wdota = 0
+         END IF
 
          CALL MPI_Bcast(r00, 1, MPI_REAL8, 0, NS_COMM, MPI_ERR)
 

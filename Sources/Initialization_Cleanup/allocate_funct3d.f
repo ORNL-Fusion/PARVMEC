@@ -23,11 +23,11 @@ C-----------------------------------------------
       ALLOCATE(pblmn(nznt,ns,0:1),stat=istat1)
       ALLOCATE(pclmn(nznt,ns,0:1),stat=istat1)
 
-      ALLOCATE(pru(nznt,ns,0:1),stat=istat1)
-      ALLOCATE(pr1(nznt,ns,0:1),stat=istat1)
+      ALLOCATE(pru(nznt,ns,0:1),stat=istat1); pru = 0
+      ALLOCATE(pr1(nznt,ns,0:1),stat=istat1); pr1 = 0
 
-      ALLOCATE(prv(nznt,ns,0:1),stat=istat1)
-      ALLOCATE(pzv(nznt,ns,0:1),stat=istat1)
+      ALLOCATE(prv(nznt,ns,0:1),stat=istat1); prv = 0
+      ALLOCATE(pzv(nznt,ns,0:1),stat=istat1); pzv = 0
 
       ALLOCATE(prcon(nznt,ns,0:1),stat=istat1)
       ALLOCATE(pzcon(nznt,ns,0:1),stat=istat1)
@@ -37,15 +37,15 @@ C-----------------------------------------------
       ALLOCATE(prcon0(nznt,ns),stat=istat1); prcon0 = 0
       ALLOCATE(pzcon0(nznt,ns),stat=istat1); pzcon0 = 0
 
-      ALLOCATE(pzu(nznt,ns,0:1),stat=istat1)
-      ALLOCATE(pz1(nznt,ns,0:1),stat=istat1)
+      ALLOCATE(pzu(nznt,ns,0:1),stat=istat1); pzu = 0
+      ALLOCATE(pz1(nznt,ns,0:1),stat=istat1); pz1 = 0
 
-      ALLOCATE(pguu(nznt,ns),stat=istat1)
-      ALLOCATE(pguv(nznt,ns),stat=istat1)
-      ALLOCATE(pgvv(nznt,ns),stat=istat1)
+      ALLOCATE(pguu(nznt,ns),stat=istat1); pguu = 0
+      ALLOCATE(pguv(nznt,ns),stat=istat1); pguv = 0
+      ALLOCATE(pgvv(nznt,ns),stat=istat1); pgvv = 0
 
-      ALLOCATE(pru0(nznt,ns),stat=istat1)
-      ALLOCATE(pzu0(nznt,ns),stat=istat1)
+      ALLOCATE(pru0(nznt,ns),stat=istat1); pru0 = 0
+      ALLOCATE(pzu0(nznt,ns),stat=istat1); pzu0 = 0
 
       ALLOCATE (pextra1(nznt,ns,0:1), stat=istat1)
       IF (istat1.ne.0) STOP 'allocation error #3 in allocate_funct3d'

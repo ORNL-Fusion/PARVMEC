@@ -49,7 +49,7 @@ C-----------------------------------------------
       potcos => potvac(1+mnpd:)
 
       ALLOCATE (bexu(nuv3), bexv(nuv3), bexn(nuv3),
-     &     bexni(nuv3), r1b(nuv), rub(nuv3), rvb(nuv3),
+     &     bexni(nuv3min:nuv3max), r1b(nuv), rub(nuv3), rvb(nuv3),
      &     z1b(nuv), zub(nuv3), zvb(nuv3), auu(nuv3), auv(nuv3),
      &     avv(nuv3), snr(nuv3), snv(nuv3), snz(nuv3), drv(nuv3),
      &     guu_b(nuv3), guv_b(nuv3), gvv_b(nuv3), rzb2(nuv),
