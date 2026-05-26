@@ -2,6 +2,7 @@
       USE vacmod
       USE parallel_include_module
       USE timer_sub
+      USE analytic, ONLY: analyt
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -25,7 +26,7 @@ C-----------------------------------------------
          STOP 'AMATSAV: Allocation error in scalpot'
       END IF
 
-      ALLOCATE (grpmn(nuv3*mnpd2), stat=ip)
+      ALLOCATE (grpmn(nuv3*mnpd2), stat=ip);  grpmn=0
       IF (ip .NE. 0) STOP 'GRPMN: Allocation error in scalpot'
 
 !
@@ -38,7 +39,7 @@ C-----------------------------------------------
 !
 
       ndim = mnpd2/mnpd
-      CALL analyt (grpmn, bvec, ivacskip, ndim)
+      CALL analyt(grpmn, bvec, ivacskip, ndim)
 
       IF (ivacskip .NE. 0) THEN
          bvec = bvec + bvecsav
