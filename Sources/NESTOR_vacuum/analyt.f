@@ -233,7 +233,7 @@
 !>  @param[out] tlp
 !>  @param[out] tlm
 !-------------------------------------------------------------------------------
-      SUBROUTINE initialize(adp, adm, cma, sqrtc, sqrta, tlp, tlm)
+      PURE SUBROUTINE initialize(adp, adm, cma, sqrtc, sqrta, tlp, tlm)
       USE parallel_include_module
       USE vacmod0, ONLY: mf, nf
 
@@ -368,7 +368,7 @@
 !>  @param[in]    t0    Inital
 !>  @param[inout] tl    Final recurrence.
 !-------------------------------------------------------------------------------
-      SUBROUTINE recurrence_sum(a, b, sqrtc, sqrta, cma, t0, tl)
+      PURE SUBROUTINE recurrence_sum(a, b, sqrtc, sqrta, cma, t0, tl)
       USE stel_kinds
       USE vacmod0, ONLY: mf, nf
 
