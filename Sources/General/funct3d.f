@@ -179,8 +179,8 @@ C-----------------------------------------------
 !     EITHER PHIEDGE OR THE INITIAL CROSS SECTION ACCORDING
 !     TO THE SCALING LAW  R*BTOR .EQ. PHIEDGE/(R1 * Z1).
 
-      IF (lfreeb       .AND.
-     &    iter2 .GT. 1 .AND.
+      IF (lfreeb                          .AND.
+     &    (iter2 .GT. 1 .or. ivac .ge. 0) .AND.
      &    iequi .EQ. 0) THEN
 
          IF (ictrl_prec2d.LE.1 .AND. (fsqr + fsqz).LE.1.e-3_dp) 
@@ -598,7 +598,9 @@ C-----------------------------------------------
 !     EITHER PHIEDGE OR THE INITIAL CROSS SECTION ACCORDING
 !     TO THE SCALING LAW  R*BTOR .EQ. PHIEDGE/(R1 * Z1).
 
-      IF (lfreeb .and. iter2.gt.1 .and. iequi.eq.0) THEN
+      IF (lfreeb                          .and.
+     &    (iter2 .gt. 1 .or. ivac .ge. 0) .and.
+     &    iequi .eq. 0) THEN
          IF (ictrl_prec2d  .le. 1 .and.
      &       (fsqr + fsqz) .le. 1.e-3_dp) THEN
             ivac = ivac+1   !decreased from e-1 to e-3 - sph12/04
