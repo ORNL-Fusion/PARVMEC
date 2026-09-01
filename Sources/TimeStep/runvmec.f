@@ -147,12 +147,41 @@ C-----------------------------------------------
      &                     RUNVMEC_COMM_WORLD, MPI_ERR)
             CALL MPI_Bcast(lamscale, 1, MPI_REAL8, 0,
      &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+#if 0
+            CALL MPI_Bcast(am, SIZE(am), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(am_aux_s, SIZE(am_aux_s), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(am_aux_f, SIZE(am_aux_f), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(ac, SIZE(ac), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(ac_aux_s, SIZE(ac_aux_s), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(ac_aux_f, SIZE(ac_aux_f), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(ai, SIZE(ai), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(ai_aux_s, SIZE(ai_aux_s), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(ai_aux_f, SIZE(ai_aux_f), MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(curtor, 1, MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(currv, 1, MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(pres_scale, 1, MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(bloat, 1, MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+            CALL MPI_Bcast(phiedge, 1, MPI_REAL8, 0,
+     &                     RUNVMEC_COMM_WORLD, MPI_ERR)
+#endif
             js = SIZE(rmn_bdy, 1)*SIZE(rmn_bdy, 2)*SIZE(rmn_bdy, 3)
             CALL MPI_Bcast(rmn_bdy, js, MPI_REAL8, 0,                          &
      &                     RUNVMEC_COMM_WORLD, MPI_ERR)
             CALL MPI_Bcast(zmn_bdy, js, MPI_REAL8, 0,                          &
      &                     RUNVMEC_COMM_WORLD, MPI_ERR)
-
             nsmin = t1lglob; nsmax = t1rglob
             DO js = nsmin, nsmax
                pphip(:,js) = phips(js)
@@ -319,17 +348,9 @@ C-----------------------------------------------
 
          grid_size(grid_id) = nsval
          grid_procs(grid_id) = nranks
-         
-!  JDH 2012-06-20. V3FIT fix, inserted with change from VMEC 8.48 -> 8.49
-!  (Not sure just what in initialize_radial messes up convergence - happens slowly)
-!  Logical l_v3fit is declared in vmec_input, available via vmec_main
-         IF (l_v3fit .AND. ns_old .ne. nsval) THEN
-            CALL initialize_radial(nsval, ns_old, delt0r, lscreen,
-     &                             reset_file_name)
-         ELSE IF (ns_old .le. nsval) THEN
-            CALL initialize_radial(nsval, ns_old, delt0r, lscreen,
-     &                             reset_file_name)
-         END IF
+
+         CALL initialize_radial(nsval, ns_old, delt0r, lscreen,
+     &                          reset_file_name)
 
          CALL Initialize_bst(.FALSE., nsval, blklength)
 
