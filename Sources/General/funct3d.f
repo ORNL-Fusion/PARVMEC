@@ -31,7 +31,7 @@ C-----------------------------------------------
       REAL(dp), DIMENSION(mnmax) ::
      &   rmnc, zmns, lmns, rmns, zmnc, lmnc
       REAL(dp), DIMENSION(:,:,:), POINTER :: lu, lv
-      REAL(dp) :: delr_mse, delt0
+      REAL(dp) :: presf_ns, delr_mse, delt0
       REAL(dp) :: tbroadon, tbroadoff
       REAL(dp), EXTERNAL :: pmass
       INTEGER :: i, j, k, nsmin, nsmax, m
@@ -320,10 +320,18 @@ C-----------------------------------------------
 !
 !          presf_ns = 1.5_dp*pres(ns) - 0.5_dp*pres(ns1)  
 !          MUST NOT BREAK TRI-DIAGONAL RADIAL COUPLING: OFFENDS PRECONDITIONER!
+            presf_ns = zero
+#ifdef EXT_PRESSURE
+            presf_ns = pmass(hs*(ns-1.5_dp))
+            IF (presf_ns .NE. zero) THEN
+               presf_ns = (pmass(1._dp)/presf_ns) * pres(ns)
+            END IF
+#endif
+
             DO l = 1, nznt
                bsqsav(l,3) = 1.5_dp*pbzmn_o(l,ns)
      &                     - 0.5_dp*pbzmn_o(l,ns-1)
-               pgcon(l,ns) = bsqvac(l)
+               pgcon(l,ns) = bsqvac(l) + presf_ns
                rbsq(l) = pgcon(l,ns)*(pr1(l,ns,0) + pr1(l,ns,1))*ohs
                dbsq(l) = ABS(pgcon(l,ns)-bsqsav(l,3))
             END DO
@@ -482,7 +490,7 @@ C-----------------------------------------------
       REAL(dp), DIMENSION(mnmax) ::
      1   rmnc, zmns, lmns, rmns, zmnc, lmnc
       REAL(dp), DIMENSION(:), POINTER :: lu, lv
-      REAL(dp) :: delr_mse, delt0
+      REAL(dp) :: presf_ns, delr_mse, delt0
       REAL(dp), EXTERNAL :: pmass
 !-----------------------------------------------
 !
@@ -695,6 +703,14 @@ C-----------------------------------------------
 !
 !           presf_ns = 1.5_dp*pres(ns) - 0.5_dp*pres(ns1)  
 !           MUST NOT BREAK TRI-DIAGONAL RADIAL COUPLING: OFFENDS PRECONDITIONER!
+            presf_ns = zero
+#ifdef EXT_PRESSURE
+            presf_ns = pmass(hs*(ns-1.5_dp))
+            IF (presf_ns .ne. zero) THEN
+               presf_ns = (pmass(one)/presf_ns) * pres(ns)
+            END IF
+#endif
+
             lk = 0
 !            gcon(:nrzt) = r1(:nrzt,0)+sqrts(:nrzt)*r1(:nrzt,1)
 !            gcon(1+nrzt) = 0
@@ -704,7 +720,7 @@ C-----------------------------------------------
 #ifdef _ANIMEC
                gcon(l)     = bsqvac(lk) + pperp_ns(lk)
 #else
-               gcon(l)     = bsqvac(lk)
+               gcon(l)     = bsqvac(lk) + presf_ns
 #endif 
 
                rbsq(lk) = gcon(l)*(r1(l,0) + r1(l,1))*ohs
