@@ -30,7 +30,7 @@ C-----------------------------------------------
      &                      cleanup_flag=16, reset_jacdt_flag=32
 
       REAL(rprec), PARAMETER :: pdamp = 0.05_dp
-      CHARACTER(LEN=*), PARAMETER :: version_ = '10.0'
+      CHARACTER(LEN=*), PARAMETER :: version_ = '10.1'
 !-----------------------------------------------
 !   L o c a l   V a r i a b l e s
 !-----------------------------------------------
