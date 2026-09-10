@@ -8,11 +8,15 @@ add_library (vmec)
 #  so that |B| rather than the total pressure is continuous there.
 OPTION (USE_EXT_PRESSURE "Use external pressure" ON)
 
+#  Write the poloidal flux chi without the Jacobian sign, as VMEC 8.52 does.
+OPTION (USE_UNSIGNED_CHI "Use unsigned chi" ON)
+
 target_compile_definitions (vmec
 
                             PUBLIC
 
                             $<$<BOOL:${USE_EXT_PRESSURE}>:EXT_PRESSURE>
+                            $<$<BOOL:${USE_UNSIGNED_CHI}>:UNSIGNED_CHI>
 )
 
 target_link_libraries (vmec PUBLIC stell)

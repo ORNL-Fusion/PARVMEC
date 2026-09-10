@@ -180,7 +180,11 @@ C-----------------------------------------------
          chi1(i) = chi1(i - 1) + hs*(phip(i)*iotas(i))
       END DO
 
+#ifdef UNSIGNED_CHI
       chi = twopi*chi1
+#else
+      chi = twopi*signgs*chi1
+#endif
 
 !	WRITE (36, 201) (i, phi1(i), chi1(i), iotas(i), i=1, ns)
 !201   FORMAT (i4, 1p,3e14.6)
