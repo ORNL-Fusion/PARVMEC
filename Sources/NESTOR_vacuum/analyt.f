@@ -9,8 +9,18 @@
 !>  singularity.
 !*******************************************************************************
       MODULE analytic
-      
+      USE stel_kinds, ONLY: dp
+
       IMPLICIT NONE
+
+!  Factors of the five-term recurrence of the Chebyshev moments, indexed by
+!  the order k. See moment_factors.
+      REAL(dp), DIMENSION(:), ALLOCATABLE, PRIVATE :: fsub2
+      REAL(dp), DIMENSION(:), ALLOCATABLE, PRIVATE :: fsub1
+      REAL(dp), DIMENSION(:), ALLOCATABLE, PRIVATE :: fdiag
+      REAL(dp), DIMENSION(:), ALLOCATABLE, PRIVATE :: fsup1
+      REAL(dp), DIMENSION(:), ALLOCATABLE, PRIVATE :: fsup2
+      REAL(dp), DIMENSION(:), ALLOCATABLE, PRIVATE :: frhs
 
       CONTAINS
 !-------------------------------------------------------------------------------
@@ -35,12 +45,12 @@
       INTEGER, INTENT(IN)   :: ndim
 
 !  local variables
-      INTEGER :: l, n, m, k, mn
-      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: tlp, tlm
+      INTEGER :: l, n, m, k
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: tlp, tlm, slp, slm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      &   r0p, r1p, r0m, r1m, sqrtc, sqrta, adp, adm, cma, ra1p, ra1m,
-     &   slm, slp, tlpm, slpm
-      REAL(dp) :: sign1, tanalon, tanaloff
+     &   tlps, tlms, slps, slms, tlpm, slpm, ulp1, ulp2, ulm1, ulm2
+      REAL(dp) :: sign1, tanalon, tanaloff, ulp, ulm, wl
       REAL(dp) :: sqad1u
       REAL(dp) :: sqad2u
       REAL(dp) :: delt1u
@@ -60,9 +70,14 @@
      &          cma(nuv3min:nuv3max), ra1p(nuv3min:nuv3max),
      &          ra1m(nuv3min:nuv3max), slpm(nuv3min:nuv3max),
      &          tlpm(nuv3min:nuv3max),
-     &          tlp(-1:nf + mf,nuv3min:nuv3max),
-     &          tlm(-1:nf + mf,nuv3min:nuv3max),
-     &          slm(nuv3min:nuv3max), slp(nuv3min:nuv3max), stat = l)
+     &          tlp(nuv3min:nuv3max,0:nf + mf),
+     &          tlm(nuv3min:nuv3max,0:nf + mf),
+     &          slp(nuv3min:nuv3max,0:nf + mf),
+     &          slm(nuv3min:nuv3max,0:nf + mf),
+     &          tlps(nuv3min:nuv3max), tlms(nuv3min:nuv3max),
+     &          slps(nuv3min:nuv3max), slms(nuv3min:nuv3max),
+     &          ulp1(nuv3min:nuv3max), ulp2(nuv3min:nuv3max),
+     &          ulm1(nuv3min:nuv3max), ulm2(nuv3min:nuv3max), stat = l)
       IF (l .ne. 0) THEN
          STOP 'Allocation error in SUBROUTINE analyt'
       ENDIF
@@ -145,70 +160,109 @@
 !
       bvec = 0
 !
-      CALL initialize(adp, adm, cma, sqrtc, sqrta, tlp, tlm)
+!     THE POLYNOMIALS OF EQ (A13-A14) ARE EXPANDED IN CHEBYSHEV POLYNOMIALS
+!     T_L (SEE PRECAL), SO TLP(M) HOLD THE CHEBYSHEV MOMENTS OF THE KERNEL,
+!     Int[-1,1] T_L(t)/SQRT(adp(m) t**2 + 2 cma t + adm(p)) dt,
+!     IN PLACE OF THE MONOMIAL MOMENTS TL+(-). T- EXCHANGES ADP AND ADM,
+!     WHICH IS guv_b -> -guv_b.
 !
-!     BEGIN L-SUM IN EQ (A14) TO COMPUTE Imn (and Kmn) INTEGRALS
-!     NOTE THAT IN THE LOOP OVER L BELOW: L == |m - n| + 2L_A14
-!     THUS, L BELOW IS THE INDEX OF THE T+- (S+-)
+      CALL chebyshev_moments(guu_b(nuv3min:nuv3max),
+     &                       guv_b(nuv3min:nuv3max),
+     &                       gvv_b(nuv3min:nuv3max), tlp)
+      CALL chebyshev_moments(guu_b(nuv3min:nuv3max),
+     &                       -guv_b(nuv3min:nuv3max),
+     &                       gvv_b(nuv3min:nuv3max), tlm)
 !
-      sign1 = 1
-
-      LLOOP: DO l = 0, mf + nf
-!
-!     COMPUTE SL+ and SL- , Eq (A17)
+!     COMPUTE SL+ and SL- , Eq (A17) APPLIED TO T_L
 !     SLP(M): SL+(-)
 !
-         IF (ivacskip .eq. 0) THEN
+!     Eq (A17) MAPS THE POLYNOMIAL p TO
+!        R1 Int[t p'/SQRT(Q)] + RA1 Int[p/SQRT(Q)] + R0 Int[p'/SQRT(Q)]
+!        - (R0 + R1) p(1)/SQRTC + (R0 - R1) p(-1)/SQRTA.
+!     FOR p = T_L: T_L' = L U_(L-1) AND t U_(L-1) = (U_L + U_(L-2))/2. ULP(M)
+!     ACCUMULATE THE MOMENTS OF U_L = 2 T_L + U_(L-2), WITH ULP(M)1 AND
+!     ULP(M)2 THOSE OF U_(L-1) AND U_(L-2).
+!
+      IF (ivacskip .eq. 0) THEN
+         ulp1 = 0
+         ulp2 = 0
+         ulm1 = 0
+         ulm2 = 0
+         sign1 = 1
+         wl = 1
+         DO l = 0, mf + nf
             DO k = nuv3min, nuv3max
-               slp(k) = (r1p(k)*l + ra1p(k))*tlp(l,k)
-     &                + r0p(k)*l*tlp(l - 1,k)
-     &                - (r1p(k) + r0p(k))/sqrtc(k)
-     &                + sign1*(r0p(k) - r1p(k))/sqrta(k)
-               slm(k) = (r1m(k)*l + ra1m(k))*tlm(l,k)
-     &                + r0m(k)*l*tlm(l - 1,k)
-     &                - (r1m(k) + r0m(k))/sqrtc(k)
-     &                + sign1*(r0m(k) - r1m(k))/sqrta(k)
-               slpm(k) = slp(k) + slm(k)
+               ulp = wl*tlp(k,l) + ulp2(k)
+               ulm = wl*tlm(k,l) + ulm2(k)
+               slp(k,l) = r1p(k)*l*p5*(ulp + ulp2(k))
+     &                  + ra1p(k)*tlp(k,l)
+     &                  + r0p(k)*l*ulp1(k)
+     &                  - (r1p(k) + r0p(k))/sqrtc(k)
+     &                  + sign1*(r0p(k) - r1p(k))/sqrta(k)
+               slm(k,l) = r1m(k)*l*p5*(ulm + ulm2(k))
+     &                  + ra1m(k)*tlm(k,l)
+     &                  + r0m(k)*l*ulm1(k)
+     &                  - (r1m(k) + r0m(k))/sqrtc(k)
+     &                  + sign1*(r0m(k) - r1m(k))/sqrta(k)
+               ulp2(k) = ulp1(k)
+               ulp1(k) = ulp
+               ulm2(k) = ulm1(k)
+               ulm1(k) = ulm
             END DO
-         ENDIF
-         tlpm = tlp(l,:) + tlm(l,:)
+            sign1 = -sign1
+            wl = 2
+         END DO
+      ELSE
+         slps = 0
+         slms = 0
+         slpm = 0
+      ENDIF
 !
-!     BEGIN MODE NUMBER (m,n) LOOP
+!     BEGIN MODE NUMBER (m,n) LOOP. THE L-SUM OF EQ (A14) TO COMPUTE THE Imn
+!     (and Kmn) INTEGRALS RUNS OVER THE ORDER OF THE CHEBYSHEV POLYNOMIALS AND
+!     IS TAKEN FIRST; CMNS(L,M,N) VANISHES FOR L > M+N.
+!     TLPS(M): SUM_L CMNS(L,M,N) TL+(-), SLPS(M): SUM_L CMNS(L,M,N) SL+(-)
 !
-         DO n = 0, nf
-            DO m = 0, mf
+      DO n = 0, nf
+         DO m = 0, mf
+            tlps = 0
+            tlms = 0
+            DO l = 0, m + n
+               tlps = tlps + cmns(l,m,n)*tlp(:,l)
+               tlms = tlms + cmns(l,m,n)*tlm(:,l)
+            END DO
+            IF (ivacskip .eq. 0) THEN
+               slps = 0
+               slms = 0
+               DO l = 0, m + n
+                  slps = slps + cmns(l,m,n)*slp(:,l)
+                  slms = slms + cmns(l,m,n)*slm(:,l)
+               END DO
+            ENDIF
 
-               IF (l .EQ. 0) THEN
-                  mn = m + mf1*(n+nf) + 1
-                  bvec(mn,:) = 0
-                  mn = m + mf1*(nf-n) + 1
-                  bvec(mn,:) = 0
-               END IF
-
-               IF (cmns(l,m,n) .eq. zero) CYCLE
-               
-               IF (n.eq.0 .or. m.eq.0) THEN
+            IF (n.eq.0 .or. m.eq.0) THEN
 !
 !       1. n = 0 and  m >= 0  OR n > 0 and m = 0
 !
-                  CALL analysum(grpmn, bvec, slpm, tlpm, m, n, l,
-     &                          ivacskip, ndim)
+               tlpm = tlps + tlms
+               IF (ivacskip .eq. 0) slpm = slps + slms
+               CALL analysum(grpmn, bvec, slpm, tlpm, m, n,
+     &                       ivacskip, ndim)
 
-               ELSE
+            ELSE
 !
 !       2. n>=1  and  m>=1
 !
-                  CALL analysum2(grpmn, bvec, slm, tlm(l,:), slp,
-     &                           tlp(l,:), m, n, l, ivacskip, ndim)
+               CALL analysum2(grpmn, bvec, slms, tlms, slps, tlps,
+     &                        m, n, ivacskip, ndim)
 
-               ENDIF
-            END DO
+            ENDIF
          END DO
-         sign1 = -sign1
-      END DO LLOOP
+      END DO
 
       DEALLOCATE (r0p, r1p, r0m, r1m, sqrtc, sqrta, tlp, tlm, adp,
-     &            adm, cma, ra1p, ra1m, slm, slp, tlpm, slpm, stat = l)
+     &            adm, cma, ra1p, ra1m, slm, slp, tlpm, slpm, tlps,
+     &            tlms, slps, slms, ulp1, ulp2, ulm1, ulm2, stat = l)
 
       CALL second0(tanaloff)
       timer_vac(tanal) = timer_vac(tanal) + (tanaloff-tanalon)
@@ -217,221 +271,276 @@
       END SUBROUTINE analyt
 
 !-------------------------------------------------------------------------------
-!>  @brief Initalize original
+!>  @brief Chebyshev moments of the tangent-plane kernel.
 !>
-!>  INITIALIZE T0+ and T0-
+!>  M_k = Int[-1,1] T_k(t)/SQRT(Q(t)) dt for k = 0, ..., mf + nf, where
+!>  Q = A t^2 + 2 d t + B with A = a + b2 + c, B = a - b2 + c and d = c - a.
 !>
-!>  TLP(M): TL+(-)
-!>  TLP(M)1:T(L-1)+(-)
-!>  TLP(M)2:T(L-2)+(-)
+!>  Integrating d/dt (F_k SQRT(Q)) with F_k' = T_k,
+!>  F_k = T_(k+1)/(2 (k + 1)) - T_(k-1)/(2 (k - 1)), gives for k >= 2 the
+!>  five-term recurrence whose factors @ref moment_factors tabulates. Its
+!>  characteristic roots are those of Q((z + 1/z)/2) = 0: a complex pair of
+!>  modulus rho > 1 and their reciprocals, so two homogeneous solutions grow
+!>  and two decay in either direction and neither a forward nor a backward
+!>  pass is stable. The moments decay like k^-2 only, and they are the solution
+!>  of the boundary-value problem whose lower boundary values are M_0 and M_1
+!>  and whose upper boundary values are the asymptotic
+!>  M_k = -(1/SQRT(Q(1)) + (-1)^k/SQRT(Q(-1)))/(k^2 - 1) + O(k^-4),
+!>  which a pentadiagonal elimination solves. The rows of its matrix tend to
+!>  those of the Toeplitz matrix with the symbol Q(COS(theta)) > 0, and the
+!>  elimination runs without pivoting. It is sequential in k and independent
+!>  across grid points, so nbatch points are eliminated together, over the
+!>  largest of their extents.
 !>
-!>  @param[in]  adp
-!>  @param[in]  adm
-!>  @param[in]  cma
-!>  @param[in]  sqrtc
-!>  @param[in]  sqrta
-!>  @param[out] tlp
-!>  @param[out] tlm
+!>  @param[in]  a  guu on the local grid points.
+!>  @param[in]  b2 guv on the local grid points, with its factor of two. Its
+!>                 negative gives the moments of the minus parity.
+!>  @param[in]  c  gvv on the local grid points.
+!>  @param[out] tl Chebyshev moments by grid point and order.
 !-------------------------------------------------------------------------------
-      PURE SUBROUTINE initialize(adp, adm, cma, sqrtc, sqrta, tlp, tlm)
+      SUBROUTINE chebyshev_moments(a, b2, c, tl)
       USE parallel_include_module
       USE vacmod0, ONLY: mf, nf
 
       IMPLICIT NONE
 
 !  Declare Arguments
-      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: adp
-      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: adm
-      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: cma
-      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: sqrtc
-      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)  :: sqrta
-      REAL(dp), DIMENSION(-1:nf + mf,nuv3min:nuv3max), INTENT(out)
-     &   :: tlp
-      REAL(dp), DIMENSION(-1:nf + mf,nuv3min:nuv3max), INTENT(out)
-     &   :: tlm
+      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)         :: a
+      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)         :: b2
+      REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in)         :: c
+      REAL(dp), DIMENSION(nuv3min:nuv3max,0:nf + mf), INTENT(out)
+     &   :: tl
+
+!  local parameters
+!  Number of grid points eliminated together.
+      INTEGER, PARAMETER  :: nbatch = 8
+!  A boundary value contaminates the moments below it by rho^-(distance). The
+!  problem extends ntail orders above mf + nf, so that this falls below 1e-17
+!  at mf + nf. ntail stays within [kMinTail,kMaxTail]; the upper bound binds
+!  for rho < 1.01, where the contamination is rho^-kMaxTail of the error of
+!  the upper boundary values, which is O(k^-4) + O(rho^-k) at k > kMaxTail.
+      REAL(dp), PARAMETER :: kMinBoundaryLogDecay = 39.14394658089878_dp
+      INTEGER, PARAMETER  :: kMinTail = 8
+      INTEGER, PARAMETER  :: kMaxTail = 4096
 
 !  local variables
-      REAL(dp)                                          :: sqad1u
-      REAL(dp)                                          :: sqad2u
-      INTEGER                                           :: k
-      REAL(dp)                                          :: t0p
-      REAL(dp)                                          :: t0m
-      REAL(dp)                                          :: high
-      REAL(dp)                                          :: current
-      REAL(dp)                                          :: low
-      REAL(dp)                                          :: scale
-      INTEGER                                           :: sign1
+!  Rows of the eliminated systems of one batch, (point, k): the two bands
+!  above the unit diagonal, and the right-hand side, which the back
+!  substitution turns into the moments.
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: up1
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: up2
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: tk
+      REAL(dp), DIMENSION(nbatch)           :: aa
+      REAL(dp), DIMENSION(nbatch)           :: dd
+      REAL(dp), DIMENSION(nbatch)           :: hab
+      REAL(dp), DIMENSION(nbatch)           :: sqp
+      REAL(dp), DIMENSION(nbatch)           :: sqm
+      REAL(dp)                              :: sub2
+      REAL(dp)                              :: sub1
+      REAL(dp)                              :: rpiv
+      REAL(dp)                              :: sign1
+      REAL(dp)                              :: semi_major
+      REAL(dp)                              :: semi_minor
+      REAL(dp)                              :: log_rho
+      INTEGER                               :: i0
+      INTEGER                               :: i
+      INTEGER                               :: j
+      INTEGER                               :: k
+      INTEGER                               :: kl
+      INTEGER                               :: ktop
+      INTEGER                               :: ntail
+      INTEGER                               :: nb
+      INTEGER                               :: istat
 
 !  Start of executable code
-      DO k = nuv3min, nuv3max
-         sqad1u = SQRT(adp(k))
-         sqad2u = SQRT(adm(k))
-         tlp(-1,k) = 0
-         tlm(-1,k) = 0
-         tlp(0,k)  = log((sqad1u*sqrtc(k) + adp(k) + cma(k)) /
-     &                   (sqad1u*sqrta(k) - adp(k) + cma(k)))/sqad1u
-         tlm(0,k)  = log((sqad2u*sqrtc(k) + adm(k) + cma(k)) /
-     &                   (sqad2u*sqrta(k) - adm(k) + cma(k)))/sqad2u
+      kl = mf + nf
+      CALL moment_factors(kl + kMaxTail + 2)
+      ALLOCATE (up1(nbatch,0:kl + kMaxTail + 2),
+     &          up2(nbatch,0:kl + kMaxTail + 2),
+     &          tk(nbatch,0:kl + kMaxTail + 2), stat = istat)
+      IF (istat .ne. 0) THEN
+         STOP 'Allocation error in SUBROUTINE chebyshev_moments'
+      ENDIF
 
-         CALL recurrence_sum(adm(k), adp(k), sqrtc(k), sqrta(k),
-     &                       cma(k), tlp(0,k), tlp(:,k))
-         CALL recurrence_sum(adp(k), adm(k), sqrtc(k), sqrta(k),
-     &                       cma(k), tlm(0,k), tlm(:,k))
+!  M_0 and M_1 enter as rows of the identity.
+      up1(:,0:1) = 0
+      up2(:,0:1) = 0
+
+      DO i0 = nuv3min, nuv3max, nbatch
+         nb = MIN(nbatch, nuv3max - i0 + 1)
+         ntail = kMinTail
+         DO j = 1, nbatch
+!  Points past the last one repeat it.
+            i = MIN(i0 + j - 1, nuv3max)
+            aa(j) = a(i) + b2(i) + c(i)
+            dd(j) = c(i) - a(i)
+            hab(j) = 0.5_dp*aa(j) + (a(i) - b2(i) + c(i))
+            sqp(j) = 2.0_dp*SQRT(c(i))
+            sqm(j) = 2.0_dp*SQRT(a(i))
+
+            tk(j,0) = t0_integral(a(i), b2(i), c(i))
+!  From Int (A t + d)/SQRT(Q) dt = SQRT(Q(1)) - SQRT(Q(-1)).
+            tk(j,1) = (sqp(j) - sqm(j) - dd(j)*tk(j,0))/aa(j)
+
+!  The roots of Q lie on the ellipse with foci -1 and 1 whose semi-axes are
+!  (rho + 1/rho)/2 = (SQRT(Q(1)) + SQRT(Q(-1)))/(2 SQRT(A)) and
+!  (rho - 1/rho)/2 = SQRT((2 SQRT(a c) - b2)/A).
+            semi_major = 0.5_dp*(sqp(j) + sqm(j))/SQRT(aa(j))
+            semi_minor = SQRT(MAX(2.0_dp*SQRT(a(i)*c(i)) - b2(i),
+     &                            0.0_dp)/aa(j))
+            log_rho = LOG(semi_major + semi_minor)
+            IF (log_rho .gt. 0.0_dp) THEN
+               ntail = MAX(ntail, CEILING(MIN(REAL(kMaxTail,dp),
+     &                        kMinBoundaryLogDecay/log_rho)))
+            ELSE
+               ntail = kMaxTail
+            END IF
+         END DO
+
+!  Row k of the eliminated system reads
+!  M_k + up1(k) M_(k+1) + up2(k) M_(k+2) = tk(k).
+         ktop = kl + ntail
+         sign1 = 1
+         DO k = 2, ktop
+            DO j = 1, nbatch
+               sub2 = aa(j)*fsub2(k)
+               sub1 = dd(j)*fsub1(k) - up1(j,k - 2)*sub2
+               rpiv = 1.0_dp/(hab(j) - aa(j)*fdiag(k)
+     &              -         up2(j,k - 2)*sub2 - up1(j,k - 1)*sub1)
+               up1(j,k) = (dd(j)*fsup1(k) - up2(j,k - 1)*sub1)*rpiv
+               up2(j,k) = aa(j)*fsup2(k)*rpiv
+               tk(j,k) = (-(sqp(j) + sign1*sqm(j))*frhs(k)
+     &                 -  tk(j,k - 2)*sub2 - tk(j,k - 1)*sub1)*rpiv
+            END DO
+            sign1 = -sign1
+         END DO
+         DO k = ktop + 1, ktop + 2
+            DO j = 1, nbatch
+               tk(j,k) = -(1.0_dp/sqp(j) + sign1/sqm(j))*frhs(k)
+            END DO
+            sign1 = -sign1
+         END DO
+         DO k = ktop, 2, -1
+            DO j = 1, nbatch
+               tk(j,k) = tk(j,k) - up1(j,k)*tk(j,k + 1)
+     &                 -           up2(j,k)*tk(j,k + 2)
+            END DO
+         END DO
+
+         DO k = 0, kl
+            tl(i0:i0 + nb - 1,k) = tk(1:nb,k)
+         END DO
       END DO
+
+      DEALLOCATE (up1, up2, tk, stat = istat)
 
       END SUBROUTINE
 
 !-------------------------------------------------------------------------------
-!>  @brief Querey if to use forward or backwards propagation.
+!>  @brief Zeroth moment of the tangent-plane kernel.
 !>
-!>  The homogeneous solutions of the recurrence are a complex pair of
-!>  modulus sqrt(a/b), so a forward pass over the mf + nf steps
-!>  amplifies the rounding of its inputs by sqrt(a/b)^(mf + nf). The
-!>  forward pass is used while that growth stays below ten, otherwise
-!>  the recurrence is run backward from a seed placed far enough above
-!>  mf + nf.
-!>  Formula: (mf + nf) * ln(a/b) <= 2 ln(10).
+!>  T_0 = Int[-1,1] dt/SQRT(A t^2 + 2 d t + B) for A = a + b2 + c,
+!>  B = a - b2 + c and d = c - a:
+!>  SQRT(A) T_0 = LOG((2 SQRT(c A) + 2 c + b2)/(2 SQRT(a A) - 2 a - b2)).
+!>  A term of the quotient that is a difference of nearly equal numbers, as the
+!>  denominator is for gvv << guu, is taken in its conjugate form, whose
+!>  numerator 4 a c - b2^2 is the determinant of the metric.
 !>
-!>  @param[in] a
-!>  @param[in] b
-!>  @returns true if (mf + nf) * log(a/b) > 2 ln(10)
+!>  @param[in] a  guu
+!>  @param[in] b2 guv with its factor of two.
+!>  @param[in] c  gvv
+!>  @returns T_0
 !-------------------------------------------------------------------------------
-      PURE FUNCTION useBackward(a, b)
-      USE stel_kinds
-      USE vacmod0, ONLY: mf, nf
+      PURE FUNCTION t0_integral(a, b2, c)
 
       IMPLICIT NONE
 
 !  Declare Arguments
-      LOGICAL              :: useBackward
+      REAL(dp)             :: t0_integral
       REAL(dp), INTENT(in) :: a
-      REAL(dp), INTENT(in) :: b
-
-!  local parameters
-      REAL(dp), PARAMETER  :: kMaxForwardLogGrowth =
-     &   2.302585092994046_dp
-
-!  Start of executable code
-      useBackward = a .gt. b   .and.
-     &              b .gt. 0.0 .and.
-     &              (mf + nf)*log(a/b) .gt. 2.0_dp*kMaxForwardLogGrowth
-
-      END FUNCTION
-
-!-------------------------------------------------------------------------------
-!>  @brief Recurrence method.
-!>
-!>  @param[in] a       ad for m or p depending on what parity is computed
-!>  @param[in] b       Opposite ad parity to a.
-!>  @param[in] sqrtc   Sqrt(c) constant.
-!>  @param[in] sqrta   Sqrt(a) constant.
-!>  @param[in] sign1   Sign of the parity.
-!>  @param[in] fl      Recurrence index.
-!>  @param[in] cma
-!>  @param[in] current Current value.
-!>  @param[in] next    Next value.
-!-------------------------------------------------------------------------------
-      PURE FUNCTION recurrence(a, b, sqrtc, sqrta, sign1, fl, fl1, fl2,
-     &                         cma, current, next)
-      USE stel_kinds
-
-      IMPLICIT NONE
-
-!  Declare Arguments
-      REAL(dp)             :: recurrence
-      REAL(dp), INTENT(in) :: a
-      REAL(dp), INTENT(in) :: b
-      REAL(dp), INTENT(in) :: sqrtc
-      REAL(dp), INTENT(in) :: sqrta
-      REAL(dp), INTENT(in) :: sign1
-      INTEGER, INTENT(in)  :: fl
-      INTEGER, INTENT(in)  :: fl1
-      INTEGER, INTENT(in)  :: fl2
-      REAL(dp), INTENT(in) :: cma
-      REAL(dp), INTENT(in) :: current
-      REAL(dp), INTENT(in) :: next
-
-!  Start of executable code
-      recurrence = (sqrtc + sign1*sqrta - fl2*cma*next - fl*a*current)
-     &           / (b*fl1)
-
-      END FUNCTION
-
-!-------------------------------------------------------------------------------
-!>  @brief Built the recurrence for a parity.
-!>
-!>  @param[in]    a     ad for m or p depending on what parity is computed
-!>  @param[in]    b     Opposite ad parity to a.
-!>  @param[in]    sqrtc Sqrt(c) constant.
-!>  @param[in]    sqrta Sqrt(a) constant.
-!>  @param[in]    sign1 Sign of the parity.
-!>  @param[in]    cma
-!>  @param[in]    t0    Inital
-!>  @param[inout] tl    Final recurrence.
-!-------------------------------------------------------------------------------
-      PURE SUBROUTINE recurrence_sum(a, b, sqrtc, sqrta, cma, t0, tl)
-      USE stel_kinds
-      USE vacmod0, ONLY: mf, nf
-
-      IMPLICIT NONE
-
-!  Declare Arguments
-      REAL(dp), INTENT(in)                           :: a
-      REAL(dp), INTENT(in)                           :: b
-      REAL(dp), INTENT(in)                           :: sqrtc
-      REAL(dp), INTENT(in)                           :: sqrta
-      REAL(dp), INTENT(in)                           :: cma
-      REAL(dp), INTENT(in)                           :: t0
-      REAL(dp), DIMENSION(-1:nf + mf), INTENT(inout) :: tl
+      REAL(dp), INTENT(in) :: b2
+      REAL(dp), INTENT(in) :: c
 
 !  local variables
-      REAL(dp)                                       :: high
-      REAL(dp)                                       :: current
-      REAL(dp)                                       :: low
-      REAL(dp)                                       :: sign1
-      INTEGER                                        :: l
-      INTEGER                                        :: ntail
-
-!  local parameters
-!  The zero seed of a backward pass contaminates tl(l) by
-!  (b/a)^((top - l)/2) of tl(top). The pass starts ntail steps above
-!  mf + nf so that this falls below 1e-17 at mf + nf.
-      REAL(dp), PARAMETER :: kMinSeedLogDecay = 39.14394658089878_dp
+      REAL(dp)             :: aa
+      REAL(dp)             :: root
+      REAL(dp)             :: det
+      REAL(dp)             :: hi
+      REAL(dp)             :: lo
+      REAL(dp)             :: sqca
+      REAL(dp)             :: sqaa
+      REAL(dp)             :: num
+      REAL(dp)             :: den
 
 !  Start of executable code
-      IF (useBackward(a,b)) THEN
-         ntail = CEILING(2.0_dp*kMinSeedLogDecay/LOG(a/b))
-         high = 0.0
-         current = 0.0
-         IF (MOD(mf + nf + ntail, 2) .eq. 0) THEN
-            sign1 = -1
-         ELSE
-            sign1 = 1
-         ENDIF
-         DO l = mf + nf + ntail, mf + nf + 2, -1
-            low = recurrence(b, a, sqrtc, sqrta, sign1,
-     &                       l + 1, l, 2*l + 1, cma, high, current)
-            high = current
-            current = low
-            sign1 = -sign1
-         END DO
-         DO l = mf + nf + 1, 1, -1
-            tl(l - 1) = recurrence(b, a, sqrtc, sqrta, sign1,
-     &                       l + 1, l, 2*l + 1, cma, high, current)
-            high = current
-            current = tl(l - 1)
-            sign1 = -sign1
-         END DO
-         tl(0) = t0
+      aa = a + b2 + c
+      root = 2.0_dp*SQRT(a*c)
+      det = (root - b2)*(root + b2)
+      hi = 2.0_dp*c + b2
+      lo = 2.0_dp*a + b2
+      sqca = 2.0_dp*SQRT(c*aa)
+      sqaa = 2.0_dp*SQRT(a*aa)
+      IF (hi .ge. 0.0_dp) THEN
+         num = sqca + hi
       ELSE
-         sign1 = 1
-         DO l = 0, mf + nf - 1
-            sign1 = -sign1
-            tl(l + 1) = recurrence(a, b, sqrtc, sqrta, sign1,
-     &                             l, l + 1, 2*l + 1, cma,
-     &                             tl(l - 1), tl(l))
-         END DO
+         num = det/(sqca - hi)
       END IF
+      IF (lo .ge. 0.0_dp) THEN
+         den = det/(sqaa + lo)
+      ELSE
+         den = sqaa - lo
+      END IF
+      t0_integral = LOG(num/den)/SQRT(aa)
+
+      END FUNCTION
+
+!-------------------------------------------------------------------------------
+!>  @brief Tabulate the factors of the five-term moment recurrence.
+!>
+!>  At order k >= 2 the recurrence reads
+!>  A fsup2 M_(k+2) + d fsup1 M_(k+1) + (A/2 + B - A fdiag) M_k
+!>  + d fsub1 M_(k-1) + A fsub2 M_(k-2)
+!>  = -frhs (SQRT(Q(1)) + (-1)^k SQRT(Q(-1))).
+!>  The tables are kept between calls and rebuilt when a larger order is
+!>  requested.
+!>
+!>  @param[in] kmax Largest order needed.
+!-------------------------------------------------------------------------------
+      SUBROUTINE moment_factors(kmax)
+
+      IMPLICIT NONE
+
+!  Declare Arguments
+      INTEGER, INTENT(in) :: kmax
+
+!  local variables
+      INTEGER             :: k
+      INTEGER             :: istat
+      REAL(dp)            :: fk
+
+!  Start of executable code
+      IF (ALLOCATED(fsub2)) THEN
+         IF (UBOUND(fsub2,1) .ge. kmax) RETURN
+         DEALLOCATE (fsub2, fsub1, fdiag, fsup1, fsup2, frhs)
+      END IF
+
+      ALLOCATE (fsub2(2:kmax), fsub1(2:kmax), fdiag(2:kmax),
+     &          fsup1(2:kmax), fsup2(2:kmax), frhs(2:kmax),
+     &          stat = istat)
+      IF (istat .ne. 0) THEN
+         STOP 'Allocation error in SUBROUTINE moment_factors'
+      ENDIF
+
+      DO k = 2, kmax
+         fk = k
+         fsub2(k) = (fk - 2.0_dp)/(4.0_dp*(fk - 1.0_dp))
+         fsub1(k) = (2.0_dp*fk - 3.0_dp)/(2.0_dp*(fk - 1.0_dp))
+         fdiag(k) = 1.0_dp/(2.0_dp*(fk*fk - 1.0_dp))
+         fsup1(k) = (2.0_dp*fk + 3.0_dp)/(2.0_dp*(fk + 1.0_dp))
+         fsup2(k) = (fk + 2.0_dp)/(4.0_dp*(fk + 1.0_dp))
+         frhs(k) = 1.0_dp/(fk*fk - 1.0_dp)
+      END DO
+
       END SUBROUTINE
 
       END MODULE

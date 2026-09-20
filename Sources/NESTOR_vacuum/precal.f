@@ -18,8 +18,11 @@ C-----------------------------------------------
       INTEGER :: kp, ku, kuminus, kv, kvminus, i, m, n, mn, n1,
      1   imn, jmn, kmn, l, istat1, smn, nuv_tan, ndim, q, qq
       REAL(dp), DIMENSION(0:mf + nf,0:mf,0:nf) :: cmn
-      REAL(dp) :: argu, argv, argp, dn1, f1, f2, f3, alp_per,
-     1            tprecon, tprecoff
+      REAL(dp), DIMENSION(0:mf + nf,0:mf + nf) :: cosk
+      REAL(dp), DIMENSION(0:mf + nf) :: pnode
+      REAL(dp) :: argu, argv, argp, dn1, alp_per, tnode, xnode,
+     1            pjm1, pj, pjp1, tjk, cnext, cthis, cprev,
+     2            tprecon, tprecoff
 C-----------------------------------------------
 !
 !     THIS ROUTINE COMPUTES INITIAL CONSTANTS AND ARRAYS
@@ -166,42 +169,52 @@ C-----------------------------------------------
          END DO
       END DO
 !
-!     COMPUTE CMNS AND THE COEFFICIENTS OF T+- IN EQ (A14 AND A13) IN J.COMP.PHYS PAPER (PKM)
-!     NOTE: HERE, THE INDEX L IN THE LOOP BELOW IS THE SUBSCRIPT OF T+-. THEREFORE,
-!     L = 2L' + Kmn (L' = INDEX IN EQ. A14, Kmn = |m-n|), WITH LMIN = K AND LMAX = Jmn == m+n.
+!     COMPUTE CMNS, THE COEFFICIENTS OF THE POLYNOMIALS OF EQ (A13) IN THE J.COMP.PHYS PAPER (PKM),
+!     IN THE CHEBYSHEV BASIS: SUM_L C(L;M,N) t**L = SUM_K CMNS(K,M,N) T_K(t).
 !
-!     THE FOLLOWING DEFINITIONS PERTAIN (NOTE: kmn <= L <= jmn):
+!     THE C(L;M,N) OF EQ (A14), WITH L = 2L' + Kmn (Kmn = |m-n|) AND Kmn <= L <= m+n, ARE THE
+!     COEFFICIENTS OF THE RADIAL ZERNIKE POLYNOMIAL
 !
-!     F1 = [(L + jmn)/2]! / [(jmn - L)/2]! == [(jmn + kmn)/2 + L']!/[(jmn - kmn)/2 + L']!
+!        (-1)**MAX(0,n-m) * t**Kmn * P(1 - 2 t**2),
 !
-!     F2 = [(L + kmn)/2]!  == (L' + kmn)!
+!     P BEING THE JACOBI POLYNOMIAL OF DEGREE MIN(m,n) WITH PARAMETERS (Kmn, 0). IT IS EVALUATED
+!     FROM THE THREE-TERM RECURRENCE OF P IN THE DEGREE AT THE mf+nf+1 CHEBYSHEV-GAUSS NODES, WHICH
+!     DETERMINE A POLYNOMIAL OF DEGREE m+n <= mf+nf EXACTLY: CMN(I,M,N) HOLDS ITS VALUE AT NODE I,
+!     AND COSK(K,I) = COS(K THETA_I).
 !
-!     F3 = [(L - kmn)/2]!  == (L')!
-!
-      DO m = 0, mf
-         DO n = 0, nf
-            jmn = m + n
-            imn = m - n
-            kmn = ABS(imn)
-            smn = (jmn + kmn)/2                  !!Integer: J+K always even
-            f1 = 1
-            f2 = 1
-            f3 = 1
-            DO i = 1, kmn
-               f1 = f1*(smn + 1 - i)
-               f2 = f2*i
-            END DO
-            cmn(0:mf+nf,m,n) = 0
-            DO l = kmn, jmn, 2
-               cmn(l,m,n) = f1/(f2*f3)*((-1)**((l - imn)/2))
-               f1 = f1*p25*((jmn + l + 2)*(jmn - l))
-               f2 = f2*p5*(l + 2 + kmn)
-               f3 = f3*p5*(l + 2 - kmn)
+      DO i = 0, mf + nf
+         argu = (i + p5)*(p5*pi2)/(mf + nf + 1)
+         DO l = 0, mf + nf
+            cosk(l,i) = COS(l*argu)
+         END DO
+         tnode = cosk(1,i)
+         xnode = one - 2*tnode*tnode
+         DO m = 0, mf
+            DO n = 0, nf
+               kmn = ABS(m - n)
+               smn = MIN(m, n)
+               pjm1 = 0
+               pj = 1
+               IF (smn .ge. 1) THEN
+                  pjm1 = 1
+                  pj = p5*((kmn + 2)*xnode + kmn)
+                  DO q = 1, smn - 1
+                     tjk = 2*q + kmn
+                     cnext = 2*(q + one)*(q + kmn + one)*tjk
+                     cthis = (tjk + 1)*((tjk + 2)*tjk*xnode + kmn*kmn)
+                     cprev = 2*(q + kmn)*(tjk + 2)*q
+                     pjp1 = (cthis*pj - cprev*pjm1)/cnext
+                     pjm1 = pj
+                     pj = pjp1
+                  END DO
+               END IF
+               cmn(i,m,n) = pj*tnode**kmn
+               IF (MOD(MAX(0,n - m),2) .eq. 1) cmn(i,m,n) = -cmn(i,m,n)
             END DO
          END DO
       END DO
 !
-!     Now combine these into a single coefficient (cmns), Eq. A13).
+!     Now combine these into a single polynomial (cmns), Eq. A13), still as values at the nodes.
 !     NOTE:  The ALP=2*pi/nfper factor is needed to normalize integral over field periods
 !
       DO m = 1,mf
@@ -217,6 +230,20 @@ C-----------------------------------------------
      1                     +           cmn(0:mf+nf,0,:nf-1))
       cmns(0:mf+nf,0,0)    = (p5*alp)*(cmn(0:mf+nf,0,0)
      1                     +           cmn(0:mf+nf,0,0))
+!
+!     CHEBYSHEV COEFFICIENTS FROM THE VALUES AT THE NODES (DISCRETE COSINE TRANSFORM). THE
+!     POLYNOMIAL OF (m,n) HAS DEGREE m+n, SO THE COEFFICIENTS ABOVE IT VANISH.
+!
+      DO m = 0, mf
+         DO n = 0, nf
+            pnode = cmns(:,m,n)
+            cmns(:,m,n) = 0
+            DO l = 0, m + n
+               cmns(l,m,n) = 2*SUM(pnode*cosk(l,:))/(mf + nf + 1)
+            END DO
+            cmns(0,m,n) = p5*cmns(0,m,n)
+         END DO
+      END DO
 
       numjs_vac=nuv3max-nuv3min+1
 !      blksize_scp=mnpd2  
