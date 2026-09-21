@@ -20,12 +20,8 @@ C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: iexit, ipoint, n, iunit, ier_flag_init,
-     &   i, ni, m, nsmin, igrid, mj, isgn, ioff, joff,
-     &   NonZeroLen
-      REAL(dp), DIMENSION(:,:), POINTER ::
-     &  rbcc, rbss, rbcs, rbsc, zbcs, zbsc, zbcc, zbss
-      REAL(dp) :: rtest, ztest, tzc, trc, delta, orient
-      REAL(dp), ALLOCATABLE :: temp(:)
+     &           i, ni, m, nsmin, igrid, mj, NonZeroLen
+      REAL(dp) :: tzc, trc
       CHARACTER(LEN=100) :: line, line2
       CHARACTER(LEN=1)   :: ch1, ch2
       LOGICAL :: lwrite
@@ -542,168 +538,56 @@ C-----------------------------------------------
 1000  CONTINUE
 
 !
-!     CONVERT TO REPRESENTATION WITH RBS(m=1) = ZBC(m=1). THE m=1
-!     DETERMINANT, WHICH NO ROTATION OF THETA CHANGES, IS NEGATIVE FOR A
-!     BOUNDARY THAT FLIP_THETA REVERSES BELOW; THAT ONE IS ROTATED SO
-!     THAT THE REPRESENTATION HOLDS AFTER THE FLIP
-!
-      IF (lasym) THEN
-         orient = SUM(rbc(-ntor:ntor,1))*SUM(zbs(-ntor:ntor,1))
-     &          - SUM(rbs(-ntor:ntor,1))*SUM(zbc(-ntor:ntor,1))
-         IF (orient .lt. zero) THEN
-            delta = -ATAN2(rbs(0,1) + zbc(0,1), zbs(0,1) - rbc(0,1))
-         ELSE IF (rbc(0,1) + zbs(0,1) .gt. zero) THEN
-            delta = ATAN((rbs(0,1) - zbc(0,1))/
-     &                   (rbc(0,1) + zbs(0,1)))
-         ELSE
-            delta = ATAN2(rbs(0,1) - zbc(0,1), rbc(0,1) + zbs(0,1))
-         END IF
-         IF (delta .ne. zero) THEN
-            DO m = 0,mpol1
-               DO n = -ntor,ntor
-                  trc = rbc(n,m)*COS(m*delta) + rbs(n,m)*SIN(m*delta)
-                  rbs(n,m) = rbs(n,m)*COS(m*delta)
-     &                     - rbc(n,m)*SIN(m*delta)
-                  rbc(n,m) = trc
-                  tzc = zbc(n,m)*COS(m*delta) + zbs(n,m)*SIN(m*delta)
-                  zbs(n,m) = zbs(n,m)*COS(m*delta)
-     &                     - zbc(n,m)*SIN(m*delta)
-                  zbc(n,m) = tzc
-               END DO
-            END DO
-         END IF
-      END IF
-
-!
 !     ALLOCATE MEMORY FOR NU, NV, MPOL, NTOR SIZED ARRAYS
 !
       CALL allocate_nunv
 
 !
-!     CONVERT TO INTERNAL REPRESENTATION OF MODES
+!     SET rmn_bdy, zmn_bdy, lflip AND signgs FROM THE INPUT BOUNDARY
 !
-!     R = RBCC*COS(M*U)*COS(N*V) + RBSS*SIN(M*U)*SIN(N*V)
-!       + RBCS*COS(M*U)*SIN(N*V) + RBSC*SIN(M*U)*COS(N*V)
-!     Z = ZBCS*COS(M*U)*SIN(N*V) + ZBSC*SIN(M*U)*COS(N*V)
-!       + ZBCC*COS(M*U)*COS(N*V) + ZBSS*SIN(M*U)*SIN(N*V)
-!
-!
-!     POINTER ASSIGNMENTS (NOTE: INDICES START AT 1, NOT 0, FOR POINTERS, EVEN THOUGH
-!                          THEY START AT ZERO FOR RMN_BDY)
-!     ARRAY STACKING ORDER DETERMINED HERE
-!
-      rbcc => rmn_bdy(:,:,rcc)
-      zbsc => zmn_bdy(:,:,zsc)
-      IF (lthreed) THEN
-         rbss => rmn_bdy(:,:,rss)
-         zbcs => zmn_bdy(:,:,zcs)
-      END IF
+      CALL reset_boundary
 
-      IF (lasym) THEN
-         rbsc => rmn_bdy(:,:,rsc)
-         zbcc => zmn_bdy(:,:,zcc)
-         IF (lthreed) THEN
-            rbcs => rmn_bdy(:,:,rcs)
-            zbss => zmn_bdy(:,:,zss)
-         END IF
-      ENDIF
-
-      rmn_bdy = 0;  zmn_bdy = 0
-
-      ioff = LBOUND(rbcc,1)
-      joff = LBOUND(rbcc,2)
-
-      DO m=0, mpol1
-         mj = m + joff
-         IF (lfreeb .and.
-     &       (mfilter_fbdy.gt.1 .and. m.gt.mfilter_fbdy)) CYCLE
-         DO n = -ntor, ntor
+      IF (ier_flag_init .eq. norm_term_flag) THEN
+         DO m = 0, mpol1
             IF (lfreeb .and.
-     &         (nfilter_fbdy.gt.0 .and. ABS(n).gt.nfilter_fbdy)) CYCLE
-            ni = ABS(n) + ioff
-            IF (n .eq. 0) THEN
-               isgn = 0
-            ELSE IF (n .gt. 0) THEN
-               isgn = 1
-            ELSE
-               isgn = -1
+     &          (mfilter_fbdy.gt.1 .and. m.gt.mfilter_fbdy)) THEN
+               CYCLE
             END IF
-            rbcc(ni,mj) = rbcc(ni,mj) + rbc(n,m)
-            IF (m .gt. 0) zbsc(ni,mj) = zbsc(ni,mj) + zbs(n,m)
-
-            IF (lthreed) THEN
-               IF (m .gt. 0) rbss(ni,mj) = rbss(ni,mj) + isgn*rbc(n,m)
-               zbcs(ni,mj) = zbcs(ni,mj) - isgn*zbs(n,m)
-            END IF
-
-            IF (lasym) THEN
-               IF (m .gt. 0) rbsc(ni,mj) = rbsc(ni,mj) + rbs(n,m)
-               zbcc(ni,mj) = zbcc(ni,mj) + zbc(n,m)
-               IF (lthreed) THEN
-               rbcs(ni,mj) = rbcs(ni,mj) - isgn*rbs(n,m)
-               IF (m .gt. 0) zbss(ni,mj) = zbss(ni,mj) + isgn*zbc(n,m)
+            DO n = -ntor, ntor
+               IF (lfreeb .and.
+     &             (nfilter_fbdy.gt.0 .and.
+     &              ABS(n).gt.nfilter_fbdy)) THEN
+                  CYCLE
                END IF
-            END IF
-
-            IF (ier_flag_init .ne. norm_term_flag) CYCLE
-            trc = ABS(rbc(n,m)) + ABS(rbs(n,m))
-     &          + ABS(zbc(n,m)) + ABS(zbs(n,m))
-            IF (m .eq. 0) THEN
-               IF (n .lt. 0) CYCLE
-               IF (trc.eq.zero .and. ABS(raxis_cc(n)).eq.zero .and.
-     &             ABS(zaxis_cs(n)).eq.zero) CYCLE
-               IF (lwrite) WRITE (nthreed,195) n, m, rbc(n,m), rbs(n,m),
-     &                   zbc(n,m), zbs(n,m), raxis_cc(n), raxis_cs(n),
-     &                   zaxis_cc(n), zaxis_cs(n)
-            ELSE
-               IF (trc .eq. zero) CYCLE
-               IF (lwrite) WRITE (nthreed,195) n, m, rbc(n,m), rbs(n,m),
-     &                   zbc(n,m), zbs(n,m)
-            END IF
+               trc = ABS(rbc(n,m)) + ABS(rbs(n,m))
+     &             + ABS(zbc(n,m)) + ABS(zbs(n,m))
+               IF (m .eq. 0) THEN
+                  IF (n .lt. 0) THEN
+                     CYCLE
+                  END IF
+                  IF (trc.eq.zero .and. ABS(raxis_cc(n)).eq.zero .and.
+     &                ABS(zaxis_cs(n)).eq.zero) THEN
+                     CYCLE
+                  END IF
+                  IF (lwrite) THEN
+                     WRITE (nthreed,195) n, m, rbc(n,m), rbs(n,m),
+     &                                   zbc(n,m), zbs(n,m),
+     &                                   raxis_cc(n), raxis_cs(n),
+     &                                   zaxis_cc(n), zaxis_cs(n)
+                  END IF
+               ELSE
+                  IF (trc .eq. zero) THEN
+                     CYCLE
+                  END IF
+                  IF (lwrite) THEN
+                     WRITE (nthreed,195) n, m, rbc(n,m), rbs(n,m),
+     &                                   zbc(n,m), zbs(n,m)
+                  END IF
+               END IF
+            END DO
          END DO
-      END DO
+      END IF
  195  FORMAT(i5,i4,1p,8e12.4)
-
-!
-!     CHECK SIGN OF JACOBIAN (SHOULD BE SAME AS SIGNGS)
-!     FOR lasym, ORIENT IS THE m=1 DETERMINANT TAKEN ABOVE
-!
-      m = 1
-      mj = m+joff
-      rtest = SUM(rbcc(1:ntor1,mj))
-      ztest = SUM(zbsc(1:ntor1,mj))
-      IF (.not.lasym) THEN
-         orient = rtest*ztest
-      END IF
-      lflip = (orient .lt. zero)
-      signgs = -1
-      IF (lflip) THEN
-         CALL flip_theta(rmn_bdy, zmn_bdy)
-      END IF
-
-!
-!     CONVERT TO INTERNAL FORM FOR (CONSTRAINED) m=1 MODES
-!     INTERNALLY, FOR m=1: XC(rss) = .5(RSS+ZCS), XC(zcs) = .5(RSS-ZCS)
-!     WITH XC(zcs) -> 0 FOR POLAR CONSTRAINT
-!     (see convert_sym, convert_asym in totzsp_mod file)
-!
-
-      IF (lconm1 .and. (lthreed .or. lasym)) THEN
-         ALLOCATE (temp(SIZE(rbcc,1)))
-         IF (lthreed) THEN
-            mj = 1+joff
-            temp = rbss(:,mj)
-            rbss(:,mj) = p5*(temp(:) + zbcs(:,mj))
-            zbcs(:,mj) = p5*(temp(:) - zbcs(:,mj))
-         END IF
-         IF (lasym) THEN
-            mj = 1+joff
-            temp = rbsc(:,mj)
-            rbsc(:,mj) = p5*(temp(:) + zbcc(:,mj))
-            zbcc(:,mj) = p5*(temp(:) - zbcc(:,mj))
-         END IF
-         IF (ALLOCATED(temp)) DEALLOCATE (temp)
-      END IF
 
 !
 !     PARSE TYPE OF PRECONDITIONER
