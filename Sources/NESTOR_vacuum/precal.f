@@ -16,13 +16,13 @@ C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: kp, ku, kuminus, kv, kvminus, i, m, n, mn, n1,
-     1   imn, jmn, kmn, l, istat1, smn, nuv_tan, ndim, q, qq
+     &   imn, kmn, l, istat1, smn, nuv_tan, ndim, q, qq
       REAL(dp), DIMENSION(0:mf + nf,0:mf,0:nf) :: cmn
       REAL(dp), DIMENSION(0:mf + nf,0:mf + nf) :: cosk
       REAL(dp), DIMENSION(0:mf + nf) :: pnode
       REAL(dp) :: argu, argv, argp, dn1, alp_per, tnode, xnode,
-     1            pjm1, pj, pjp1, tjk, cnext, cthis, cprev,
-     2            tprecon, tprecoff
+     &            pjm1, pj, pjp1, tjk, cnext, cthis, cprev,
+     &            tprecon, tprecoff
 C-----------------------------------------------
 !
 !     THIS ROUTINE COMPUTES INITIAL CONSTANTS AND ARRAYS
@@ -209,7 +209,9 @@ C-----------------------------------------------
                   END DO
                END IF
                cmn(i,m,n) = pj*tnode**kmn
-               IF (MOD(MAX(0,n - m),2) .eq. 1) cmn(i,m,n) = -cmn(i,m,n)
+               IF (MOD(MAX(0,n - m),2) .eq. 1) THEN
+                  cmn(i,m,n) = -cmn(i,m,n)
+               END IF
             END DO
          END DO
       END DO

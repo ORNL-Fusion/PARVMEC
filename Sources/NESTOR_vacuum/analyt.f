@@ -212,10 +212,6 @@
             sign1 = -sign1
             wl = 2
          END DO
-      ELSE
-         slps = 0
-         slms = 0
-         slpm = 0
       ENDIF
 !
 !     BEGIN MODE NUMBER (m,n) LOOP. THE L-SUM OF EQ (A14) TO COMPUTE THE Imn
@@ -231,9 +227,9 @@
                tlps = tlps + cmns(l,m,n)*tlp(:,l)
                tlms = tlms + cmns(l,m,n)*tlm(:,l)
             END DO
+            slps = 0
+            slms = 0
             IF (ivacskip .eq. 0) THEN
-               slps = 0
-               slms = 0
                DO l = 0, m + n
                   slps = slps + cmns(l,m,n)*slp(:,l)
                   slms = slms + cmns(l,m,n)*slm(:,l)
@@ -245,7 +241,7 @@
 !       1. n = 0 and  m >= 0  OR n > 0 and m = 0
 !
                tlpm = tlps + tlms
-               IF (ivacskip .eq. 0) slpm = slps + slms
+               slpm = slps + slms
                CALL analysum(grpmn, bvec, slpm, tlpm, m, n,
      &                       ivacskip, ndim)
 
@@ -390,8 +386,9 @@
      &                            0.0_dp)/aa(j))
             log_rho = LOG(semi_major + semi_minor)
             IF (log_rho .gt. 0.0_dp) THEN
-               ntail = MAX(ntail, CEILING(MIN(REAL(kMaxTail,dp),
-     &                        kMinBoundaryLogDecay/log_rho)))
+               ntail = MAX(ntail,
+     &                     CEILING(MIN(REAL(kMaxTail,dp),
+     &                                 kMinBoundaryLogDecay/log_rho)))
             ELSE
                ntail = kMaxTail
             END IF
@@ -415,21 +412,15 @@
             sign1 = -sign1
          END DO
          DO k = ktop + 1, ktop + 2
-            DO j = 1, nbatch
-               tk(j,k) = -(1.0_dp/sqp(j) + sign1/sqm(j))*frhs(k)
-            END DO
+            tk(:,k) = -(1.0_dp/sqp(:) + sign1/sqm(:))*frhs(k)
             sign1 = -sign1
          END DO
          DO k = ktop, 2, -1
-            DO j = 1, nbatch
-               tk(j,k) = tk(j,k) - up1(j,k)*tk(j,k + 1)
-     &                 -           up2(j,k)*tk(j,k + 2)
-            END DO
+            tk(:,k) = tk(:,k) - up1(:,k)*tk(:,k + 1)
+     &              -           up2(:,k)*tk(:,k + 2)
          END DO
 
-         DO k = 0, kl
-            tl(i0:i0 + nb - 1,k) = tk(1:nb,k)
-         END DO
+         tl(i0:i0 + nb - 1,:) = tk(1:nb,0:kl)
       END DO
 
       DEALLOCATE (up1, up2, tk, stat = istat)
@@ -516,11 +507,12 @@
 !  local variables
       INTEGER             :: k
       INTEGER             :: istat
-      REAL(dp)            :: fk
 
 !  Start of executable code
       IF (ALLOCATED(fsub2)) THEN
-         IF (UBOUND(fsub2,1) .ge. kmax) RETURN
+         IF (UBOUND(fsub2,1) .ge. kmax) THEN
+            RETURN
+         END IF
          DEALLOCATE (fsub2, fsub1, fdiag, fsup1, fsup2, frhs)
       END IF
 
@@ -532,13 +524,12 @@
       ENDIF
 
       DO k = 2, kmax
-         fk = k
-         fsub2(k) = (fk - 2.0_dp)/(4.0_dp*(fk - 1.0_dp))
-         fsub1(k) = (2.0_dp*fk - 3.0_dp)/(2.0_dp*(fk - 1.0_dp))
-         fdiag(k) = 1.0_dp/(2.0_dp*(fk*fk - 1.0_dp))
-         fsup1(k) = (2.0_dp*fk + 3.0_dp)/(2.0_dp*(fk + 1.0_dp))
-         fsup2(k) = (fk + 2.0_dp)/(4.0_dp*(fk + 1.0_dp))
-         frhs(k) = 1.0_dp/(fk*fk - 1.0_dp)
+         fsub2(k) = (k - 2.0_dp)/(4.0_dp*(k - 1.0_dp))
+         fsub1(k) = (2.0_dp*k - 3.0_dp)/(2.0_dp*(k - 1.0_dp))
+         fdiag(k) = 1.0_dp/(2.0_dp*(k*k - 1.0_dp))
+         fsup1(k) = (2.0_dp*k + 3.0_dp)/(2.0_dp*(k + 1.0_dp))
+         fsup2(k) = (k + 2.0_dp)/(4.0_dp*(k + 1.0_dp))
+         frhs(k) = 1.0_dp/(k*k - 1.0_dp)
       END DO
 
       END SUBROUTINE

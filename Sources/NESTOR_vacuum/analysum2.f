@@ -1,5 +1,5 @@
-      SUBROUTINE analysum2 (grpmn, bvec, slp, tlp, slm, tlm,
-     &    m, n, ivacskip, ndim)
+      SUBROUTINE analysum2(grpmn, bvec, slp, tlp, slm, tlm,
+     &                     m, n, ivacskip, ndim)
       USE vacmod
       USE parallel_include_module
       USE timer_sub
