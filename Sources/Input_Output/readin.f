@@ -24,7 +24,7 @@ C-----------------------------------------------
      &   NonZeroLen
       REAL(dp), DIMENSION(:,:), POINTER ::
      &  rbcc, rbss, rbcs, rbsc, zbcs, zbsc, zbcc, zbss
-      REAL(dp) :: rtest, ztest, tzc, trc, delta
+      REAL(dp) :: rtest, ztest, tzc, trc, delta, orient
       REAL(dp), ALLOCATABLE :: temp(:)
       CHARACTER(LEN=100) :: line, line2
       CHARACTER(LEN=1)   :: ch1, ch2
@@ -542,11 +542,22 @@ C-----------------------------------------------
 1000  CONTINUE
 
 !
-!     CONVERT TO REPRESENTATION WITH RBS(m=1) = ZBC(m=1)
+!     CONVERT TO REPRESENTATION WITH RBS(m=1) = ZBC(m=1). THE m=1
+!     DETERMINANT, WHICH NO ROTATION OF THETA CHANGES, IS NEGATIVE FOR A
+!     BOUNDARY THAT FLIP_THETA REVERSES BELOW; THAT ONE IS ROTATED SO
+!     THAT THE REPRESENTATION HOLDS AFTER THE FLIP
 !
       IF (lasym) THEN
-         delta = ATAN((rbs(0,1) - zbc(0,1))/
-     &                (ABS(rbc(0,1)) + ABS(zbs(0,1))))
+         orient = SUM(rbc(-ntor:ntor,1))*SUM(zbs(-ntor:ntor,1))
+     &          - SUM(rbs(-ntor:ntor,1))*SUM(zbc(-ntor:ntor,1))
+         IF (orient .lt. zero) THEN
+            delta = -ATAN2(rbs(0,1) + zbc(0,1), zbs(0,1) - rbc(0,1))
+         ELSE IF (rbc(0,1) + zbs(0,1) .gt. zero) THEN
+            delta = ATAN((rbs(0,1) - zbc(0,1))/
+     &                   (rbc(0,1) + zbs(0,1)))
+         ELSE
+            delta = ATAN2(rbs(0,1) - zbc(0,1), rbc(0,1) + zbs(0,1))
+         END IF
          IF (delta .ne. zero) THEN
             DO m = 0,mpol1
                DO n = -ntor,ntor
@@ -655,14 +666,20 @@ C-----------------------------------------------
 
 !
 !     CHECK SIGN OF JACOBIAN (SHOULD BE SAME AS SIGNGS)
+!     FOR lasym, ORIENT IS THE m=1 DETERMINANT TAKEN ABOVE
 !
       m = 1
       mj = m+joff
       rtest = SUM(rbcc(1:ntor1,mj))
       ztest = SUM(zbsc(1:ntor1,mj))
-      lflip=(rtest*ztest .lt. zero)
+      IF (.not.lasym) THEN
+         orient = rtest*ztest
+      END IF
+      lflip = (orient .lt. zero)
       signgs = -1
-      IF (lflip) CALL flip_theta(rmn_bdy, zmn_bdy)
+      IF (lflip) THEN
+         CALL flip_theta(rmn_bdy, zmn_bdy)
+      END IF
 
 !
 !     CONVERT TO INTERNAL FORM FOR (CONSTRAINED) m=1 MODES
