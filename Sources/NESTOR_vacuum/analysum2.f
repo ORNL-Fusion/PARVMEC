@@ -1,5 +1,5 @@
-      SUBROUTINE analysum2 (grpmn, bvec, slp, tlp, slm, tlm,
-     &    m, n, l, ivacskip, ndim)
+      SUBROUTINE analysum2(grpmn, bvec, slp, tlp, slm, tlm,
+     &                     m, n, ivacskip, ndim)
       USE vacmod
       USE parallel_include_module
       USE timer_sub
@@ -7,7 +7,7 @@
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
-      INTEGER, INTENT(in) :: m, n, l, ivacskip, ndim
+      INTEGER, INTENT(in) :: m, n, ivacskip, ndim
       REAL(dp), INTENT(inout) :: grpmn(0:mf,-nf:nf,ndim,nuv3)
       REAL(dp), INTENT(inout) :: bvec(0:mf,-nf:nf,ndim)
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(in) ::
@@ -18,15 +18,18 @@ C-----------------------------------------------
       INTEGER :: i
       REAL(dp) :: sinp, sinm, cosp, cosm, temp, ton, toff
 C-----------------------------------------------
+!
+!     SLP(M) AND TLP(M) ARE THE SUMS OVER THE CHEBYSHEV ORDER, WEIGHTED WITH cmns(:,m,n)
+!
       CALL second0(ton)
     
       IF (n .LT. 0) STOP 'error calling analysum2!'
 
       DO i = nuv3min, nuv3max
-         sinp =  sinu1(i,m)*cosv1(i,n)*cmns(l,m,n)
-         temp = -cosu1(i,m)*sinv1(i,n)*cmns(l,m,n)
-         sinm = sinp - temp                 !SIN(mu + |n|v) * cmns (l,m,|n|)
-         sinp = sinp + temp                 !SIN(mu - |n|v) * cmns (l,m,|n|)
+         sinp =  sinu1(i,m)*cosv1(i,n)
+         temp = -cosu1(i,m)*sinv1(i,n)
+         sinm = sinp - temp                 !SIN(mu + |n|v)
+         sinp = sinp + temp                 !SIN(mu - |n|v)
          bvec(m,n,1)  = bvec(m,n,1)  + tlp(i)*bexni(i)*sinp
          bvec(m,-n,1) = bvec(m,-n,1) + tlm(i)*bexni(i)*sinm
 
@@ -37,10 +40,10 @@ C-----------------------------------------------
 
 
          IF (lasym) THEN
-            cosp = cosu1(i,m)*cosv1(i,n)*cmns(l,m,n)
-            temp = sinu1(i,m)*sinv1(i,n)*cmns(l,m,n)
-            cosm = cosp - temp                !COS(mu + |n|v) * cmns (l,m,|n|)
-            cosp = cosp + temp                !COS(mu - |n|v) * cmns (l,m,|n|)
+            cosp = cosu1(i,m)*cosv1(i,n)
+            temp = sinu1(i,m)*sinv1(i,n)
+            cosm = cosp - temp                !COS(mu + |n|v)
+            cosp = cosp + temp                !COS(mu - |n|v)
             bvec(m,n,2)  = bvec(m,n,2)  + tlp(i)*bexni(i)*cosp
             bvec(m,-n,2) = bvec(m,-n,2) + tlm(i)*bexni(i)*cosm
 

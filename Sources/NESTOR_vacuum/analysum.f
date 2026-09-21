@@ -1,5 +1,4 @@
-      SUBROUTINE analysum(grpmn, bvec, sl, tl, m, n, l, ivacskip,
-     &                    ndim)
+      SUBROUTINE analysum(grpmn, bvec, sl, tl, m, n, ivacskip, ndim)
       USE vacmod
       USE parallel_include_module
       USE timer_sub
@@ -7,7 +6,7 @@
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
-      INTEGER, INTENT(IN) :: m, n, l, ivacskip, ndim
+      INTEGER, INTENT(IN) :: m, n, ivacskip, ndim
       REAL(dp), INTENT(INOUT) :: grpmn(0:mf,-nf:nf,ndim,nuv3)
       REAL(dp), INTENT(INOUT) :: bvec(0:mf,-nf:nf,ndim)
       REAL(dp), DIMENSION(nuv3min:nuv3max), INTENT(IN) :: sl, tl
@@ -17,19 +16,20 @@ C-----------------------------------------------
       INTEGER  :: i
       REAL(dp) :: sinp, cosp, ton, toff
 C-----------------------------------------------
+!
+!     SL AND TL ARE THE SUMS OVER THE CHEBYSHEV ORDER, WEIGHTED WITH cmns(:,m,n)
+!
       CALL second0(ton)
 
       DO i = nuv3min, nuv3max
-         sinp = (sinu1(i,m)*cosv1(i,n) - sinv1(i,n)*cosu1(i,m))
-     &        *  cmns(l,m,n)                                   !SIN(mu - |n|v)*cmns
+         sinp = sinu1(i,m)*cosv1(i,n) - sinv1(i,n)*cosu1(i,m)   !SIN(mu - |n|v)
          IF (ivacskip .EQ. 0) THEN
             grpmn(m,n,1,i) = grpmn(m,n,1,i) + sl(i)*sinp
          END IF
          bvec(m,n,1) = bvec(m,n,1) + tl(i)*bexni(i)*sinp
 
          IF (lasym) THEN
-            cosp = (cosu1(i,m)*cosv1(i,n) + sinv1(i,n)*sinu1(i,m))
-     &           *  cmns(l,m,n)                                !COS(mu - |n|v)*cmns
+            cosp = cosu1(i,m)*cosv1(i,n) + sinv1(i,n)*sinu1(i,m) !COS(mu - |n|v)
 
             IF (ivacskip .EQ. 0) THEN
                grpmn(m,n,2,i) = grpmn(m,n,2,i) + sl(i)*cosp
