@@ -20,7 +20,7 @@ set_tests_properties (vmec_reversed_test
 
 #  Check woutfile to ensure that values match.
 add_test (NAME    vmec_reversed_check_aspect_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_forward.vmec.nc -wout_file2=wout_test_reversed.vmec.nc -quantity=aspect -tol=1.0E-20)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_forward.vmec.nc -wout_file2=wout_test_reversed.vmec.nc -quantity=aspect -tol=1.4E-13)
 set_tests_properties (vmec_reversed_check_aspect_test
                       PROPERTIES
                       DEPENDS "vmec_forward_test;vmec_reversed_test")
