@@ -1,9 +1,36 @@
+!*******************************************************************************
+!>  @file init_geometry.f90
+!>  @brief Contains module @ref init_geometry.
+!
+!  Note separating the Doxygen comment block here so detailed description is
+!  found in the Module not the file.
+!
+!>  Defines the routines that set the boundary of a run from its input
+!>  coefficients and orient the poloidal angle so that the Jacobian takes the
+!>  sign VMEC assumes.
+!*******************************************************************************
       MODULE INIT_GEOMETRY
 
+!>  True when @ref reset_boundary flipped theta -> pi - theta because the
+!>  boundary was given with the opposite orientation. profil1d negates iotas
+!>  and chips to match.
       LOGICAL     :: lflip
 
       CONTAINS
 
+!-------------------------------------------------------------------------------
+!>  @brief Flip the poloidal angle, theta -> pi - theta.
+!>
+!>  Multiplies the cos(m*theta) amplitudes by (-1)^m and the sin(m*theta)
+!>  amplitudes by (-1)^(m+1), which reverses the direction theta runs around
+!>  each surface and with it the sign of the Jacobian. The m = 0 amplitudes are
+!>  unchanged.
+!>
+!>  @param[inout] rmn Fourier amplitudes of R, indexed by n, m and parity.
+!>  @param[inout] zmn Fourier amplitudes of Z, indexed by n, m and parity.
+!>  @param[inout] lmn Fourier amplitudes of lambda, indexed by n, m and parity.
+!>                    Optional.
+!-------------------------------------------------------------------------------
       SUBROUTINE flip_theta(rmn, zmn, lmn)
       USE vmec_main
       USE vmec_params, ONLY: ntmax, rcc, rss, zsc, zcs,                 &
@@ -55,6 +82,23 @@
 
       END SUBROUTINE flip_theta
 
+!-------------------------------------------------------------------------------
+!>  @brief Set the internal boundary of a run from its input coefficients.
+!>
+!>  Fills rmn_bdy and zmn_bdy from the input coefficients rbc, zbs, rbs and zbc,
+!>  sets lflip and signgs, and flips a boundary given with the opposite
+!>  orientation with @ref flip_theta. The orientation is the sign of the m = 1
+!>  determinant at zeta = 0,
+!>
+!>    SUM(rbc(:,1))*SUM(zbs(:,1)) - SUM(rbs(:,1))*SUM(zbc(:,1)),
+!>
+!>  whose second term is absent without lasym and which no rotation of theta
+!>  changes. For lasym the coefficients are first rotated in theta so that
+!>  RBS(m=1) = ZBC(m=1) holds after the flip. The rotation changes rbc, zbs, rbs
+!>  and zbc in place, and a second call finds a rotation angle of zero to
+!>  round-off. Called by readin, and again by any caller that changes the
+!>  boundary coefficients.
+!-------------------------------------------------------------------------------
       SUBROUTINE reset_boundary
       USE vmec_main
       USE vmec_params, ONLY: rcc, rss, zsc, zcs, zcc, zss, rsc, rcs,    &
@@ -69,10 +113,6 @@
          rbcc, rbss, rbcs, rbsc, zbcs, zbsc, zbcc, zbss
       REAL(rprec), ALLOCATABLE :: temp(:)
 !-----------------------------------------------
-!
-!     SETS rmn_bdy, zmn_bdy, lflip AND signgs FROM THE BOUNDARY
-!     COEFFICIENTS rbc, zbs, rbs, zbc OF THE INPUT. THE lasym ROTATION
-!     CHANGES THOSE FOUR IN PLACE; A SECOND CALL FINDS delta = 0
 !
 !     CONVERT TO REPRESENTATION WITH RBS(m=1) = ZBC(m=1). THE m=1
 !     DETERMINANT, WHICH NO ROTATION OF THETA CHANGES, IS NEGATIVE FOR A
