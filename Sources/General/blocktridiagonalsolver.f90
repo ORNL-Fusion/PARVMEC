@@ -1550,6 +1550,9 @@ END SUBROUTINE SlaveSendVector
 !<
 !-------------------------------------------------------------------------------
 SUBROUTINE PLBDGEMM( alpha, A, B, beta, C )
+#ifdef ACCELERATE_NEW_LAPACK
+  USE accelerate_blas_lp64
+#endif
   !----------------------------------------------
   ! Formal arguments
   !----------------------------------------------
@@ -1580,7 +1583,11 @@ SUBROUTINE PLBDGEMM( alpha, A, B, beta, C )
 
   IF ( useblas ) THEN
     IF(KPDBG) WRITE(OFU,*) 'BLAS DGEMM only (not using PBLAS)'; CALL FL(OFU)
-    CALL DGEMM( 'N', 'N', M, M, M, alpha, A, M, B, M, beta, C, M )
+#ifdef ACCELERATE_NEW_LAPACK
+    CALL DGEMM('N', 'N', M, M, M, alpha, A(1,1), M, B(1,1), M, beta, C(1,1), M)
+#else
+    CALL DGEMM('N', 'N', M, M, M, alpha, A, M, B, M, beta, C, M)
+#endif
   ELSE
 #if defined(MPI_OPT)
     CALL BSystemClock(pstats%mm%t1)
@@ -1785,6 +1792,9 @@ END SUBROUTINE SlaveDGEMM
 !<
 !-------------------------------------------------------------------------------
 SUBROUTINE PLBDGEMV( alpha, A, x, beta, y )
+#ifdef ACCELERATE_NEW_LAPACK
+  USE accelerate_blas_lp64
+#endif
   !----------------------------------------------
   ! Formal arguments
   !----------------------------------------------
@@ -1795,7 +1805,11 @@ SUBROUTINE PLBDGEMV( alpha, A, x, beta, y )
 
   !----------------------------------------------
   !Just do this locally (not worth asking slaves' help)
-  CALL DGEMV( 'N', M, M, alpha, A, M, x, 1, beta, y, 1 )
+#ifdef ACCELERATE_NEW_LAPACK
+  CALL DGEMV( 'N', M, M, alpha, A(1,1), M, x(1), 1, beta, y(1), 1 )
+#else
+  CALL DGEMV( 'N', M, M, alpha, A(1,1), M, x(1), 1, beta, y(1), 1 )
+#endif
 END SUBROUTINE PLBDGEMV
 
 !-------------------------------------------------------------------------------
@@ -1804,6 +1818,9 @@ END SUBROUTINE PLBDGEMV
 !<
 !-------------------------------------------------------------------------------
 SUBROUTINE PLBDGETRF( A, piv, info )
+#ifdef ACCELERATE_NEW_LAPACK
+   USE accelerate_lapack_lp64
+#endif
   !----------------------------------------------
   ! Formal arguments
   !----------------------------------------------
@@ -1837,7 +1854,11 @@ SUBROUTINE PLBDGETRF( A, piv, info )
   IF ( useblas ) THEN
     !IF(KPDBG) WRITE(OFU,*) 'BLAS DGETRF only (not using PBLAS)' ; CALL FL(OFU)
     IF(KPDBG) WRITE(OFU,*) 'BLAS DGETRF only (not using PBLAS) with M=',M ; CALL FL(OFU)
+#ifdef ACCELERATE_NEW_LAPACK
+    CALL DGETRF( M, M, A(1,1), M, piv(1), info )
+#else
     CALL DGETRF( M, M, A, M, piv, info )
+#endif
   ELSE
 #if defined(MPI_OPT)
     CALL BSystemClock(pstats%trf%t1)
@@ -1963,6 +1984,9 @@ END SUBROUTINE SlaveDGETRF
 !<
 !-------------------------------------------------------------------------------
 SUBROUTINE PLBDGETRS( nrhs, A, piv, B, info )
+#ifdef ACCELERATE_NEW_LAPACK
+  USE accelerate_lapack_lp64
+#endif
   !----------------------------------------------
   ! Formal arguments
   !----------------------------------------------
@@ -1975,7 +1999,11 @@ SUBROUTINE PLBDGETRS( nrhs, A, piv, B, info )
   !----------------------------------------------
   !Just do this locally (not worth asking slaves' help)
   IF(KPDBG) WRITE(OFU,*) 'BLAS DGETRS only (not using PBLAS)'; CALL FL(OFU)
+#ifdef ACCELERATE_NEW_LAPACK
+  CALL DGETRS( 'N', M, nrhs, A(1,1), M, piv(1), B(1,1), M, info )
+#else
   CALL DGETRS( 'N', M, nrhs, A, M, piv, B, M, info )
+#endif
 END SUBROUTINE PLBDGETRS
 
 !-------------------------------------------------------------------------------
