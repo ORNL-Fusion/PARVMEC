@@ -34,6 +34,7 @@
 ///  @brief Utility to check the difference between two wout files.
 //******************************************************************************
 
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include <netcdf.h>
@@ -128,9 +129,9 @@ int main(int argc, const char * argv[]) {
     }
 
     for (size_t i = 0, e = q1.size(); i < e; i++) {
-        pass = pass && abs(q1[i] - q2[i]) < tolarance;
+        pass = pass && std::abs(q1[i] - q2[i]) < tolarance;
         if (!pass) {
-            std::cout << abs(q1[i] - q2[i]) << std::endl;
+            std::cout << std::abs(q1[i] - q2[i]) << std::endl;
         }
     }
 
