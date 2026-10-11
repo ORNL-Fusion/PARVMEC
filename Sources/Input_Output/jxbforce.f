@@ -717,7 +717,7 @@ C                 lu (js,lz,lt ) =  lt
       bdotgradv(1) = two*bdotgradv(2) - bdotgradv(3)
       bdotgradv(ns) = two*bdotgradv(ns-1) - bdotgradv(ns-2)
       jpar2(1)   = 0; jpar2(ns)  = 0; jperp2(1)  = 0; jperp2(ns) = 0
-      pprim(1) = 2*pprim(ns-1) - pprim(ns-2)
+      pprim(1) = 2*pprim(2) - pprim(3)
       pprim(ns) = 2*pprim(ns-1) - pprim(ns-2)
 
       IF (lprint_flag) THEN
