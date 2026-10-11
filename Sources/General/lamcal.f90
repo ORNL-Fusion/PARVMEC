@@ -1,7 +1,7 @@
       SUBROUTINE lamcal_par(overg, guu, guv, gvv)
       USE vmec_main
       USE vmec_params, ONLY: ntmax, jlam, lamscale
-      USE realspace, ONLY: psqrts
+      USE realspace, ONLY: sqrts
       USE parallel_include_module
       IMPLICIT NONE
 !-----------------------------------------------
@@ -16,8 +16,9 @@
 !-----------------------------------------------
 !   L o c a l   V a r i a b l e s
 !-----------------------------------------------
-      INTEGER :: m, n, js, nsmin, nsmax, numjs, i, j, k, l 
+      INTEGER :: m, n, js, nsmin, nsmax, numjs, i, j, k, l
       REAL(rprec) :: tnn, tnm, tmm, power, pfactor0, pfactor
+      REAL(rprec), DIMENSION(ns) :: damping
 
       INTEGER :: blksize
       INTEGER, ALLOCATABLE, DIMENSION(:) :: counts, disps
@@ -52,6 +53,9 @@
       DO m = 0, mpol1
          tmm = m*m
          power = MIN(tmm/256, 8._dp)
+!        Damps m > 16 modes. Evaluated over all ns surfaces on every rank, so
+!        that a surface takes the same arithmetic whatever the partition.
+         damping = sqrts(1:ns)**power
          pfactor = pfactor0
          DO n = 0, ntor
             IF (m.eq.0 .and. n.eq.0) CYCLE
@@ -64,8 +68,7 @@
                IF (pfaclam(n,m,js,1) .eq. zero) THEN
                   pfaclam(n,m,js,1) = -1.E-10_dp
                END IF
-               pfaclam(n,m,js,1) = (pfactor/pfaclam(n,m,js,1))                 &
-                                 * psqrts(1,js)**power !Damps m > 16 modes
+               pfaclam(n,m,js,1) = (pfactor/pfaclam(n,m,js,1))*damping(js)
             END DO
          END DO
       END DO

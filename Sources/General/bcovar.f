@@ -261,7 +261,13 @@
 
       nsmin = MAX(2,tlglob)
       nsmax = MIN(ns,t1rglob)
-      pres(nsmin:nsmax) = mass(nsmin:nsmax)/vp(nsmin:nsmax)**gamma
+!     The loop runs over all ns surfaces on every rank, so that a surface
+!     takes the same arithmetic in the power whatever the partition.
+      DO js = 2, ns
+         IF (js .GE. nsmin .AND. js .LE. nsmax) THEN
+            pres(js) = mass(js)/vp(js)**gamma
+         END IF
+      END DO
       pres(1)=0
 
       IF (ictrl_prec2d .LE. 1) THEN
