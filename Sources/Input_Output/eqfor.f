@@ -37,7 +37,7 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER :: i, icount, itheta, js, js1, l, loff,
+      INTEGER :: i, icount, itheta, js, js1, l, loff, npasses, nthetas,
      &   lpi, lt, n, n1, nchicur, nchiiota0, noff,
      &   nout, nsort, iv, iu, lk, nplanes
       REAL(dp), DIMENSION(:), POINTER ::
@@ -482,29 +482,39 @@ C-----------------------------------------------
             xmax = -HUGE(xmax)
             rzmax = zero
 
-!           Theta = 0 to pi in upper half of X-Z plane
-            DO icount = 1,2
+!           Under stellarator symmetry theta = 0 to pi is stored, and the
+!           reflected plane 2 pi - v with Z -> -Z supplies the other half.
+!           A lasym run stores the complete contour, scanned in one pass.
+            npasses = 2
+            nthetas = ntheta2
+            IF (lasym) THEN
+               npasses = 1
+               nthetas = ntheta3
+            END IF
+            DO icount = 1, npasses
                n1 = noff                                      !nphi-plane, n1 = noff,...,nzeta
                IF (icount .eq. 2)
      1         n1 = MOD(nzeta + 1 - noff,nzeta) + 1           !(twopi-v), reflected plane
                loff = js + ns*(n1-1)
                t1 = one
                IF (icount .eq. 2) t1 = -one
-               DO itheta = 1,ntheta2
+               DO itheta = 1, nthetas
                   yr1u = r1(loff,0) + sqrts(js)*r1(loff,1)
                   yz1u = z1(loff,0) + sqrts(js)*z1(loff,1)
                   yz1u = t1*yz1u
                   IF (yz1u .ge. zmax) THEN
-                     zmax = ABS(yz1u)
+                     zmax = yz1u
                      rzmax = yr1u
-                  ELSE IF (yz1u .le. zmin) THEN
+                  END IF
+                  IF (yz1u .le. zmin) THEN
                      zmin = yz1u
                      rzmin = yr1u
                   END IF
                   IF (yr1u .ge. xmax) THEN
                      xmax = yr1u
                      zxmax = yz1u
-                  ELSE IF (yr1u .le. xmin) THEN
+                  END IF
+                  IF (yr1u .le. xmin) THEN
                      xmin = yr1u
                      zxmin = yz1u
                   END IF
