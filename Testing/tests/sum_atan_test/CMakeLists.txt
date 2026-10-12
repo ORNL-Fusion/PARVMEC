@@ -1,5 +1,7 @@
 #  Copy input files from the source to the build directory.
-foreach (name test_positive test_negative test_positive_q0 test_negative_q0)
+foreach (name test_positive test_negative test_positive_q0 test_negative_q0
+               test_iota_positive test_iota_negative
+               test_iota_positive_q0 test_iota_negative_q0)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/input.${name}.vmec
                     ${CMAKE_CURRENT_BINARY_DIR}/input.${name}.vmec
                     COPYONLY)
@@ -11,9 +13,11 @@ foreach (name test_positive test_negative test_positive_q0 test_negative_q0)
                           RESOURCE_LOCK sum_atan_test)
 endforeach ()
 
-#  The same sum_atan current profile written with the signs of the amplitude
-#  and the coefficient both reversed gives the same equilibrium.
-foreach (pair test_positive:test_negative test_positive_q0:test_negative_q0)
+#  The same sum_atan current or iota profile written with the signs of the
+#  amplitude and the coefficient both reversed gives the same equilibrium.
+foreach (pair test_positive:test_negative test_positive_q0:test_negative_q0
+              test_iota_positive:test_iota_negative
+              test_iota_positive_q0:test_iota_negative_q0)
     string (REPLACE ":" ";" pair ${pair})
     list (GET pair 0 first)
     list (GET pair 1 second)
