@@ -61,8 +61,7 @@
 ! ac assumed to be dimensioned (0:n), with n >= 20
 !-----------------------------------------------
       INTEGER     :: i, ioff, iflag
-      REAL(rprec) :: xx, pcurr, x, xp, temp_num, temp_denom
-      REAL(rprec), EXTERNAL :: sum_atan_edge
+      REAL(rprec) :: xx, pcurr, x, xc, xp, temp_num, temp_denom
       CHARACTER(len=20) :: pcurr_type_lc
 
       INTEGER, PARAMETER          :: gln = 10
@@ -373,20 +372,15 @@
 !     &         ac(9) * (2/pi) * atan(ac(10)*x**ac(11)/(1-x)**ac(12)) +         &
 !     &         ac(13) * (2/pi) * atan(ac(14)*x**ac(15)/(1-x)**ac(16)) +        &
 !     &         ac(17) * (2/pi) * atan(ac(18)*x**ac(19)/(1-x)**ac(20))
-      IF (x .ge. one) THEN
-         pcurr = ac(0) + ac(1)*sum_atan_edge(ac(2), ac(4))                     &
-     &                 + ac(5)*sum_atan_edge(ac(6), ac(8))                     &
-     &                 + ac(9)*sum_atan_edge(ac(10), ac(12))                   &
-     &                 + ac(13)*sum_atan_edge(ac(14), ac(16))                  &
-     &                 + ac(17)*sum_atan_edge(ac(18), ac(20))
-      ELSE
-          pcurr = ac(0) +                                                      &
-     &       (2/pi) * (ac(1) * atan(ac(2)*x**ac(3)/(1-x)**ac(4)) +             &
-     &                 ac(5) * atan(ac(6)*x**ac(7)/(1-x)**ac(8)) +             &
-     &                 ac(9) * atan(ac(10)*x**ac(11)/(1-x)**ac(12)) +          &
-     &                 ac(13) * atan(ac(14)*x**ac(15)/(1-x)**ac(16)) +         &
-     &                 ac(17) * atan(ac(18)*x**ac(19)/(1-x)**ac(20)))
-      ENDIF
+!     At x = 1, (1 - x)**q is zero, one or infinite, and ATAN2 takes each
+!     term to its limit from below.
+      xc = MIN(x, one)
+      pcurr = ac(0) +                                                           &
+     &   (2/pi) * (ac(1) * ATAN2(ac(2)*xc**ac(3), (1-xc)**ac(4)) +              &
+     &             ac(5) * ATAN2(ac(6)*xc**ac(7), (1-xc)**ac(8)) +              &
+     &             ac(9) * ATAN2(ac(10)*xc**ac(11), (1-xc)**ac(12)) +           &
+     &             ac(13) * ATAN2(ac(14)*xc**ac(15), (1-xc)**ac(16)) +          &
+     &             ac(17) * ATAN2(ac(18)*xc**ac(19), (1-xc)**ac(20)))
 
       CASE('power_series_I','power_series_i') ! former ipcurr=3
 !  I(s)  - not I-prime(s)
@@ -592,8 +586,7 @@
 !-----------------------------------------------
       INTEGER     :: i, iflag, ioff
       REAL(rprec), INTENT(IN) :: x
-      REAL(rprec) :: piota, temp_num, temp_denom
-      REAL(rprec), EXTERNAL :: sum_atan_edge
+      REAL(rprec) :: piota, xc, temp_num, temp_denom
       CHARACTER(len=20) :: piota_type_lc
 !-----------------------------------------------
       piota = 0
@@ -612,20 +605,15 @@
 !     &         ai(9) * (2/pi) * atan(ai(10)*x**ai(11)/(1-x)**ai(12)) +         &
 !     &         ai(13) * (2/pi) * atan(ai(14)*x**ai(15)/(1-x)**ai(16)) +        &
 !     &         ai(17) * (2/pi) * atan(ai(18)*x**ai(19)/(1-x)**ai(20))
-      IF (x .ge. one) THEN
-         piota = ai(0) + ai(1)*sum_atan_edge(ai(2), ai(4))                     &
-     &                 + ai(5)*sum_atan_edge(ai(6), ai(8))                     &
-     &                 + ai(9)*sum_atan_edge(ai(10), ai(12))                   &
-     &                 + ai(13)*sum_atan_edge(ai(14), ai(16))                  &
-     &                 + ai(17)*sum_atan_edge(ai(18), ai(20))
-      ELSE
-          piota = ai(0) +                                                      &
-     &       (2/pi) * (ai(1) * atan(ai(2)*x**ai(3)/(1-x)**ai(4)) +             &
-     &                 ai(5) * atan(ai(6)*x**ai(7)/(1-x)**ai(8)) +             &
-     &                 ai(9) * atan(ai(10)*x**ai(11)/(1-x)**ai(12)) +          &
-     &                 ai(13) * atan(ai(14)*x**ai(15)/(1-x)**ai(16)) +         &
-     &                 ai(17) * atan(ai(18)*x**ai(19)/(1-x)**ai(20)))
-      ENDIF
+!     At x = 1, (1 - x)**q is zero, one or infinite, and ATAN2 takes each
+!     term to its limit from below.
+      xc = MIN(x, one)
+      piota = ai(0) +                                                           &
+     &   (2/pi) * (ai(1) * ATAN2(ai(2)*xc**ai(3), (1-xc)**ai(4)) +              &
+     &             ai(5) * ATAN2(ai(6)*xc**ai(7), (1-xc)**ai(8)) +              &
+     &             ai(9) * ATAN2(ai(10)*xc**ai(11), (1-xc)**ai(12)) +           &
+     &             ai(13) * ATAN2(ai(14)*xc**ai(15), (1-xc)**ai(16)) +          &
+     &             ai(17) * ATAN2(ai(18)*xc**ai(19), (1-xc)**ai(20)))
 
       CASE('Akima_spline','akima_spline') ! former ipiota=11
 ! Akima-spline   (iogrid + siogrid)
@@ -880,43 +868,6 @@
       pmass = mu0*pres_scale*pmass
 
       END FUNCTION pmass
-
-!******************************************************************************
-!>  @brief Value at s = 1 of one term of the sum_atan profile.
-!>
-!>  The term (2/pi)*atan(b*s**p/(1 - s)**q) takes its limit from below at
-!>  s = 1: sign(b) for q > 0, (2/pi)*atan(b) for q = 0 and zero for q < 0.
-!>
-!>  @param[in] b Coefficient of s**p.
-!>  @param[in] q Exponent of 1 - s.
-!>  @returns The value of the term at s = 1.
-!******************************************************************************
-      FUNCTION sum_atan_edge(b, q)
-
-      USE stel_kinds
-      USE stel_constants, ONLY: zero, one, pi
-
-      IMPLICIT NONE
-
-      REAL(rprec)             :: sum_atan_edge
-      REAL(rprec), INTENT(IN) :: b
-      REAL(rprec), INTENT(IN) :: q
-
-      IF (q .gt. zero) THEN
-         IF (b .gt. zero) THEN
-            sum_atan_edge = one
-         ELSE IF (b .lt. zero) THEN
-            sum_atan_edge = -one
-         ELSE
-            sum_atan_edge = zero
-         END IF
-      ELSE IF (q .lt. zero) THEN
-         sum_atan_edge = zero
-      ELSE
-         sum_atan_edge = (2/pi)*ATAN(b)
-      END IF
-
-      END FUNCTION sum_atan_edge
 
 #ifdef _ANIMEC
       FUNCTION photp (xx)
