@@ -300,10 +300,7 @@ C-----------------------------------------------
 !
 !     b poloidals (cylindrical estimates)
 !
-!      rcen = p5*(router + rinner)               !geometric center
-      rcen = 1.0 !  MRC: Zero this for now so it has an initalized value.
-                 !       Eventuall we should figure out the correct value for
-                 !       this.
+      rcen = p5*(router + rinner)               !geometric center
       n = 0
       n1 = n + 1
       rcenin = DOT_PRODUCT(rmncc(ns,n1,:mpol1+1:2),
