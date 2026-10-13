@@ -204,7 +204,32 @@ C-----------------------------------------------
       sqrts(nrzt + 1) = 1
       CALL Gather1XArray(shalf)
       CALL Gather1XArray(sqrts)
+      
+!  Set the oddpf_ and poddpf_ variables
+      DO i = nsmin, nsmax
+         oddpf_h(i:nrzt:ns) = shalf(i:nrzt:ns)
+         oddpf_f(i:nrzt:ns) = sqrts(i:nrzt:ns)
+         oddpf_ds_h(i:nrzt:ns) = 1. / (2. * shalf(i:nrzt:ns))    ! since on half-mesh, should be no /0.
+         poddpf_h(:,i) = pshalf(:,i)
+         poddpf_f(:,i) = psqrts(:,i)
+         poddpf_ds_h(:,i) = 1. / (2. * pshalf(:,i))    ! since on half-mesh, should be no /0.
+      END DO
+      
+      poddpf_f(:,ns) = 1     !!Avoid round-off
 
+      oddpf_f(ns:nrzt:ns) = 1     !!Avoid round-off
+      oddpf_h(nrzt + 1) = 1
+      oddpf_f(nrzt + 1) = 1
+      CALL Gather1XArray(oddpf_h)
+      CALL Gather1XArray(oddpf_f)
+      CALL Gather1XArray(oddpf_ds_h)
+
+! oddpf_ terms have been set to shalf and sqrts values
+! Below - alterations of oddpf_
+
+! End - alterations of oddpf_
+      
+! To Do - rewrite sm and sp in terms of oddpf_ variables
       nsmin = MAX(2, t1lglob)
       nsmax = t1rglob
       DO i = nsmin, nsmax
@@ -233,6 +258,7 @@ C-----------------------------------------------
       USE vmec_input, ONLY: lRFP
       USE vspline
       USE realspace, ONLY: shalf, sqrts
+      USE realspace, ONLY: oddpf_f, oddpf_h, oddpf_ds_h
       USE init_geometry, ONLY: lflip
 
       IMPLICIT NONE
@@ -404,6 +430,19 @@ C-----------------------------------------------
       shalf(nrzt + 1) = 1
       sqrts(nrzt + 1) = 1
 
+!  Set the oddpf_ variables
+      DO i = 1,ns
+         oddpf_h(i:nrzt:ns) = shalf(i:nrzt:ns)
+         oddpf_f(i:nrzt:ns) = sqrts(i:nrzt:ns)
+         oddpf_ds_h(i:nrzt:ns) = 1. / (2. * shalf(i:nrzt:ns))    ! since on half-mesh, should be no /0.
+      END DO
+      
+      oddpf_f(ns:nrzt:ns) = 1     !!Avoid round-off
+      oddpf_h(nrzt + 1) = 1
+      oddpf_f(nrzt + 1) = 1
+      oddpf_ds_h(nrzt + 1) = 1. / (2. * shalf(nrzt + 1))
+      
+! To Do - rewrite sm and sp in terms of oddpf_ variables
       DO i = 2,ns
          sm(i) = shalf(i)/sqrts(i)
          sp(i) = shalf(i+1)/sqrts(i)
