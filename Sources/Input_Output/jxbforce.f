@@ -712,12 +712,12 @@ C                 lu (js,lz,lt ) =  lt
       izeta(ns,:nznt)= two*izeta(ns-1,:nznt) - izeta(ns-2,:nznt)     !!Need in wrout
       jdotb(1) = two*jdotb(2) - jdotb(3)
       jdotb(ns) = two*jdotb(ns-1) - jdotb(ns-2)
-      bdotb(1) = two*bdotb(3) - bdotb(2)
+      bdotb(1) = two*bdotb(2) - bdotb(3)
       bdotb(ns) = two*bdotb(ns-1) - bdotb(ns-2)
       bdotgradv(1) = two*bdotgradv(2) - bdotgradv(3)
       bdotgradv(ns) = two*bdotgradv(ns-1) - bdotgradv(ns-2)
       jpar2(1)   = 0; jpar2(ns)  = 0; jperp2(1)  = 0; jperp2(ns) = 0
-      pprim(1) = 2*pprim(ns-1) - pprim(ns-2)
+      pprim(1) = 2*pprim(2) - pprim(3)
       pprim(ns) = 2*pprim(ns-1) - pprim(ns-2)
 
       IF (lprint_flag) THEN
