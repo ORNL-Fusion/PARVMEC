@@ -30,17 +30,17 @@ set_tests_properties (vmec_asym_check_b0_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bdotb_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bdotb -tol=4.6E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bdotb -tol=4.7E-14)
 set_tests_properties (vmec_asym_check_bdotb_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bdotgradv_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bdotgradv -tol=2.1E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bdotgradv -tol=2.6E-13)
 set_tests_properties (vmec_asym_check_bdotgradv_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_beta_vol_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=beta_vol -tol=1.1E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=beta_vol -tol=1.2E-14)
 set_tests_properties (vmec_asym_check_beta_vol_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -65,32 +65,32 @@ set_tests_properties (vmec_asym_check_betaxis_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bmnc -tol=9.0E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bmnc -tol=1.3E-13)
 set_tests_properties (vmec_asym_check_bmnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bsubsmns_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsubsmns -tol=2.1E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsubsmns -tol=2.7E-14)
 set_tests_properties (vmec_asym_check_bsubsmns_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bsubumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsubumnc -tol=2.2E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsubumnc -tol=2.7E-14)
 set_tests_properties (vmec_asym_check_bsubumnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bsubvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsubvmnc -tol=6.5E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsubvmnc -tol=1.1E-13)
 set_tests_properties (vmec_asym_check_bsubvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bsupumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsupumnc -tol=3.7E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsupumnc -tol=4.6E-13)
 set_tests_properties (vmec_asym_check_bsupumnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_bsupvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsupvmnc -tol=2.0E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=bsupvmnc -tol=2.1E-13)
 set_tests_properties (vmec_asym_check_bsupvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -110,22 +110,22 @@ set_tests_properties (vmec_asym_check_chi_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_chipf_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chipf -tol=1.3E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=chipf -tol=1.4E-14)
 set_tests_properties (vmec_asym_check_chipf_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_currumnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=currumnc -tol=2.9E-7)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=currumnc -tol=5.4E-6)
 set_tests_properties (vmec_asym_check_currumnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_currvmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=currvmnc -tol=6.9E-8)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=currvmnc -tol=8.6E-7)
 set_tests_properties (vmec_asym_check_currvmnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_DCurr_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=DCurr -tol=5.1E-11)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=DCurr -tol=5.8E-10)
 set_tests_properties (vmec_asym_check_DCurr_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -140,7 +140,7 @@ set_tests_properties (vmec_asym_check_DMerc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_DShear_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=DShear -tol=3.0E-11)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=DShear -tol=3.1E-10)
 set_tests_properties (vmec_asym_check_DShear_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -170,7 +170,7 @@ set_tests_properties (vmec_asym_check_fsqz_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_gmnc_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=gmnc -tol=4.7E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=gmnc -tol=5.8E-14)
 set_tests_properties (vmec_asym_check_gmnc_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -180,7 +180,7 @@ set_tests_properties (vmec_asym_check_IonLarmor_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_iotaf_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=iotaf -tol=2.5E-14)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=iotaf -tol=2.7E-13)
 set_tests_properties (vmec_asym_check_iotaf_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -200,7 +200,7 @@ set_tests_properties (vmec_asym_check_jdotb_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_lmns_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=lmns -tol=2.0E-13)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=lmns -tol=2.6E-12)
 set_tests_properties (vmec_asym_check_lmns_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -235,7 +235,7 @@ set_tests_properties (vmec_asym_check_presf_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_q_factor_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=q_factor -tol=2.1E-13)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=q_factor -tol=2.4E-12)
 set_tests_properties (vmec_asym_check_q_factor_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -270,7 +270,7 @@ set_tests_properties (vmec_asym_check_volume_p_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_vp_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=vp -tol=1.5E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=vp -tol=1.7E-14)
 set_tests_properties (vmec_asym_check_vp_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
@@ -310,7 +310,7 @@ set_tests_properties (vmec_asym_check_xn_nyq_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
 add_test (NAME    vmec_asym_check_zmns_test
-          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=zmns -tol=2.7E-15)
+          COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_sym.vmec.nc -wout_file2=wout_test_asym.vmec.nc -quantity=zmns -tol=3.3E-14)
 set_tests_properties (vmec_asym_check_zmns_test
                       PROPERTIES
                       DEPENDS "vmec_sym_test;vmec_asym_test")
