@@ -1,0 +1,45 @@
+&INDATA
+
+! VMEC execution parameters.
+LFORBAL = F,
+LFREEB = F,
+DELT = 1.0,
+TCON0 = 2.0,
+NFP = 1,
+NS_ARRAY = 15,
+FTOL_ARRAY = 1.0E-12,
+NITER = 10000,
+NSTEP = 200,
+NTOR = 0,
+MPOL = 5,
+NZETA = 1,
+LASYM = F,
+
+! Fitting parameters.
+GAMMA = 0.0,
+PHIEDGE = -0.05,
+BLOAT = 1.0,
+
+! Initial Position.
+RAXIS(0) = 0.75,
+ZAXIS(0) = 0.0,
+RBC(0,0) = 0.75,
+RBC(0,1) = 0.25,
+ZBS(0,0) = 0.0,
+ZBS(0,1) = 0.25,
+
+! Rotational transform parameters. The iota profile of
+! input.test_iota_positive.vmec with the signs of the amplitude and
+! the coefficient both reversed.
+NCURR = 0,
+AI = 0.5, -1.0, -2.0, 2.0, 1.0
+PIOTA_TYPE = 'sum_atan',
+
+! Plasma pressure parameters.
+SPRES_PED = 1.0,
+PRES_SCALE = 400.0,
+am_aux_s = 0.0, 0.5, 1.0
+am_aux_f = 1.0, 1.0, 1.0
+pmass_type = 'line_segment',
+/
+&END
