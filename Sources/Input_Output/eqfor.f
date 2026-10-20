@@ -485,11 +485,12 @@ C-----------------------------------------------
 !           Under stellarator symmetry theta = 0 to pi is stored, and the
 !           reflected plane 2 pi - v with Z -> -Z supplies the other half.
 !           A lasym run stores the complete contour, scanned in one pass.
-            npasses = 2
-            nthetas = ntheta2
             IF (lasym) THEN
                npasses = 1
                nthetas = ntheta3
+            ELSE
+               npasses = 2
+               nthetas = ntheta2
             END IF
             DO icount = 1, npasses
                n1 = noff                                      !nphi-plane, n1 = noff,...,nzeta
@@ -505,16 +506,14 @@ C-----------------------------------------------
                   IF (yz1u .ge. zmax) THEN
                      zmax = yz1u
                      rzmax = yr1u
-                  END IF
-                  IF (yz1u .le. zmin) THEN
+                  ELSE IF (yz1u .le. zmin) THEN
                      zmin = yz1u
                      rzmin = yr1u
                   END IF
                   IF (yr1u .ge. xmax) THEN
                      xmax = yr1u
                      zxmax = yz1u
-                  END IF
-                  IF (yr1u .le. xmin) THEN
+                  ELSE IF (yr1u .le. xmin) THEN
                      xmin = yr1u
                      zxmin = yz1u
                   END IF
