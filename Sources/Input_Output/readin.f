@@ -366,7 +366,7 @@ C-----------------------------------------------
      &  1x,45('-'),/,
      &  '     ns     nu     nv     mu     mv',/,
      &  5i7,//,' CONFIGURATION PARAMETERS:',/,1x,39('-'),/,
-     &  '    nfp      gamma      spres_ped    phiedge(wb)'
+     &  '    nfp      gamma      spres_ped    phiedge(wb)',
 #ifdef _ANIMEC
      &  '     curtor(A)      BCrit(T)        lRFP',
      &  /,i7,1p,e11.3,2e15.3,2e14.3,L12/)
