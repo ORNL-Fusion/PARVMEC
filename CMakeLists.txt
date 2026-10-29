@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.14)
 project (parvmec C CXX Fortran)
 
 add_library (vmec)
+add_dependencies (vmec pull_parvmec)
 
 #  Add the plasma edge pressure to the total pressure outside a free boundary,
 #  so that |B| rather than the total pressure is continuous there.
@@ -36,6 +37,7 @@ install (TARGETS xvmec)
 
 #  Build test utilities.
 add_executable (xwout_diff)
+add_dependencies (vmec pull_parvmec)
 
 target_link_libraries (xwout_diff PUBLIC stell)
 target_compile_features (xwout_diff PRIVATE cxx_std_11)
