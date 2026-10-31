@@ -71,6 +71,13 @@ C-----------------------------------------------
          STOP 'allocation error #2 in allocate_ns'
       END IF
       phip=0; chip=0; shalf=0; sqrts=0; wint=0
+      
+      ALLOCATE (oddpf_f(ndim), oddpf_h(ndim), oddpf_ds_h(ndim), 
+     1           stat=istat1)
+      IF (istat1.ne.0) THEN
+         STOP 'allocation error #2a in allocate_ns'
+      END IF
+      oddpf_f=0; oddpf_h=0; oddpf_ds_h=0
 
       IF(PARVMEC) THEN
          ALLOCATE(pshalf(nznt,ns),stat=istat1)
@@ -81,6 +88,9 @@ C-----------------------------------------------
          ALLOCATE(pphip(nznt,ns),stat=istat1)
          ALLOCATE(psqrts(nznt,ns),stat=istat1)
          ALLOCATE(pfaclam(0:ntor,0:mpol1,1:ns,ntmax),stat=istat1)
+         ALLOCATE(poddpf_f(nznt,ns),stat=istat1)
+         ALLOCATE(poddpf_h(nznt,ns),stat=istat1)
+         ALLOCATE(poddpf_ds_h(nznt,ns),stat=istat1)
       END IF
 
       ALLOCATE(ireflect(ns*nzeta), stat=istat1)
