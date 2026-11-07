@@ -14,10 +14,12 @@ C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER, DIMENSION(2) :: ilow, ihigh
       INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
+      INTEGER :: kua, kva, kv0, kvm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      1    ftemp, gsave, htemp, ga1, ga2, dsave
       REAL(dp):: xip, yip, xper, yper,
      1    sxsave, sysave, tgreenon, tgreenoff
+      REAL(dp) :: hv, su, du, sv, dv
 C-----------------------------------------------
 !
 !     ON ENTRANCE, IP IS THE INDEX OF THE PRIMED MESH POINT (lies in 1st field period)
@@ -99,6 +101,52 @@ C-----------------------------------------------
                  delgr(i) = delgr(i) + htemp(i) - ga1(i)
                END DO
             END DO
+
+!
+!           GA1 AND GA1*GA2 VANISH WITH A KINK WHERE U - U' OR V - V' IS PI,
+!           WHERE THE GREEN'S FUNCTION IS SMOOTH. THE TRAPEZOIDAL SUM ACROSS
+!           A KINK OF SLOPE S IS OFF BY H**2*S/6, SO THE NODES ON THE KINK
+!           TAKE H*S/6 IN PLACE OF ZERO, AND THE NODE WHERE THE U AND V KINKS
+!           CROSS TAKES THE V VALUE. FOR ODD NV THE V KINK LIES MIDWAY
+!           BETWEEN TWO NODES, AND EACH OF THEM TAKES H*S/24 LESS.
+!
+            hv = alv
+            IF (nv .eq. 1) THEN
+               hv = pi2/nvper
+            END IF
+            su = alu/(24*SQRT(guu_b(ip)))
+            du = su*auu(ip)/guu_b(ip)
+            sv = hv/(24*SQRT(gvv_b(ip)))
+            dv = sv*avv(ip)/gvv_b(ip)
+            kua = MOD(iskip + nu/2, nu)*nv
+            IF (nv .eq. 1) THEN
+               IF (2*(kp - 1) .eq. nvper) THEN
+                  delgr = delgr - sv
+                  delgrp = delgrp - dv
+               ELSE
+                  delgr(kua + 1) = delgr(kua + 1) - su
+                  delgrp(kua + 1) = delgrp(kua + 1) - du
+               END IF
+            ELSE
+               delgr(kua + 1:kua + nv) = delgr(kua + 1:kua + nv) - su
+               delgrp(kua + 1:kua + nv) = delgrp(kua + 1:kua + nv) - du
+               kv0 = MOD(ip - 1, nv)
+               IF (MOD(nv, 2) .eq. 0) THEN
+                  kva = MOD(kv0 + nv/2, nv) + 1
+                  delgr(kua + kva) = delgr(kua + kva) + su
+                  delgrp(kua + kva) = delgrp(kua + kva) + du
+                  delgr(kva:nuv:nv) = delgr(kva:nuv:nv) - sv
+                  delgrp(kva:nuv:nv) = delgrp(kva:nuv:nv) - dv
+               ELSE
+                  DO kvm = kv0 + (nv - 1)/2, kv0 + (nv + 1)/2
+                     kva = MOD(kvm, nv) + 1
+                     delgr(kva:nuv:nv) = delgr(kva:nuv:nv) + sv/4
+                     delgrp(kva:nuv:nv) = delgrp(kva:nuv:nv) + dv/4
+                     delgr(kua + kva) = delgr(kua + kva) - sv/4
+                     delgrp(kua + kva) = delgrp(kua + kva) - dv/4
+                  END DO
+               END IF
+            END IF
 
             IF (kp.EQ.nvper .AND. nv.EQ.1) THEN
                 delgrp = delgrp/nvper
