@@ -3,6 +3,7 @@
       USE vparams, ONLY: one
       USE parallel_include_module
       USE timer_sub
+      USE greenf_singular, ONLY: singular_defects
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -14,12 +15,13 @@ C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER, DIMENSION(2) :: ilow, ihigh
       INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
-      INTEGER :: kua, kva, kv0, kvm
+      INTEGER :: kua, kva, kv0, kvm, iup, ium, ivp, ivm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      1    ftemp, gsave, htemp, ga1, ga2, dsave
       REAL(dp):: xip, yip, xper, yper,
      1    sxsave, sysave, tgreenon, tgreenoff
       REAL(dp) :: hv, su, du, sv, dv
+      REAL(dp) :: wg(3), wk(3), dphi, area
 C-----------------------------------------------
 !
 !     ON ENTRANCE, IP IS THE INDEX OF THE PRIMED MESH POINT (lies in 1st field period)
@@ -145,6 +147,44 @@ C-----------------------------------------------
                      delgr(kua + kva) = delgr(kua + kva) - sv/4
                      delgrp(kua + kva) = delgrp(kua + kva) - dv/4
                   END DO
+               END IF
+            END IF
+
+!
+!           THE SUM SKIPS THE SOURCE POINT, WHERE THE REMAINDERS TEND TO
+!           A DIRECTION-DEPENDENT LIMIT AND RISE LINEARLY; ITS DEFECTS FOR
+!           THE WEIGHTS 1, U - U' AND V - V' GO ONTO THE SOURCE NODE AND
+!           ITS NEIGHBOURS. FOR NV = 1 THE V STEP IS THE IMAGE SPACING IN
+!           THE TOROIDAL ANGLE, ALONG WHICH THE MODES DO NOT VARY.
+!
+            IF (kp .EQ. 1) THEN
+               kv0 = MOD(ip - 1, nv)
+               dphi = onp
+               IF (nv .EQ. 1) dphi = one
+               CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip), xip,
+     1              yip, z1b(ip), alvp*kv0, dphi, sxsave, sysave,
+     2              snz(ip), guu_b(ip), guv_b(ip), gvv_b(ip), auu(ip),
+     3              auv(ip), avv(ip), alu, hv, wg, wk)
+               area = alu*hv
+               iup = ip + nv
+               IF (iup .GT. nuv) iup = iup - nuv
+               ium = ip - nv
+               IF (ium .LT. 1) ium = ium + nuv
+               delgr(ip) = delgr(ip) + wg(1)/area
+               delgrp(ip) = delgrp(ip) + wk(1)/area
+               delgr(iup) = delgr(iup) + wg(2)/(2*alu*area)
+               delgr(ium) = delgr(ium) - wg(2)/(2*alu*area)
+               delgrp(iup) = delgrp(iup) + wk(2)/(2*alu*area)
+               delgrp(ium) = delgrp(ium) - wk(2)/(2*alu*area)
+               IF (nv .GT. 1) THEN
+                  ivp = ip + 1
+                  IF (kv0 .EQ. nv - 1) ivp = ivp - nv
+                  ivm = ip - 1
+                  IF (kv0 .EQ. 0) ivm = ivm + nv
+                  delgr(ivp) = delgr(ivp) + wg(3)/(2*hv*area)
+                  delgr(ivm) = delgr(ivm) - wg(3)/(2*hv*area)
+                  delgrp(ivp) = delgrp(ivp) + wk(3)/(2*hv*area)
+                  delgrp(ivm) = delgrp(ivm) - wk(3)/(2*hv*area)
                END IF
             END IF
 
