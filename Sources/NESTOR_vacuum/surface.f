@@ -15,7 +15,7 @@ C-----------------------------------------------
      1   ruu, ruv, rvv, zuu, zuv, zvv, cosmn1, sinmn1
       REAL(dp) :: tsurfon, tsurfoff
       REAL(dp) :: mpow(0:4), npow(0:4), tfac(0:4,0:4), rph(0:3),
-     1   zph(0:3), rsn, zcn
+     &            zph(0:3), rsn, zcn
       REAL(dp), PARAMETER :: fact(0:4) = (/ 1, 1, 2, 6, 24 /)
 C-----------------------------------------------
 !

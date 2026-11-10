@@ -160,16 +160,24 @@ C-----------------------------------------------
             IF (kp .EQ. 1) THEN
                kv0 = MOD(ip - 1, nv)
                dphi = onp
-               IF (nv .EQ. 1) dphi = one
+               IF (nv .EQ. 1) THEN
+                  dphi = one
+               END IF
                CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip), xip,
-     1              yip, z1b(ip), alvp*kv0, dphi, sxsave, sysave,
-     2              snz(ip), guu_b(ip), guv_b(ip), gvv_b(ip), auu(ip),
-     3              auv(ip), avv(ip), alu, hv, wg, wk)
+     &                               yip, z1b(ip), alvp*kv0, dphi,
+     &                               sxsave, sysave, snz(ip),
+     &                               guu_b(ip), guv_b(ip), gvv_b(ip),
+     &                               auu(ip), auv(ip), avv(ip), alu,
+     &                               hv, wg, wk)
                area = alu*hv
                iup = ip + nv
-               IF (iup .GT. nuv) iup = iup - nuv
+               IF (iup .GT. nuv) THEN
+                  iup = iup - nuv
+               END IF
                ium = ip - nv
-               IF (ium .LT. 1) ium = ium + nuv
+               IF (ium .LT. 1) THEN
+                  ium = ium + nuv
+               END IF
                delgr(ip) = delgr(ip) + wg(1)/area
                delgrp(ip) = delgrp(ip) + wk(1)/area
                delgr(iup) = delgr(iup) + wg(2)/(2*alu*area)
@@ -178,9 +186,13 @@ C-----------------------------------------------
                delgrp(ium) = delgrp(ium) - wk(2)/(2*alu*area)
                IF (nv .GT. 1) THEN
                   ivp = ip + 1
-                  IF (kv0 .EQ. nv - 1) ivp = ivp - nv
+                  IF (kv0 .EQ. nv - 1) THEN
+                     ivp = ivp - nv
+                  END IF
                   ivm = ip - 1
-                  IF (kv0 .EQ. 0) ivm = ivm + nv
+                  IF (kv0 .EQ. 0) THEN
+                     ivm = ivm + nv
+                  END IF
                   delgr(ivp) = delgr(ivp) + wg(3)/(2*hv*area)
                   delgr(ivm) = delgr(ivm) - wg(3)/(2*hv*area)
                   delgrp(ivp) = delgrp(ivp) + wk(3)/(2*hv*area)
