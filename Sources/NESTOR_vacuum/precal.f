@@ -1,5 +1,5 @@
       SUBROUTINE precal (wint)
-      USE vparams, ONLY: zero, one, epstan
+      USE vparams, ONLY: zero, one
       USE vacmod
       USE vmec_main, ONLY: mnmax
       USE parallel_include_module
@@ -9,18 +9,14 @@ C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       REAL(dp), INTENT(in) :: wint(nuv3)
 C-----------------------------------------------
-C   L o c a l   P a r a m e t e r s
-C-----------------------------------------------
-      REAL(dp), PARAMETER :: p25 = p5*p5, bigno = 1.e50_dp
-C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER :: kp, ku, kuminus, kv, kvminus, i, m, n, mn, n1,
-     &   imn, kmn, l, istat1, smn, nuv_tan, ndim, q, qq
+      INTEGER :: ku, kuminus, kv, kvminus, i, m, n, mn, n1,
+     &   imn, kmn, l, istat1, smn, ndim, q, qq
       REAL(dp), DIMENSION(0:mf + nf,0:mf,0:nf) :: cmn
       REAL(dp), DIMENSION(0:mf + nf,0:mf + nf) :: cosk
       REAL(dp), DIMENSION(0:mf + nf) :: pnode
-      REAL(dp) :: argu, argv, argp, dn1, alp_per, tnode, xnode,
+      REAL(dp) :: argu, dn1, tnode, xnode,
      &            pjm1, pj, pjp1, tjk, cnext, cthis, cprev,
      &            tprecon, tprecoff
 C-----------------------------------------------
@@ -44,18 +40,12 @@ C-----------------------------------------------
 !     ALLOCATE PERSISTENT ARRAYS. DEALLOCATED IN FILEOUT ROUTINE
 !
       IF (nv == 1) THEN         !(AXISYMMETRIC CASE: DO FP SUM TO INTEGRATE IN V)
-         nvper = 64 
-         nuv_tan = 2*nu*nvper
+         CALL image_tables (64)
       ELSE
-         nvper = nfper
-         nuv_tan = 2*nuv
+         CALL image_tables (nfper)
       END IF
-      
-      alp_per = pi2/nvper
-      nvp = nv*nvper
 
-      ALLOCATE (tanu(nuv_tan), tanv(nuv_tan), 
-     1     sinper(nvper), cosper(nvper), sinuv(nuv), cosuv(nuv),
+      ALLOCATE (sinuv(nuv), cosuv(nuv),
      2     sinu(0:mf,nu), cosu(0:mf,nu), sinv(-nf:nf,nv),
      3     cosv(-nf:nf,nv), sinui(0:mf,nu2), cosui(0:mf,nu2),
      4     cmns(0:(mf+nf),0:mf,0:nf), csign(-nf:nf),
@@ -68,11 +58,6 @@ C-----------------------------------------------
 !
 !     IMIRR(I) GIVES THE INDEX OF THE POINT TWOPI-THETA(I),TWOPI-ZETA(I)
 !
-      DO kp = 1, nvper
-         cosper(kp) = COS(alp_per*(kp - 1))
-         sinper(kp) = SIN(alp_per*(kp - 1))
-      END DO
-
       DO ku = 1, nu
          kuminus = MOD(nu + 1 - ku,nu) + 1
          DO kv = 1, nv
@@ -81,37 +66,6 @@ C-----------------------------------------------
             imirr(i) = kvminus + nv*(kuminus - 1)
             cosuv(i) = COS(alvp*(kv - 1))
             sinuv(i) = SIN(alvp*(kv - 1))
-         END DO
-      END DO
-
-!
-!     NOTE: ANGLE DIFFERENCE IS PI2*{[NUV + (KUP-1)] - (KU-1)}
-!           THIS DIFFERENCE IS ACCOUNTED FOR BY THE OFFSET IUOFF IN GREENF ROUTINE
-!
-!           THE KP SUM BELOW IS USED ONLY FOR NV == 1. IT PERFORMS THE V-INTEGRAL
-!           IN AN AXISYMMETRIC PLASMA
-!
-      i = 0
-      DO kp = 1, nvper
-         IF (kp.gt.1 .and. nv.ne.1) EXIT
-         argp = p5*alp_per*(kp-1)
-         DO ku = 1, 2*nu
-            argu = p5*alu*(ku - 1)
-            DO kv = 1, nv
-               i = i + 1
-               argv = p5*alv*(kv - 1) + argp
-               IF (ABS(argu - p25*pi2)<epstan .or.
-     1         ABS(argu - 0.75_dp*pi2) < epstan) THEN
-                  tanu(i) = bigno
-               ELSE
-                  tanu(i) = 2*TAN(argu)
-               ENDIF
-               IF (ABS(argv - p25*pi2) < epstan) THEN
-                  tanv(i) = bigno
-               ELSE
-                  tanv(i) = 2*TAN(argv)
-               ENDIF
-            END DO
          END DO
       END DO
 
@@ -264,3 +218,138 @@ C-----------------------------------------------
       precal_time = precal_time + (tprecoff - tprecon) 
 
       END SUBROUTINE precal
+
+!-------------------------------------------------------------------------------
+!>  @brief Set the number of toroidal images and the tables that depend on it.
+!>
+!>  nvper is the number of field periods that greenf sums over or, for nv = 1,
+!>  the number of images of the evaluation point around the torus over which
+!>  it takes the integral in v. tanu and tanv hold 2 TAN(u/2) and 2 TAN(v/2)
+!>  of the analytic approximation for the differences of the grid angles, and
+!>  sinper and cosper rotate into each period or image.
+!>
+!>  @param[in] nimages Number of field periods or of toroidal images.
+!-------------------------------------------------------------------------------
+      SUBROUTINE image_tables (nimages)
+      USE vparams, ONLY: epstan
+      USE vacmod
+
+      IMPLICIT NONE
+
+!  Declare Arguments
+      INTEGER, INTENT(IN) :: nimages
+
+!  local parameters
+      REAL(dp), PARAMETER :: p25 = p5*p5
+      REAL(dp), PARAMETER :: bigno = 1.e50_dp
+
+!  local variables
+      INTEGER             :: kp
+      INTEGER             :: ku
+      INTEGER             :: kv
+      INTEGER             :: i
+      INTEGER             :: nuv_tan
+      INTEGER             :: istat1
+      REAL(dp)            :: argu
+      REAL(dp)            :: argv
+      REAL(dp)            :: argp
+      REAL(dp)            :: alp_per
+
+!  Start of executable code
+      nvper = nimages
+      nvp = nv*nvper
+      alp_per = pi2/nvper
+      IF (nv .EQ. 1) THEN
+         nuv_tan = 2*nu*nvper
+      ELSE
+         nuv_tan = 2*nuv
+      END IF
+
+      IF (ALLOCATED(tanu)) THEN
+         DEALLOCATE (tanu, tanv, sinper, cosper)
+      END IF
+      ALLOCATE (tanu(nuv_tan), tanv(nuv_tan), sinper(nvper),
+     &          cosper(nvper), stat=istat1)
+      IF (istat1 .NE. 0) THEN
+         STOP 'allocation error in image_tables'
+      END IF
+
+      DO kp = 1, nvper
+         cosper(kp) = COS(alp_per*(kp - 1))
+         sinper(kp) = SIN(alp_per*(kp - 1))
+      END DO
+
+!
+!     NOTE: ANGLE DIFFERENCE IS PI2*{[NUV + (KUP-1)] - (KU-1)}
+!           THIS DIFFERENCE IS ACCOUNTED FOR BY THE OFFSET IUOFF IN GREENF ROUTINE
+!
+!           THE KP SUM BELOW IS USED ONLY FOR NV == 1. IT PERFORMS THE V-INTEGRAL
+!           IN AN AXISYMMETRIC PLASMA
+!
+      i = 0
+      DO kp = 1, nvper
+         IF (kp .GT. 1 .AND. nv .NE. 1) THEN
+            EXIT
+         END IF
+         argp = p5*alp_per*(kp - 1)
+         DO ku = 1, 2*nu
+            argu = p5*alu*(ku - 1)
+            DO kv = 1, nv
+               i = i + 1
+               argv = p5*alv*(kv - 1) + argp
+               IF (ABS(argu - p25*pi2) .LT. epstan .OR.
+     &             ABS(argu - 0.75_dp*pi2) .LT. epstan) THEN
+                  tanu(i) = bigno
+               ELSE
+                  tanu(i) = 2*TAN(argu)
+               END IF
+               IF (ABS(argv - p25*pi2) .LT. epstan) THEN
+                  tanv(i) = bigno
+               ELSE
+                  tanv(i) = 2*TAN(argv)
+               END IF
+            END DO
+         END DO
+      END DO
+
+      END SUBROUTINE image_tables
+
+!-------------------------------------------------------------------------------
+!>  @brief Resolve the cross section with the toroidal images of nv = 1.
+!>
+!>  For nv = 1, greenf takes the integral in v as a sum over nvper images
+!>  around the torus. Where the cross section has the radius of curvature rho,
+!>  the difference of the Green's function and its analytic approximation
+!>  varies over the toroidal angle rho/R, and the sum resolves it with
+!>  images_per_radius images for each unit of R/rho. The count is that of the
+!>  largest R/rho on the boundary, in steps of 64, and it only grows.
+!>
+!>  In the quantities of surface, R/rho is 2 ABS(auu)/guu_b**1.5.
+!-------------------------------------------------------------------------------
+      SUBROUTINE image_count
+      USE vacmod
+      USE parallel_include_module
+
+      IMPLICIT NONE
+
+!  local parameters
+      REAL(dp), PARAMETER :: images_per_radius = 40
+
+!  local variables
+      INTEGER             :: nimages
+      REAL(dp)            :: curv
+
+!  Start of executable code
+      curv = MAXVAL(2*ABS(auu(nuv3min:nuv3max))
+     &              /SQRT(guu_b(nuv3min:nuv3max))**3)
+      IF (vlactive) THEN
+         CALL MPI_Allreduce(MPI_IN_PLACE, curv, 1, MPI_REAL8, MPI_MAX,
+     &                      VAC_COMM, MPI_ERR)
+      END IF
+
+      nimages = 64*CEILING(images_per_radius*curv/64)
+      IF (nimages .GT. nvper) THEN
+         CALL image_tables (nimages)
+      END IF
+
+      END SUBROUTINE image_count
