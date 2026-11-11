@@ -8,6 +8,7 @@
       USE vmec_main, ONLY: nznt, irst
       USE parallel_include_module
       USE timer_sub
+      USE greenf_singular, ONLY: defect_fade
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -95,6 +96,9 @@ C-----------------------------------------------
 !     Determine scalar magnetic potential POTVAC
 !
       CALL second0(ton)
+      IF (ivac_skip .EQ. 0) THEN
+         CALL defect_fade
+      END IF
       CALL scalpot (potvac, amatrix, ivac_skip)
       CALL second0(toff)
       timer_vac(tscal) = timer_vac(tscal) + (toff-ton)

@@ -17,18 +17,30 @@
 !>  the metric is the identity the six functions are |x| times even harmonics
 !>  of the polar angle up to order 8, so L follows from Epstein zeta functions
 !>  with harmonic weights, which are summed by Ewald's method.
+!>
+!>  The defects are the leading terms of an expansion in the lattice step over
+!>  the radius of curvature of the boundary, so they are faded out where the
+!>  grid does not resolve that radius: @ref defect_fade sets the fraction of
+!>  them that is applied, one fraction for every source point of the surface.
 !*******************************************************************************
       MODULE greenf_singular
       USE stel_kinds, ONLY: dp
       IMPLICIT NONE
       PRIVATE
-      PUBLIC :: singular_defects
+      PUBLIC :: singular_defects, defect_fade
 
 !>  Pi.
       REAL(dp), PARAMETER :: pi = 3.14159265358979323846264338_dp
 !>  Number of polar angles sampled over a half turn. The six functions are
 !>  trigonometric polynomials of degree 8 with period pi in the polar angle.
       INTEGER, PARAMETER :: nang = 10
+!>  Lattice step over the radius of curvature up to which the defects are
+!>  applied in full.
+      REAL(dp), PARAMETER :: span_full = 0.5_dp
+!>  Lattice step over the radius of curvature from which they are dropped.
+      REAL(dp), PARAMETER :: span_none = 2.0_dp
+!>  Fraction of the defects applied on the current surface.
+      REAL(dp) :: fade = 1
 
       CONTAINS
 
@@ -80,6 +92,31 @@
       END FUNCTION tpart
 
 !-------------------------------------------------------------------------------
+!>  @brief Lagrange-Gauss reduction of a lattice basis.
+!>
+!>  @param[inout] f1 On exit the shortest vector of the lattice.
+!>  @param[inout] f2 On exit the shortest vector that completes the basis.
+!-------------------------------------------------------------------------------
+      PURE SUBROUTINE reduce_basis(f1, f2)
+      REAL(dp), INTENT(INOUT) :: f1(2), f2(2)
+      REAL(dp) :: w(2), mu
+      INTEGER :: it
+      DO it = 1, 100
+         IF (SUM(f1*f1) .GT. SUM(f2*f2)) THEN
+            w = f1
+            f1 = f2
+            f2 = w
+            CYCLE
+         END IF
+         mu = ANINT(SUM(f1*f2)/SUM(f1*f1))
+         IF (mu .EQ. 0) THEN
+            EXIT
+         END IF
+         f2 = f2 - mu*f1
+      END DO
+      END SUBROUTINE reduce_basis
+
+!-------------------------------------------------------------------------------
 !>  @brief Regularized lattice sums of the harmonic kernels.
 !>
 !>  esum(q) = A*Z_k, k = 2*q, q = 0, ..., 4: the regularized sum of
@@ -98,28 +135,16 @@
       COMPLEX(dp), INTENT(OUT) :: esum(0:4)
       REAL(dp), PARAMETER :: reach2 = 7
       REAL(dp) :: scale, f1(2), f2(2), d1(2), d2(2), b1(2), b2(2), w(2)
-      REAL(dp) :: det, area, mu, g11, g22, g12, gdet, r2, x, xinv
+      REAL(dp) :: det, area, g11, g22, g12, gdet, r2, x, xinv
       REAL(dp) :: ex, sx, a, xa, xp, g(0:6), pgam(0:4)
       COMPLEX(dp) :: direct(0:4), dual(0:4), z2, zk, total
-      INTEGER :: it, side, i, j, ni, nj, q, m
+      INTEGER :: side, i, j, ni, nj, q, m
 
 !     unit cell area, then the Lagrange-Gauss reduced basis
       scale = SQRT(ABS(e1(1)*e2(2) - e1(2)*e2(1)))
       f1 = e1/scale
       f2 = e2/scale
-      DO it = 1, 100
-         IF (SUM(f1*f1) .GT. SUM(f2*f2)) THEN
-            w = f1
-            f1 = f2
-            f2 = w
-            CYCLE
-         END IF
-         mu = ANINT(SUM(f1*f2)/SUM(f1*f1))
-         IF (mu .EQ. 0) THEN
-            EXIT
-         END IF
-         f2 = f2 - mu*f1
-      END DO
+      CALL reduce_basis(f1, f2)
       det = f1(1)*f2(2) - f1(2)*f2(1)
       d1 = (/ f2(2), -f2(1) /)/det
       d2 = (/ -f1(2), f1(1) /)/det
@@ -207,7 +232,8 @@
 !>  @brief Defects of the punctured trapezoidal sums at the source point.
 !>
 !>  The defects are minus the regularized lattice sums, in the units of the
-!>  integral over (s, t), the steps of u and v from the source point.
+!>  integral over (s, t), the steps of u and v from the source point, times
+!>  the fraction set by @ref defect_fade.
 !>
 !>  @param[in]  rt   Taylor coefficients of R in (s, t).
 !>  @param[in]  zt   Taylor coefficients of Z in (s, t).
@@ -326,6 +352,54 @@
             wk(m-3) = el
          END IF
       END DO
+      wg = fade*wg
+      wk = fade*wk
       END SUBROUTINE singular_defects
+
+!-------------------------------------------------------------------------------
+!>  @brief Set the fraction of the defects applied on the current surface.
+!>
+!>  At each point of the surface the longer vector of the reduced basis of the
+!>  grid lattice is measured against the smaller radius of curvature. The
+!>  defects are applied in full while the largest ratio on the surface is
+!>  below span_full and dropped above span_none, with a smooth step between.
+!>  For nv = 1 the v step is the image spacing, as in greenf.
+!-------------------------------------------------------------------------------
+      SUBROUTINE defect_fade
+      USE vacmod
+      USE parallel_include_module
+      REAL(dp) :: hv, ca, cb, cc, f1(2), f2(2), b11, b12, b22, kmax, ratio,  &
+                  x
+      INTEGER :: i
+
+      hv = alv
+      IF (nv .EQ. 1) THEN
+         hv = pi2/nvper
+      END IF
+      ratio = 0
+      DO i = nuv3min, nuv3max
+!        (ca*s + cb*t, cc*t) are coordinates in which the metric is the identity
+         ca = SQRT(guu_b(i))
+         cb = guv_b(i)/(2*ca)
+         cc = SQRT(gvv_b(i) - cb*cb)
+         f1 = (/ ca*alu, 0.0_dp /)
+         f2 = (/ cb*hv, cc*hv /)
+         CALL reduce_basis(f1, f2)
+!        second fundamental form in those coordinates, times half the normal
+         b11 = auu(i)/(ca*ca)
+         b12 = (auv(i)/2 - auu(i)*cb/ca)/(ca*cc)
+         b22 = (avv(i) - auv(i)*cb/ca + auu(i)*cb*cb/(ca*ca))/(cc*cc)
+         kmax = (ABS(b11 + b22) + SQRT((b11 - b22)**2 + 4*b12*b12))         &
+              / SQRT(snr(i)**2 + snv(i)**2 + snz(i)**2)
+         ratio = MAX(ratio, SQRT(SUM(f2*f2))*kmax)
+      END DO
+      IF (vlactive) THEN
+         CALL MPI_Allreduce(MPI_IN_PLACE, ratio, 1, MPI_REAL8, MPI_MAX,      &
+                            VAC_COMM, MPI_ERR)
+      END IF
+      x = MIN(1.0_dp, MAX(0.0_dp, (span_none - ratio)                       &
+                                  /(span_none - span_full)))
+      fade = x*x*(3 - 2*x)
+      END SUBROUTINE defect_fade
 
       END MODULE greenf_singular
