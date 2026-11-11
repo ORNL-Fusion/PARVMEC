@@ -3,7 +3,8 @@
       USE vparams, ONLY: one
       USE parallel_include_module
       USE timer_sub
-      USE greenf_kink, ONLY: kink_line, kink_corner
+      USE greenf_kink, ONLY: kink_weights, kink_steps, kink_moments,
+     &                       kink_line, kink_corner
       USE greenf_singular, ONLY: singular_defects
       IMPLICIT NONE
 C-----------------------------------------------
@@ -17,14 +18,18 @@ C-----------------------------------------------
       INTEGER, DIMENSION(2) :: ilow, ihigh
       INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
       INTEGER :: kua, kv0, kfu, kfv, kr, kc, i0, k, iup, ium, ivp, ivm
+      INTEGER :: nc
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      1    ftemp, gsave, htemp, ga1, ga2, dsave
-      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: rows
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: rows, cs
+      REAL(dp), DIMENSION(:,:,:), ALLOCATABLE :: c0
       COMPLEX(dp), DIMENSION(:), ALLOCATABLE :: wu, wv
+      COMPLEX(dp), DIMENSION(:,:,:), ALLOCATABLE :: c1
       REAL(dp):: xip, yip, xper, yper,
      1    sxsave, sysave, tgreenon, tgreenoff
-      REAL(dp) :: hv, gk, s0(2), vg(4), vk(4), cg, ck
-      COMPLEX(dp) :: s1(2)
+      REAL(dp) :: hv, gk, w0, w1, s0(2), m0(2), vg(4), vk(4), cg, ck,
+     &            stu(7), stv(7)
+      COMPLEX(dp) :: s1(2), m1(2), wstep
       LOGICAL :: lmid
       REAL(dp) :: wg(3), wk(3), dphi, area
 C-----------------------------------------------
@@ -41,8 +46,10 @@ C-----------------------------------------------
 !
       CALL second0(tgreenon)
 
+      nc = MAX(nu, nv, nvper)/2
       ALLOCATE (ftemp(nuv), gsave(nuv), htemp(nuv), ga1(nuv), ga2(nuv),
-     1          dsave(nuv), rows(nuv,2), wu(0:nu-1), wv(nv), stat=i)
+     1          dsave(nuv), rows(nuv,4), wu(0:nu-1), wv(nv),
+     2          cs(0:nc,2), c0(2,0:nc,2), c1(2,0:nc,2), stat=i)
       IF (i .NE. 0) STOP 'allocation error in greenf'
 
 !
@@ -201,7 +208,7 @@ C-----------------------------------------------
       END DO
 
       DEALLOCATE (ftemp, gsave, htemp, ga1, ga2, dsave, rows, wu, wv,
-     &            stat=i)
+     &            cs, c0, c1, stat=i)
 
       CALL second0(tgreenoff)
       timer_vac(tgreenf) = timer_vac(tgreenf) + (tgreenoff-tgreenon)
@@ -218,14 +225,21 @@ C-----------------------------------------------
 !     FIRST OF THE NODES ABOUT THE KINK ON A LINE OF V AND ON A LINE OF U
       kfv = kv0 + (nv - 2)/2
       kfu = iskip + nu/2 - 1
-      DO kc = 1, nv
-         wv(kc) = CMPLX(COS(alv*(kc - 1 - kv0)),
-     &                  -SIN(alv*(kc - 1 - kv0)), dp)
+!     EXP(-i*t) AT THE STEPS OF V AND OF U FROM THE SOURCE
+      wstep = CMPLX(COS(alv), -SIN(alv), dp)
+      wv(1 + kv0) = 1
+      DO k = 1, nv - 1
+         wv(1 + MOD(kv0 + k, nv)) = wv(1 + MOD(kv0 + k - 1, nv))*wstep
       END DO
-      DO kr = 0, nu - 1
-         wu(kr) = CMPLX(COS(alu*(kr - iskip)),
-     &                  -SIN(alu*(kr - iskip)), dp)
+      wstep = CMPLX(COS(alu), -SIN(alu), dp)
+      wu(iskip) = 1
+      DO k = 1, nu - 1
+         wu(MOD(iskip + k, nu)) = wu(MOD(iskip + k - 1, nu))*wstep
       END DO
+      CALL kink_steps(hv, nv, lmid, gvv_b(ip), stv)
+      CALL kink_steps(alu, nu, .FALSE., guu_b(ip), stu)
+!     NO LINE HAS ITS INTEGRALS IN KINK_PAIR YET
+      cs = 0
 
 !     LINES OF V, BUT THAT ON THE KINK OF U
       DO kr = 0, nu - 1
@@ -233,22 +247,27 @@ C-----------------------------------------------
          IF (i0 .EQ. kua) THEN
             CYCLE
          END IF
+         CALL kink_weights(tanu(i0 + 1 + iuoff), guu_b(ip), guv_b(ip),
+     &                     gvv_b(ip), nv, hv, w0, w1)
          s0 = 0
          s1 = 0
-         DO kc = 1, nv
-            i = i0 + kc
-            IF (i .EQ. ip) THEN
-               CYCLE
-            END IF
-            gk = ga1(i)*ga2(i)
-            s0(1) = s0(1) + ga1(i)
-            s0(2) = s0(2) + gk
-            s1(1) = s1(1) + ga1(i)*wv(kc)
-            s1(2) = s1(2) + gk*wv(kc)
-         END DO
+         IF (w0 .GT. 0) THEN
+            DO kc = 1, nv
+               i = i0 + kc
+               gk = ga1(i)*ga2(i)
+               s0(1) = s0(1) + ga1(i)
+               s0(2) = s0(2) + gk
+               s1(1) = s1(1) + ga1(i)*wv(kc)
+               s1(2) = s1(2) + gk*wv(kc)
+            END DO
+            k = MOD(kr - iskip + nu, nu)
+            CALL kink_pair(1, MIN(k, nu - k), tanu(i0 + 1 + iuoff),
+     &                     guu_b(ip), guv_b(ip), gvv_b(ip), auu(ip),
+     &                     auv(ip), avv(ip))
+         END IF
          CALL kink_line(tanu(i0 + 1 + iuoff), guu_b(ip), guv_b(ip),
-     &                  gvv_b(ip), auu(ip), auv(ip), avv(ip), nv, hv,
-     &                  lmid, s0, s1, vg, vk)
+     &                  gvv_b(ip), auu(ip), auv(ip), avv(ip), hv, lmid,
+     &                  stv, w0, w1, s0, s1, m0, m1, vg, vk)
          DO k = 1, 4
             i = i0 + 1 + MOD(kfv + k - 1, nv)
             delgr(i) = delgr(i) - vg(k)
@@ -261,22 +280,27 @@ C-----------------------------------------------
          IF (.NOT.lmid .AND. kc .EQ. 1 + MOD(kfv + 1, nv)) THEN
             CYCLE
          END IF
+         CALL kink_weights(tanv(kc + ivoff), gvv_b(ip), guv_b(ip),
+     &                     guu_b(ip), nu, alu, w0, w1)
          s0 = 0
          s1 = 0
-         DO kr = 0, nu - 1
-            i = kr*nv + kc
-            IF (i .EQ. ip) THEN
-               CYCLE
-            END IF
-            gk = ga1(i)*ga2(i)
-            s0(1) = s0(1) + ga1(i)
-            s0(2) = s0(2) + gk
-            s1(1) = s1(1) + ga1(i)*wu(kr)
-            s1(2) = s1(2) + gk*wu(kr)
-         END DO
+         IF (w0 .GT. 0) THEN
+            DO kr = 0, nu - 1
+               i = kr*nv + kc
+               gk = ga1(i)*ga2(i)
+               s0(1) = s0(1) + ga1(i)
+               s0(2) = s0(2) + gk
+               s1(1) = s1(1) + ga1(i)*wu(kr)
+               s1(2) = s1(2) + gk*wu(kr)
+            END DO
+            k = MOD(kc - 1 - kv0 + nv, nv)
+            CALL kink_pair(2, MIN(k, nv - k), tanv(kc + ivoff),
+     &                     gvv_b(ip), guv_b(ip), guu_b(ip), avv(ip),
+     &                     auv(ip), auu(ip))
+         END IF
          CALL kink_line(tanv(kc + ivoff), gvv_b(ip), guv_b(ip),
-     &                  guu_b(ip), avv(ip), auv(ip), auu(ip), nu, alu,
-     &                  .FALSE., s0, s1, vg, vk)
+     &                  guu_b(ip), avv(ip), auv(ip), auu(ip), alu,
+     &                  .FALSE., stu, w0, w1, s0, s1, m0, m1, vg, vk)
          DO k = 1, 3
             i = MOD(kfu + k - 1, nu)*nv + kc
             delgr(i) = delgr(i) - vg(k)
@@ -307,31 +331,49 @@ C-----------------------------------------------
       kfu = iskip + nu/2 - 1
       IF (kp .EQ. 1) THEN
          rows = 0
+         wstep = CMPLX(COS(alu), -SIN(alu), dp)
+         wu(iskip) = 1
+         DO k = 1, nu - 1
+            wu(MOD(iskip + k, nu)) = wu(MOD(iskip + k - 1, nu))*wstep
+         END DO
+         CALL kink_steps(hv, nvper, .FALSE., gvv_b(ip), stv)
+         CALL kink_steps(alu, nu, .FALSE., guu_b(ip), stu)
+         cs = 0
+!        WEIGHTS OF THE SUMS OVER THE IMAGES, KEPT BESIDE THE SUMS
          DO kr = 0, nu - 1
-            wu(kr) = CMPLX(COS(alu*(kr - iskip)),
-     &                     -SIN(alu*(kr - iskip)), dp)
+            CALL kink_weights(tanu(kr + 1 + iuoff), guu_b(ip),
+     &                        guv_b(ip), gvv_b(ip), nvper, hv,
+     &                        rows(kr + 1,3), rows(kr + 1,4))
          END DO
       END IF
 
 !     LINE OF U OF THIS IMAGE, BUT THAT ON THE KINK OF V
       IF (2*(kp - 1) .NE. nvper) THEN
+         CALL kink_weights(tanv(1 + ivoff), gvv_b(ip), guv_b(ip),
+     &                     guu_b(ip), nu, alu, w0, w1)
          s0 = 0
          s1 = 0
          DO i = 1, nuv
-            IF (kp .EQ. 1 .AND. i .EQ. ip) THEN
-               CYCLE
+            IF (rows(i,3) .GT. 0) THEN
+               rows(i,1) = rows(i,1) + ga1(i)
+               rows(i,2) = rows(i,2) + ga1(i)*ga2(i)
             END IF
-            gk = ga1(i)*ga2(i)
-            rows(i,1) = rows(i,1) + ga1(i)
-            rows(i,2) = rows(i,2) + gk
-            s0(1) = s0(1) + ga1(i)
-            s0(2) = s0(2) + gk
-            s1(1) = s1(1) + ga1(i)*wu(i - 1)
-            s1(2) = s1(2) + gk*wu(i - 1)
+            IF (w0 .GT. 0) THEN
+               gk = ga1(i)*ga2(i)
+               s0(1) = s0(1) + ga1(i)
+               s0(2) = s0(2) + gk
+               s1(1) = s1(1) + ga1(i)*wu(i - 1)
+               s1(2) = s1(2) + gk*wu(i - 1)
+            END IF
          END DO
+         IF (w0 .GT. 0) THEN
+            CALL kink_pair(2, MIN(kp - 1, nvper - kp + 1),
+     &                     tanv(1 + ivoff), gvv_b(ip), guv_b(ip),
+     &                     guu_b(ip), avv(ip), auv(ip), auu(ip))
+         END IF
          CALL kink_line(tanv(1 + ivoff), gvv_b(ip), guv_b(ip),
-     &                  guu_b(ip), avv(ip), auv(ip), auu(ip), nu, alu,
-     &                  .FALSE., s0, s1, vg, vk)
+     &                  guu_b(ip), avv(ip), auv(ip), auu(ip), alu,
+     &                  .FALSE., stu, w0, w1, s0, s1, m0, m1, vg, vk)
          DO k = 1, 3
             i = 1 + MOD(kfu + k - 1, nu)
             delgr(i) = delgr(i) - vg(k)
@@ -346,10 +388,17 @@ C-----------------------------------------------
             IF (i .EQ. kua + 1) THEN
                CYCLE
             END IF
-            s0 = rows(i,:)
+            s0 = rows(i,1:2)
+            IF (rows(i,3) .GT. 0) THEN
+               k = MOD(i - ip + nu, nu)
+               CALL kink_pair(1, MIN(k, nu - k), tanu(i + iuoff),
+     &                        guu_b(ip), guv_b(ip), gvv_b(ip), auu(ip),
+     &                        auv(ip), avv(ip))
+            END IF
             CALL kink_line(tanu(i + iuoff), guu_b(ip), guv_b(ip),
-     &                     gvv_b(ip), auu(ip), auv(ip), avv(ip), nvper,
-     &                     hv, .FALSE., s0, s1, vg, vk)
+     &                     gvv_b(ip), auu(ip), auv(ip), avv(ip), hv,
+     &                     .FALSE., stv, rows(i,3), rows(i,4), s0, s1,
+     &                     m0, m1, vg, vk)
             delgr(i) = delgr(i) - SUM(vg)
             delgrp(i) = delgrp(i) - SUM(vk)
          END DO
@@ -359,6 +408,27 @@ C-----------------------------------------------
          delgrp(kua + 1) = delgrp(kua + 1) - ck
       END IF
       END SUBROUTINE kink_images
+
+!-----------------------------------------------------------------------
+!     INTEGRALS OF THE APPROXIMATIONS ALONG THE LINE AT THE STEP D FROM
+!     THE SOURCE IN THE FAMILY FAM OF LINES. THOSE OF THE LINE AT THE
+!     OPPOSITE STEP ARE THEIR CONJUGATES.
+!-----------------------------------------------------------------------
+      SUBROUTINE kink_pair(fam, d, s, a, b, c, aa, bb, cc)
+      INTEGER, INTENT(in) :: fam, d
+      REAL(dp), INTENT(in) :: s, a, b, c, aa, bb, cc
+      IF (cs(d,fam) .EQ. 0) THEN
+         CALL kink_moments(s, a, b, c, aa, bb, cc, c0(1,d,fam),
+     &                     c1(1,d,fam), c0(2,d,fam), c1(2,d,fam))
+         cs(d,fam) = s
+      END IF
+      m0 = c0(:,d,fam)
+      IF (s*cs(d,fam) .GT. 0) THEN
+         m1 = c1(:,d,fam)
+      ELSE
+         m1 = CONJG(c1(:,d,fam))
+      END IF
+      END SUBROUTINE kink_pair
 
       END SUBROUTINE greenf
 
