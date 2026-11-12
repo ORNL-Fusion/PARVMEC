@@ -11,14 +11,69 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER :: ku, kuminus, kv, kvminus, i, m, n, mn, n1,
-     &   imn, kmn, l, istat1, smn, ndim, q, qq
+!>  Index of a poloidal grid point.
+      INTEGER                                  :: ku
+!>  Index of the poloidal grid point at the mirrored angle.
+      INTEGER                                  :: kuminus
+!>  Index of a toroidal grid point.
+      INTEGER                                  :: kv
+!>  Index of the toroidal grid point at the mirrored angle.
+      INTEGER                                  :: kvminus
+!>  Index of a grid point of the surface or of a Chebyshev node, and status
+!>  of an allocation.
+      INTEGER                                  :: i
+!>  Poloidal mode number.
+      INTEGER                                  :: m
+!>  Toroidal mode number.
+      INTEGER                                  :: n
+!>  Index of a mode (m,n).
+      INTEGER                                  :: mn
+!>  Absolute value of the toroidal mode number.
+      INTEGER                                  :: n1
+!>  Offset of the first grid point of this process.
+      INTEGER                                  :: imn
+!>  Absolute value of m - n.
+      INTEGER                                  :: kmn
+!>  Order of a Chebyshev polynomial.
+      INTEGER                                  :: l
+!>  Status of an allocation.
+      INTEGER                                  :: istat1
+!>  Smaller of m and n.
+      INTEGER                                  :: smn
+!>  Degree in the recurrence of the Jacobi polynomial.
+      INTEGER                                  :: q
+!>  Values at the Chebyshev nodes of the polynomial of each (m,n).
       REAL(dp), DIMENSION(0:mf + nf,0:mf,0:nf) :: cmn
+!>  Chebyshev polynomials at the nodes.
       REAL(dp), DIMENSION(0:mf + nf,0:mf + nf) :: cosk
-      REAL(dp), DIMENSION(0:mf + nf) :: pnode
-      REAL(dp) :: argu, dn1, tnode, xnode,
-     &            pjm1, pj, pjp1, tjk, cnext, cthis, cprev,
-     &            tprecon, tprecoff
+!>  Values of one polynomial at the nodes.
+      REAL(dp), DIMENSION(0:mf + nf)           :: pnode
+!>  Angle of a Chebyshev node.
+      REAL(dp)                                 :: argu
+!>  Toroidal mode number times the grid step of v.
+      REAL(dp)                                 :: dn1
+!>  Chebyshev node.
+      REAL(dp)                                 :: tnode
+!>  Argument of the Jacobi polynomial at a node.
+      REAL(dp)                                 :: xnode
+!>  Jacobi polynomial of the degree below the current one.
+      REAL(dp)                                 :: pjm1
+!>  Jacobi polynomial of the current degree.
+      REAL(dp)                                 :: pj
+!>  Jacobi polynomial of the degree above the current one.
+      REAL(dp)                                 :: pjp1
+!>  Twice the degree plus kmn in the recurrence of the Jacobi polynomial.
+      REAL(dp)                                 :: tjk
+!>  Factor of the next polynomial in the recurrence.
+      REAL(dp)                                 :: cnext
+!>  Factor of the current polynomial in the recurrence.
+      REAL(dp)                                 :: cthis
+!>  Factor of the previous polynomial in the recurrence.
+      REAL(dp)                                 :: cprev
+!>  Time at the start of the routine.
+      REAL(dp)                                 :: tprecon
+!>  Time at the end of the routine.
+      REAL(dp)                                 :: tprecoff
 C-----------------------------------------------
 !
 !     THIS ROUTINE COMPUTES INITIAL CONSTANTS AND ARRAYS
@@ -40,18 +95,18 @@ C-----------------------------------------------
 !     ALLOCATE PERSISTENT ARRAYS. DEALLOCATED IN FILEOUT ROUTINE
 !
       IF (nv == 1) THEN         !(AXISYMMETRIC CASE: DO FP SUM TO INTEGRATE IN V)
-         CALL image_tables (64)
+         CALL image_tables(64)
       ELSE
-         CALL image_tables (nfper)
+         CALL image_tables(nfper)
       END IF
 
       ALLOCATE (sinuv(nuv), cosuv(nuv),
-     2     sinu(0:mf,nu), cosu(0:mf,nu), sinv(-nf:nf,nv),
-     3     cosv(-nf:nf,nv), sinui(0:mf,nu2), cosui(0:mf,nu2),
-     4     cmns(0:(mf+nf),0:mf,0:nf), csign(-nf:nf),
-     5     sinu1(nuv3,0:mf), cosu1(nuv3,0:mf),
-     6     sinv1(nuv3,0:nf), cosv1(nuv3,0:nf), imirr(nuv),
-     7     xmpot(mnpd), xnpot(mnpd), stat=istat1)
+     &          sinu(0:mf,nu), cosu(0:mf,nu), sinv(-nf:nf,nv),
+     &          cosv(-nf:nf,nv), sinui(0:mf,nu2), cosui(0:mf,nu2),
+     &          cmns(0:(mf+nf),0:mf,0:nf), csign(-nf:nf),
+     &          sinu1(nuv3,0:mf), cosu1(nuv3,0:mf),
+     &          sinv1(nuv3,0:nf), cosv1(nuv3,0:nf), imirr(nuv),
+     &          xmpot(mnpd), xnpot(mnpd), stat=istat1)
       IF (istat1.ne.0) STOP 'allocation error in precal'
 
 
@@ -230,7 +285,7 @@ C-----------------------------------------------
 !>
 !>  @param[in] nimages Number of field periods or of toroidal images.
 !-------------------------------------------------------------------------------
-      SUBROUTINE image_tables (nimages)
+      SUBROUTINE image_tables(nimages)
       USE vparams, ONLY: epstan
       USE vacmod
 
@@ -239,21 +294,33 @@ C-----------------------------------------------
 !  Declare Arguments
       INTEGER, INTENT(IN) :: nimages
 
-!  local parameters
-      REAL(dp), PARAMETER :: p25 = p5*p5
-      REAL(dp), PARAMETER :: bigno = 1.e50_dp
-
-!  local variables
+!  Local Variables
+!>  Index of a field period or of an image.
       INTEGER             :: kp
+!>  Index of a half step of u.
       INTEGER             :: ku
+!>  Index of a half step of v.
       INTEGER             :: kv
+!>  Index into the tables of tangents.
       INTEGER             :: i
+!>  Size of the tables of tangents.
       INTEGER             :: nuv_tan
+!>  Status of the allocation.
       INTEGER             :: istat1
+!>  Half the difference of two poloidal grid angles.
       REAL(dp)            :: argu
+!>  Half the difference of two toroidal grid angles.
       REAL(dp)            :: argv
+!>  Half the toroidal angle of an image.
       REAL(dp)            :: argp
+!>  Toroidal angle between two field periods or images.
       REAL(dp)            :: alp_per
+
+!  Local Parameters
+!>  One quarter.
+      REAL(dp), PARAMETER :: p25 = p5*p5
+!>  Stands for the tangent of a quarter turn.
+      REAL(dp), PARAMETER :: bigno = 1.e50_dp
 
 !  Start of executable code
       nvper = nimages
@@ -279,13 +346,11 @@ C-----------------------------------------------
          sinper(kp) = SIN(alp_per*(kp - 1))
       END DO
 
-!
-!     NOTE: ANGLE DIFFERENCE IS PI2*{[NUV + (KUP-1)] - (KU-1)}
-!           THIS DIFFERENCE IS ACCOUNTED FOR BY THE OFFSET IUOFF IN GREENF ROUTINE
-!
-!           THE KP SUM BELOW IS USED ONLY FOR NV == 1. IT PERFORMS THE V-INTEGRAL
-!           IN AN AXISYMMETRIC PLASMA
-!
+!  Note: the angle difference is pi2*{[nuv + (kup - 1)] - (ku - 1)}. This
+!  difference is accounted for by the offset iuoff in the greenf routine.
+
+!  The kp sum below is used only for nv == 1. It performs the v-integral in
+!  an axisymmetric plasma.
       i = 0
       DO kp = 1, nvper
          IF (kp .GT. 1 .AND. nv .NE. 1) THEN
@@ -312,7 +377,7 @@ C-----------------------------------------------
          END DO
       END DO
 
-      END SUBROUTINE image_tables
+      END SUBROUTINE
 
 !-------------------------------------------------------------------------------
 !>  @brief Resolve the cross section with the toroidal images of nv = 1.
@@ -332,16 +397,19 @@ C-----------------------------------------------
 
       IMPLICIT NONE
 
-!  local parameters
-      REAL(dp), PARAMETER :: images_per_radius = 40
-
-!  local variables
+!  Local Variables
+!>  Number of images that resolves the cross section.
       INTEGER             :: nimages
+!>  Largest ratio of R to the radius of curvature on the boundary.
       REAL(dp)            :: curv
 
+!  Local Parameters
+!>  Images for each unit of that ratio.
+      REAL(dp), PARAMETER :: images_per_radius = 40
+
 !  Start of executable code
-      curv = MAXVAL(2*ABS(auu(nuv3min:nuv3max))
-     &              /SQRT(guu_b(nuv3min:nuv3max))**3)
+      curv = MAXVAL(2*ABS(auu(nuv3min:nuv3max)) /
+     &              SQRT(guu_b(nuv3min:nuv3max))**3)
       IF (vlactive) THEN
          CALL MPI_Allreduce(MPI_IN_PLACE, curv, 1, MPI_REAL8, MPI_MAX,
      &                      VAC_COMM, MPI_ERR)
@@ -349,7 +417,7 @@ C-----------------------------------------------
 
       nimages = 64*CEILING(images_per_radius*curv/64)
       IF (nimages .GT. nvper) THEN
-         CALL image_tables (nimages)
+         CALL image_tables(nimages)
       END IF
 
-      END SUBROUTINE image_count
+      END SUBROUTINE

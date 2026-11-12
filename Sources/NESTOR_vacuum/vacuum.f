@@ -86,10 +86,8 @@ C-----------------------------------------------
       CALL second0(toff)
       timer_vac(tsurf) = timer_vac(tsurf) + (toff-ton)
 
-!
-!     FOR NV = 1, RESOLVE THE CROSS SECTION WITH THE TOROIDAL IMAGES OF GREENF
-!     AT EACH FULL UPDATE
-!
+!  For nv = 1, resolve the cross section with the toroidal images of greenf
+!  at each full update.
       IF (nv .EQ. 1 .AND. ivac_skip .EQ. 0) THEN
          CALL image_count
       END IF

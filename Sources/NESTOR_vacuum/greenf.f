@@ -61,12 +61,11 @@ C-----------------------------------------------
         dsave(i) = drv(ip) + z1b(i)*snz(ip)
       END DO
 
-!
-!     SUM OVER FIELD-PERIODS (NVPER=NFPER) OR INTEGRATE OVER NV (NVPER IMAGES) IF NV == 1
-!
-!     NOTE THE SURFACE NORMAL SNORM == Xu cross Xv = NP*[SNR, SNV, SNZ]
-!     IS PERIODIC ON EACH FIELD PERIOD
-!
+!  Sum over field periods (nvper = nfper) or integrate over v (nvper images)
+!  if nv == 1.
+
+!  Note the surface normal snorm == Xu cross Xv = np*[snr, snv, snz] is
+!  periodic on each field period.
       DO kp = 1, nvper
          xper = xip*cosper(kp) - yip*sinper(kp)              !x(ip) in field period kp
          yper = yip*cosper(kp) + xip*sinper(kp)              !y(ip) in field period kp
