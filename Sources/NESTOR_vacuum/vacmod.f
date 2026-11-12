@@ -21,7 +21,14 @@ C-----------------------------------------------
      2   zub, zvb, bexu, bexv, bexn, auu, auv, avv, snr, snv, snz, drv,
      3   guu_b, guv_b, gvv_b, rzb2, rcosuv, rsinuv,
      5   bredge, bpedge, bzedge
-      REAL(rprec), DIMENSION(:,:,:), ALLOCATABLE :: rtay, ztay
+!>  Taylor coefficients of R about each grid point of the surface, to
+!>  fourth order in the steps (s, t) of u and of the v of one field period.
+!>  The first two indices are the powers of s and t, and the third is the
+!>  grid point.
+      REAL(rprec), DIMENSION(:,:,:), ALLOCATABLE :: rtay
+!>  Taylor coefficients of Z about each grid point of the surface, indexed
+!>  as rtay.
+      REAL(rprec), DIMENSION(:,:,:), ALLOCATABLE :: ztay
       INTEGER, ALLOCATABLE :: ipiv(:)
       REAL(rprec), DIMENSION(:), ALLOCATABLE :: raxis_nestor, 
      1                                          zaxis_nestor

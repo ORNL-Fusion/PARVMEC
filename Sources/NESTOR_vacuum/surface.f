@@ -5,18 +5,29 @@
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
-      INTEGER mnmax, ivac_skip
+      INTEGER mnmax
       REAL(dp), DIMENSION(mnmax) :: rc, rs, zs, zc, xm, xn
+      INTEGER, INTENT(IN) :: ivac_skip
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER :: i, mn, m, n, n1, ia, ja, k
+      INTEGER :: i, mn, m, n, n1
+      INTEGER                      :: ia
+      INTEGER                      :: ja
+      INTEGER                      :: k
       REAL(dp), ALLOCATABLE, DIMENSION(:) ::
      1   ruu, ruv, rvv, zuu, zuv, zvv, cosmn1, sinmn1
       REAL(dp) :: tsurfon, tsurfoff
-      REAL(dp) :: mpow(0:4), npow(0:4), tfac(0:4,0:4), rph(0:3),
-     &            zph(0:3), rsn, zcn
-      REAL(dp), PARAMETER :: fact(0:4) = (/ 1, 1, 2, 6, 24 /)
+      REAL(dp), DIMENSION(0:4)     :: mpow
+      REAL(dp), DIMENSION(0:4)     :: npow
+      REAL(dp), DIMENSION(0:4,0:4) :: tfac
+      REAL(dp), DIMENSION(0:3)     :: rph
+      REAL(dp), DIMENSION(0:3)     :: zph
+      REAL(dp)                     :: rsn
+      REAL(dp)                     :: zcn
+      REAL(dp)                     :: temp
+      REAL(dp), DIMENSION(0:4), PARAMETER :: fact =
+     &   (/ 1, 1, 2, 6, 24 /)
 C-----------------------------------------------
 !
 !       THIS ROUTINE COMPUTES THE SURFACE VALUES OF R,Z AND DERIVATIVES
@@ -40,7 +51,8 @@ C-----------------------------------------------
       DO i = nuv3min, nuv3max  
          zub(i) = 0;   zvb(i) = 0;  zuu(i) = 0; zuv(i) = 0; zvv(i) = 0
          rub(i) = 0;   rvb(i) = 0;  ruu(i) = 0; ruv(i) = 0; rvv(i) = 0
-         rtay(:,:,i) = 0;  ztay(:,:,i) = 0
+         rtay(:,:,i) = 0
+         ztay(:,:,i) = 0
       END DO
 
       DO mn = 1, mnmax
@@ -68,36 +80,40 @@ C-----------------------------------------------
             zvv(i) = zvv(i) - xn(mn)*xn(mn)*zs(mn) * sinmn1(i)
          END DO
 
-!
-!        TAYLOR COEFFICIENTS OF R AND Z TO FOURTH ORDER IN THE STEPS OF U
-!        AND OF THE V OF ONE FIELD PERIOD, FOR THE SINGULAR POINT OF
-!        GREENF: D**(IA+JA)/(IA! JA!) TAKES COS(MU - NV) TO
-!        M**IA*(-N)**JA*COS(MU - NV + (IA + JA)*PI/2)
-!
+!  Taylor coefficients of R and Z to fourth order in the steps of u and of
+!  the v of one field period, for the source point of greenf:
+!  d**(ia + ja)/(ia! ja!) takes COS(m*u - n*v) to
+!  m**ia*(-n)**ja*COS(m*u - n*v + (ia + ja)*pi/2)
          IF (ivac_skip .EQ. 0) THEN
-            rsn = 0;  zcn = 0
+            rsn = 0
+            zcn = 0
             IF (lasym) THEN
-               rsn = rs(mn);  zcn = zc(mn)
+               rsn = rs(mn)
+               zcn = zc(mn)
             END IF
-            mpow(0) = 1;  npow(0) = 1
+            mpow(0) = 1
+            npow(0) = 1
             DO ia = 1, 4
                mpow(ia) = mpow(ia - 1)*m
                npow(ia) = -npow(ia - 1)*n
             END DO
-            DO ia = 0, 4
-               DO ja = 0, 4 - ia
-                  tfac(ia,ja) = mpow(ia)*npow(ja)/(fact(ia)*fact(ja))
+            DO ja = 0, 4
+               temp = npow(ja)/fact(ja)
+               DO ia = 0, 4 - ja
+                  tfac(ia,ja) = temp*mpow(ia)/fact(ia)
                END DO
             END DO
             DO i = nuv3min, nuv3max
                rph(0) = rc(mn)*cosmn1(i) + rsn*sinmn1(i)
                rph(1) = rsn*cosmn1(i) - rc(mn)*sinmn1(i)
+               rph(2) = -rph(0)
+               rph(3) = -rph(1)
                zph(0) = zs(mn)*sinmn1(i) + zcn*cosmn1(i)
                zph(1) = zs(mn)*cosmn1(i) - zcn*sinmn1(i)
-               rph(2) = -rph(0);  rph(3) = -rph(1)
-               zph(2) = -zph(0);  zph(3) = -zph(1)
-               DO ia = 0, 4
-                  DO ja = 0, 4 - ia
+               zph(2) = -zph(0)
+               zph(3) = -zph(1)
+               DO ja = 0, 4
+                  DO ia = 0, 4 - ja
                      k = MOD(ia + ja, 4)
                      rtay(ia,ja,i) = rtay(ia,ja,i) + tfac(ia,ja)*rph(k)
                      ztay(ia,ja,i) = ztay(ia,ja,i) + tfac(ia,ja)*zph(k)

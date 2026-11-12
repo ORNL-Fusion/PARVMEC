@@ -15,13 +15,27 @@ C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER, DIMENSION(2) :: ilow, ihigh
       INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
-      INTEGER :: kua, kva, kv0, kvm, iup, ium, ivp, ivm
+      INTEGER                :: kua
+      INTEGER                :: kva
+      INTEGER                :: kv0
+      INTEGER                :: kvm
+      INTEGER                :: iup
+      INTEGER                :: ium
+      INTEGER                :: ivp
+      INTEGER                :: ivm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      1    ftemp, gsave, htemp, ga1, ga2, dsave
       REAL(dp):: xip, yip, xper, yper,
      1    sxsave, sysave, tgreenon, tgreenoff
-      REAL(dp) :: hv, su, du, sv, dv
-      REAL(dp) :: wg(3), wk(3), dphi, area
+      REAL(dp)               :: hv
+      REAL(dp)               :: su
+      REAL(dp)               :: du
+      REAL(dp)               :: sv
+      REAL(dp)               :: dv
+      REAL(dp), DIMENSION(3) :: wg
+      REAL(dp), DIMENSION(3) :: wk
+      REAL(dp)               :: dphi
+      REAL(dp)               :: area
 C-----------------------------------------------
 !
 !     ON ENTRANCE, IP IS THE INDEX OF THE PRIMED MESH POINT (lies in 1st field period)
@@ -104,14 +118,12 @@ C-----------------------------------------------
                END DO
             END DO
 
-!
-!           GA1 AND GA1*GA2 VANISH WITH A KINK WHERE U - U' OR V - V' IS PI,
-!           WHERE THE GREEN'S FUNCTION IS SMOOTH. THE TRAPEZOIDAL SUM ACROSS
-!           A KINK OF SLOPE S IS OFF BY H**2*S/6, SO THE NODES ON THE KINK
-!           TAKE H*S/6 IN PLACE OF ZERO, AND THE NODE WHERE THE U AND V KINKS
-!           CROSS TAKES THE V VALUE. FOR ODD NV THE V KINK LIES MIDWAY
-!           BETWEEN TWO NODES, AND EACH OF THEM TAKES H*S/24 LESS.
-!
+!  ga1 and ga1*ga2 vanish with a kink where u - u' or v - v' is pi, where
+!  the Green's function is smooth. The trapezoidal sum across a kink of
+!  slope S is off by h**2*S/6, so the nodes on the kink take h*S/6 in place
+!  of zero, and the node where the u and v kinks cross takes the v value.
+!  For odd nv the v kink lies midway between two nodes, and each of them
+!  takes h*S/24 less.
             hv = alv
             IF (nv .eq. 1) THEN
                hv = pi2/nvper
@@ -150,25 +162,25 @@ C-----------------------------------------------
                END IF
             END IF
 
-!
-!           THE SUM SKIPS THE SOURCE POINT, WHERE THE REMAINDERS TEND TO
-!           A DIRECTION-DEPENDENT LIMIT AND RISE LINEARLY; ITS DEFECTS FOR
-!           THE WEIGHTS 1, U - U' AND V - V' GO ONTO THE SOURCE NODE AND
-!           ITS NEIGHBOURS. FOR NV = 1 THE V STEP IS THE IMAGE SPACING IN
-!           THE TOROIDAL ANGLE, ALONG WHICH THE MODES DO NOT VARY.
-!
+!  The sum skips the source point, where the remainders tend to a
+!  direction-dependent limit and rise linearly; its defects for the weights
+!  1, u - u' and v - v' go onto the source node and its neighbours. For
+!  nv = 1 the v step is the image spacing in the toroidal angle, along which
+!  the modes do not vary.
             IF (kp .EQ. 1) THEN
                kv0 = MOD(ip - 1, nv)
                dphi = onp
                IF (nv .EQ. 1) THEN
                   dphi = one
                END IF
-               CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip), xip,
-     &                               yip, z1b(ip), alvp*kv0, dphi,
-     &                               sxsave, sysave, snz(ip),
-     &                               guu_b(ip), guv_b(ip), gvv_b(ip),
-     &                               auu(ip), auv(ip), avv(ip), alu,
-     &                               hv, wg, wk)
+               CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip),
+     &                               (/ xip, yip, z1b(ip) /),
+     &                               alvp*kv0, dphi,
+     &                               (/ sxsave, sysave, snz(ip) /),
+     &                               (/ guu_b(ip), guv_b(ip),
+     &                                  gvv_b(ip) /),
+     &                               (/ auu(ip), auv(ip), avv(ip) /),
+     &                               (/ alu, hv /), wg, wk)
                area = alu*hv
                iup = ip + nv
                IF (iup .GT. nuv) THEN
