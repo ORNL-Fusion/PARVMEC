@@ -84,7 +84,7 @@ C-----------------------------------------------
 !
       CALL second0(ton)
       IF (.NOT. ALLOCATED(tanu)) CALL precal (wint)
-      CALL surface (rmnc, rmns, zmns, zmnc, xm, xn, mnmax, ivac_skip)
+      CALL surface(rmnc, rmns, zmns, zmnc, xm, xn, mnmax, ivac_skip)
       CALL second0(toff)
       timer_vac(tsurf) = timer_vac(tsurf) + (toff-ton)
 

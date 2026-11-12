@@ -150,12 +150,14 @@ C-----------------------------------------------
                IF (nv .EQ. 1) THEN
                   dphi = one
                END IF
-               CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip), xip,
-     &                               yip, z1b(ip), alvp*kv0, dphi,
-     &                               sxsave, sysave, snz(ip),
-     &                               guu_b(ip), guv_b(ip), gvv_b(ip),
-     &                               auu(ip), auv(ip), avv(ip), alu,
-     &                               hv, wg, wk)
+               CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip),
+     &                               (/ xip, yip, z1b(ip) /),
+     &                               alvp*kv0, dphi,
+     &                               (/ sxsave, sysave, snz(ip) /),
+     &                               (/ guu_b(ip), guv_b(ip),
+     &                                  gvv_b(ip) /),
+     &                               (/ auu(ip), auv(ip), avv(ip) /),
+     &                               (/ alu, hv /), wg, wk)
                area = alu*hv
                iup = ip + nv
                IF (iup .GT. nuv) THEN
