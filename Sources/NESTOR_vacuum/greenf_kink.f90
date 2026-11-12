@@ -324,8 +324,8 @@
                        (width_sums - width_series))
       kink_weights = wk
       IF (wk .GT. 0 .AND. x*x + y*y .LT. 4) THEN
-         res = n*LOG(((2 + y)*(2 + y) + x*x)/((2 - y)*(2 - y) + x*x))/2 +      &
-               2*LOG(h)
+         res = n*LOG(((2 + y)*(2 + y) + x*x)/((2 - y)*(2 - y) + x*x))/2        &
+             + 2*LOG(h)
          kink_weights(1) = wk*smooth_step((res - peak_source)/                 &
                                           (peak_sums - peak_source))
          kink_weights(2) = wk*smooth_step((res - peak_source - peak_spread)/   &
@@ -630,8 +630,8 @@
       dual_summands(:,1,2) = pv*r3
       dual_summands(:,2,2) = pn*r3 - 3*pv*qn*r5/2
       dual_summands(:,3,2) = pm*r3 - 3*pv*qm*r5/2
-      dual_summands(:,4,2) = -p(2)*r3 - 3*(pm*qn + pn*qm - pv*q(2))*r5/2 +     &
-                             15*pv*qn*qm*r5*r2/4
+      dual_summands(:,4,2) = -p(2)*r3 - 3*(pm*qn + pn*qm - pv*q(2))*r5/2       &
+                           + 15*pv*qn*qm*r5*r2/4
 
       END FUNCTION
 
