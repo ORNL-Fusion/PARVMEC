@@ -7,25 +7,40 @@ C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       INTEGER mnmax
       REAL(dp), DIMENSION(mnmax) :: rc, rs, zs, zc, xm, xn
+!>  Zero in a full update of the vacuum solution, which takes the Taylor
+!>  coefficients of the surface.
       INTEGER, INTENT(IN) :: ivac_skip
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER :: i, mn, m, n, n1
+!>  Power of the step of u in a Taylor coefficient.
       INTEGER                      :: ia
+!>  Power of the step of v in a Taylor coefficient.
       INTEGER                      :: ja
+!>  Number of quarter turns that the derivative of order ia + ja adds to the
+!>  phase of a mode, modulo 4.
       INTEGER                      :: k
       REAL(dp), ALLOCATABLE, DIMENSION(:) ::
      1   ruu, ruv, rvv, zuu, zuv, zvv, cosmn1, sinmn1
       REAL(dp) :: tsurfon, tsurfoff
+!>  Powers of the poloidal mode number.
       REAL(dp), DIMENSION(0:4)     :: mpow
+!>  Powers of minus the toroidal mode number of one field period.
       REAL(dp), DIMENSION(0:4)     :: npow
+!>  Factors of a mode in the Taylor coefficients: m**ia*(-n)**ja/(ia! ja!).
       REAL(dp), DIMENSION(0:4,0:4) :: tfac
+!>  The mode of R with its phase advanced by 0 to 3 quarter turns.
       REAL(dp), DIMENSION(0:3)     :: rph
+!>  The mode of Z with its phase advanced by 0 to 3 quarter turns.
       REAL(dp), DIMENSION(0:3)     :: zph
+!>  Sine coefficient of the mode of R, zero without lasym.
       REAL(dp)                     :: rsn
+!>  Cosine coefficient of the mode of Z, zero without lasym.
       REAL(dp)                     :: zcn
+!>  Factor of a column of tfac.
       REAL(dp)                     :: temp
+!>  Factorials of 0 to 4.
       REAL(dp), DIMENSION(0:4), PARAMETER :: fact =
      &   (/ 1, 1, 2, 6, 24 /)
 C-----------------------------------------------
