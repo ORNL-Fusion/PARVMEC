@@ -12,45 +12,76 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   L o c a l   P a r a m e t e r s
 C-----------------------------------------------
+!>  Vertices of the filament for each unit of the ratio of the axis radius
+!>  to the least distance from the axis to the boundary.
       REAL(dp), PARAMETER :: vertex_density = 16
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER, SAVE :: nsub = 0
-      INTEGER :: i, j, kper, kv, nvsub
-      REAL(dp) :: current(1), ttolion, ttolioff, dmin, argv, weight
+!>  Index of a boundary point or of a vertex, and status of the allocation.
+      INTEGER                               :: i
+!>  Index of a vertex in one field period.
+      INTEGER                               :: j
+!>  Index of a field period.
+      INTEGER                               :: kper
+!>  Index of a toroidal plane.
+      INTEGER                               :: kv
+!>  Number of vertices in one field period.
+      INTEGER                               :: nvsub
+!>  Current of the filament.
+      REAL(dp), DIMENSION(1)                :: current
+!>  Time at the start of the routine.
+      REAL(dp)                              :: ttolion
+!>  Time at the end of the routine.
+      REAL(dp)                              :: ttolioff
+!>  Least squared distance from the axis to the boundary in a plane.
+      REAL(dp)                              :: dmin
+!>  Half the angle from a plane to a vertex, in the toroidal angle of one
+!>  field period, then the toroidal angle of the vertex.
+      REAL(dp)                              :: argv
+!>  Weight of a plane in the interpolant of the axis at a vertex.
+      REAL(dp)                              :: weight
+!>  Cartesian positions of the vertices.
       REAL(dp), DIMENSION(:,:), ALLOCATABLE :: xpts
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: rax, zax, cosax, sinax
+!>  R of the axis at the vertices of one field period.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: rax
+!>  Z of the axis at the vertices of one field period.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: zax
+!>  Cosine of the toroidal angle of the vertices of one field period.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: cosax
+!>  Sine of the toroidal angle of the vertices of one field period.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: sinax
 C-----------------------------------------------
-!
-!     COMPUTE WIRE SEGMENTS (DO NOT CLOSE LOOP, CLOSURE DONE IN biotsavart ROUTINES)
-!
-!     THE FILAMENT IS A POLYGON THROUGH THE MAGNETIC AXIS. THE BOUNDARY POINTS
-!     LIE IN THE TOROIDAL PLANES OF THE GRID, WHERE A POLYGON WITH ITS VERTICES
-!     IN THOSE PLANES ALONE HAS THE FIELD OF A CORNER, NOT OF AN ARC, UNLESS ITS
-!     SIDES ARE SHORT AGAINST THE DISTANCE FROM THE AXIS TO THE BOUNDARY. EACH
-!     SIDE IS DIVIDED INTO NSUB, THE AXIS BETWEEN THE PLANES BEING ITS
-!     TRIGONOMETRIC INTERPOLANT OVER THE FIELD PERIOD.
-!
-!     NSUB GIVES THE POLYGON vertex_density VERTICES FOR EACH UNIT OF THE RATIO
-!     OF THE AXIS RADIUS TO THAT DISTANCE. IT IS SET AT THE FIRST VACUUM CALL
-!     OF A RUN (IVAC = 0, OR NSUB UNSET IN A RUN RESTARTED AT IVAC > 0) AND
-!     KEPT, SO THAT THE FIELD OF THE FILAMENT IS A CONTINUOUS FUNCTION OF THE
-!     PLASMA SHAPE DURING THE ITERATIONS.
-!
+
+!  Compute wire segments (do not close the loop, closure is done in the
+!  biotsavart routines).
+
+!  The filament is a polygon through the magnetic axis. The boundary points
+!  lie in the toroidal planes of the grid, where a polygon with its vertices
+!  in those planes alone has the field of a corner, not of an arc, unless
+!  its sides are short against the distance from the axis to the boundary.
+!  Each side is divided into nsub_axis, the axis between the planes being
+!  its trigonometric interpolant over the field period.
+
+!  nsub_axis gives the polygon vertex_density vertices for each unit of the
+!  ratio of the axis radius to that distance. It is set at the first vacuum
+!  call of a run (ivac = 0, or nsub_axis unset in a run restarted at
+!  ivac > 0) and kept, so that the field of the filament is a continuous
+!  function of the plasma shape during the iterations.
       CALL second0(ttolion)
 
-      IF (ivac .LE. 0 .OR. nsub .EQ. 0) THEN
+      IF (ivac .LE. 0 .OR. nsub_axis .EQ. 0) THEN
          dmin = HUGE(dmin)
          DO i = 1, nuv
             kv = 1 + MOD(i - 1,nv)
-            dmin = MIN(dmin, (r1b(i) - raxis_nestor(kv))**2
-     &                     + (z1b(i) - zaxis_nestor(kv))**2)
+            dmin = MIN(dmin, (r1b(i) - raxis_nestor(kv))**2 +
+     &                       (z1b(i) - zaxis_nestor(kv))**2)
          END DO
-         nsub = MAX(1, CEILING(vertex_density*MAXVAL(raxis_nestor)
-     &                         /(SQRT(dmin)*nvp)))
+         nsub_axis = MAX(1,
+     &                   CEILING(vertex_density*MAXVAL(raxis_nestor) /
+     &                           (SQRT(dmin)*nvp)))
       END IF
-      nvsub = nv*nsub
+      nvsub = nv*nsub_axis
 
       ALLOCATE (xpts(3,nvsub*nvper), rax(nvsub), zax(nvsub),
      &          cosax(nvsub), sinax(nvsub), stat=i)
@@ -58,13 +89,11 @@ C-----------------------------------------------
 
       current = torcur/mu0
 
-!
-!     AXIS AT THE VERTICES OF ONE FIELD PERIOD. WEIGHT IS THE PERIODIC
-!     INTERPOLATION KERNEL OF THE NV PLANES.
-!
+!  Axis at the vertices of one field period. weight is the periodic
+!  interpolation kernel of the nv planes.
       DO j = 1, nvsub
-         IF (MOD(j - 1,nsub) .EQ. 0) THEN
-            kv = 1 + (j - 1)/nsub
+         IF (MOD(j - 1,nsub_axis) .EQ. 0) THEN
+            kv = 1 + (j - 1)/nsub_axis
             rax(j) = raxis_nestor(kv)
             zax(j) = zaxis_nestor(kv)
             cosax(j) = cosuv(kv)
@@ -72,17 +101,23 @@ C-----------------------------------------------
          ELSE
             rax(j) = 0
             zax(j) = 0
-            DO kv = 1, nv
-               argv = p5*pi2*((j - 1)/REAL(nvsub,dp)
-     &                      - (kv - 1)/REAL(nv,dp))
-               IF (MOD(nv,2) .EQ. 0) THEN
+            IF (MOD(nv,2) .EQ. 0) THEN
+               DO kv = 1, nv
+                  argv = p5*pi2*((j - 1)/REAL(nvsub,dp) -
+     &                           (kv - 1)/REAL(nv,dp))
                   weight = SIN(nv*argv)/(nv*TAN(argv))
-               ELSE
+                  rax(j) = rax(j) + weight*raxis_nestor(kv)
+                  zax(j) = zax(j) + weight*zaxis_nestor(kv)
+               END DO
+            ELSE
+               DO kv = 1, nv
+                  argv = p5*pi2*((j - 1)/REAL(nvsub,dp) -
+     &                           (kv - 1)/REAL(nv,dp))
                   weight = SIN(nv*argv)/(nv*SIN(argv))
-               END IF
-               rax(j) = rax(j) + weight*raxis_nestor(kv)
-               zax(j) = zax(j) + weight*zaxis_nestor(kv)
-            END DO
+                  rax(j) = rax(j) + weight*raxis_nestor(kv)
+                  zax(j) = zax(j) + weight*zaxis_nestor(kv)
+               END DO
+            END IF
             argv = (pi2/nvper)*(j - 1)/REAL(nvsub,dp)
             cosax(j) = COS(argv)
             sinax(j) = SIN(argv)
@@ -93,10 +128,10 @@ C-----------------------------------------------
       DO kper = 1, nvper
          DO j = 1, nvsub
             i = i + 1
-            xpts(1,i) = rax(j)*(cosper(kper)*cosax(j)
-     &                -         sinper(kper)*sinax(j))
-            xpts(2,i) = rax(j)*(sinper(kper)*cosax(j)
-     &                +         cosper(kper)*sinax(j))
+            xpts(1,i) = rax(j)*(cosper(kper)*cosax(j) -
+     &                          sinper(kper)*sinax(j))
+            xpts(2,i) = rax(j)*(sinper(kper)*cosax(j) +
+     &                          cosper(kper)*sinax(j))
             xpts(3,i) = zax(j)
          END DO
       END DO
