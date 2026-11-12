@@ -33,14 +33,6 @@ C-----------------------------------------------
       pi2 = 8*ATAN(one)
       pi3 = p5*pi2**3
       pi4 = 2*pi2
-!
-!     FOR NV = 1 THE V-INTEGRAL IS A SUM OVER IMAGES AROUND THE WHOLE TORUS,
-!     SO THE TORUS IS ONE FIELD PERIOD: V IS THE TOROIDAL ANGLE IN THE METRIC,
-!     THE NORMAL AND THE NORMALIZATION OF THE INTEGRALS
-!
-      IF (nv .eq. 1) THEN
-         nfper = 1
-      END IF
       onp = one/nfper
       onp2 = onp*onp
       alu = pi2/nu
