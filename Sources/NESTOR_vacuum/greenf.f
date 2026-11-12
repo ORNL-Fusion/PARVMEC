@@ -14,12 +14,28 @@ C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER, DIMENSION(2) :: ilow, ihigh
       INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
-      INTEGER :: kua, kva, kv0, kvm
+!>  Offset of the nodes on the kink of u.
+      INTEGER  :: kua
+!>  Index in v of a node on or beside the kink of v.
+      INTEGER  :: kva
+!>  Index in v of the source point, from zero.
+      INTEGER  :: kv0
+!>  Index in v, before it wraps, of a node beside the kink of v.
+      INTEGER  :: kvm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      1    ftemp, gsave, htemp, ga1, ga2, dsave
       REAL(dp):: xip, yip, xper, yper,
      1    sxsave, sysave, tgreenon, tgreenoff
-      REAL(dp) :: hv, su, du, sv, dv
+!>  Step of v: that of the grid, or the spacing of the images for nv = 1.
+      REAL(dp) :: hv
+!>  Value of ga1 on the nodes of the kink of u.
+      REAL(dp) :: su
+!>  Value of ga1*ga2 on the nodes of the kink of u.
+      REAL(dp) :: du
+!>  Value of ga1 on the nodes of the kink of v.
+      REAL(dp) :: sv
+!>  Value of ga1*ga2 on the nodes of the kink of v.
+      REAL(dp) :: dv
 C-----------------------------------------------
 !
 !     ON ENTRANCE, IP IS THE INDEX OF THE PRIMED MESH POINT (lies in 1st field period)
@@ -63,6 +79,23 @@ C-----------------------------------------------
         dsave(i) = drv(ip) + z1b(i)*snz(ip)
       END DO
 
+!  ga1 and ga1*ga2 vanish with a kink where u - u' or v - v' is pi, where
+!  the Green's function is smooth. The trapezoidal sum across a kink of
+!  slope S is off by h**2*S/6, so the nodes on the kink take h*S/6 in place
+!  of zero, and the node where the u and v kinks cross takes the v value.
+!  For odd nv the v kink lies midway between two nodes, and each of them
+!  takes h*S/24 less.
+      hv = alv
+      IF (nv .eq. 1) THEN
+         hv = pi2/nvper
+      END IF
+      su = alu/(24*SQRT(guu_b(ip)))
+      du = su*auu(ip)/guu_b(ip)
+      sv = hv/(24*SQRT(gvv_b(ip)))
+      dv = sv*avv(ip)/gvv_b(ip)
+      kua = MOD(iskip + nu/2, nu)*nv
+      kv0 = MOD(ip - 1, nv)
+
 !
 !     SUM OVER FIELD-PERIODS (NVPER=NFPER) OR INTEGRATE OVER NV (NVPER=64) IF NV == 1
 !
@@ -102,35 +135,12 @@ C-----------------------------------------------
                END DO
             END DO
 
-!
-!           GA1 AND GA1*GA2 VANISH WITH A KINK WHERE U - U' OR V - V' IS PI,
-!           WHERE THE GREEN'S FUNCTION IS SMOOTH. THE TRAPEZOIDAL SUM ACROSS
-!           A KINK OF SLOPE S IS OFF BY H**2*S/6, SO THE NODES ON THE KINK
-!           TAKE H*S/6 IN PLACE OF ZERO, AND THE NODE WHERE THE U AND V KINKS
-!           CROSS TAKES THE V VALUE. FOR ODD NV THE V KINK LIES MIDWAY
-!           BETWEEN TWO NODES, AND EACH OF THEM TAKES H*S/24 LESS.
-!
-            hv = alv
-            IF (nv .eq. 1) THEN
-               hv = pi2/nvper
-            END IF
-            su = alu/(24*SQRT(guu_b(ip)))
-            du = su*auu(ip)/guu_b(ip)
-            sv = hv/(24*SQRT(gvv_b(ip)))
-            dv = sv*avv(ip)/gvv_b(ip)
-            kua = MOD(iskip + nu/2, nu)*nv
-            IF (nv .eq. 1) THEN
-               IF (2*(kp - 1) .eq. nvper) THEN
-                  delgr = delgr - sv
-                  delgrp = delgrp - dv
-               ELSE
-                  delgr(kua + 1) = delgr(kua + 1) - su
-                  delgrp(kua + 1) = delgrp(kua + 1) - du
-               END IF
-            ELSE
+!  Values of the nodes on the kinks. For nv = 1 each image has one node on
+!  the u kink, or lies on the v kink, and the sum over the images is the
+!  integral over v.
+            IF (nv .gt. 1) THEN
                delgr(kua + 1:kua + nv) = delgr(kua + 1:kua + nv) - su
                delgrp(kua + 1:kua + nv) = delgrp(kua + 1:kua + nv) - du
-               kv0 = MOD(ip - 1, nv)
                IF (MOD(nv, 2) .eq. 0) THEN
                   kva = MOD(kv0 + nv/2, nv) + 1
                   delgr(kua + kva) = delgr(kua + kva) + su
@@ -146,11 +156,18 @@ C-----------------------------------------------
                      delgrp(kua + kva) = delgrp(kua + kva) - dv/4
                   END DO
                END IF
-            END IF
-
-            IF (kp.EQ.nvper .AND. nv.EQ.1) THEN
-                delgrp = delgrp/nvper
-                delgr  = delgr /nvper
+            ELSE
+               IF (2*(kp - 1) .eq. nvper) THEN
+                  delgr = delgr - sv
+                  delgrp = delgrp - dv
+               ELSE
+                  delgr(kua + 1) = delgr(kua + 1) - su
+                  delgrp(kua + 1) = delgrp(kua + 1) - du
+               END IF
+               IF (kp .eq. nvper) THEN
+                  delgrp = delgrp/nvper
+                  delgr = delgr/nvper
+               END IF
             END IF
 
             ivoff = ivoff + 2*nu
