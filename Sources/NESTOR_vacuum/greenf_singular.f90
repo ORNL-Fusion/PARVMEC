@@ -78,8 +78,8 @@
          DO j = k, 4
             temp = b(k,j - k)
             DO i = j, 4
-               tmul(k:4 - (i - k),i - k) = tmul(k:4 - (i - k),i - k) +         &
-                                           a(:4 - i,i - j)*temp
+               tmul(k:4 - (i - k),i - k) = tmul(k:4 - (i - k),i - k)           &
+                                         + a(:4 - i,i - j)*temp
             END DO
          END DO
       END DO
@@ -299,8 +299,8 @@
                xp = xp*xinv
             END DO
             DO q = 0, 4
-               half_lattice_sums(q) = half_lattice_sums(q) +                   &
-                                      zk*xp*g(q + shift)
+               half_lattice_sums(q) = half_lattice_sums(q)                     &
+                                    + zk*xp*g(q + shift)
                zk = zk*z2
                xp = xp*xinv
             END DO
@@ -522,8 +522,8 @@
       f0g = -c3*i32/2
       f1g = -(d4 - t4)*i32/2 + 3*c3*c3*i52/8
       f0k = a3*i32 - 3*a2*c3*i52/2
-      f1k = (a4 - s4)*i32 - 3*(a3*c3 + a2*(d4 - t4))*i52/2 +                   &
-            15*a2*c3*c3*i72/8
+      f1k = (a4 - s4)*i32 - 3*(a3*c3 + a2*(d4 - t4))*i52/2                     &
+          + 15*a2*c3*c3*i72/8
       remainder_terms = (/ f1g, f0g*s, f0g*t, f1k, f0k*s, f0k*t /)
 
       END FUNCTION
@@ -705,8 +705,8 @@
          b12 = (auv(i)/2 - auu(i)*cb/ca)/(ca*cc)
          b22 = (avv(i) - auv(i)*cb/ca + auu(i)*cb*cb/(ca*ca))/(cc*cc)
          kmax = (ABS(b11 + b22) +                                              &
-                 SQRT((b11 - b22)*(b11 - b22) + 4*b12*b12))/                   &
-                SQRT(snr(i)*snr(i) + snv(i)*snv(i) + snz(i)*snz(i))
+                 SQRT((b11 - b22)*(b11 - b22) + 4*b12*b12))                    &
+              / SQRT(snr(i)*snr(i) + snv(i)*snv(i) + snz(i)*snz(i))
          ratio = MAX(ratio, SQRT(DOT_PRODUCT(f2, f2))*kmax)
       END DO
       IF (vlactive) THEN
