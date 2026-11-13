@@ -23,7 +23,7 @@ foreach (pair test_positive:test_negative test_positive_q0:test_negative_q0
     list (GET pair 1 second)
     foreach (quantity ctor jcurv iotaf)
         add_test (NAME    vmec_sum_atan_${second}_check_${quantity}_test
-                  COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_${first}.vmec.nc -wout_file2=wout_${second}.vmec.nc -quantity=${quantity} -tol=1.0E-20)
+                  COMMAND $<TARGET_PROPERTY:xnetcdf_diff,BINARY_DIR>/xnetcdf_diff -netcdf_file1=wout_${first}.vmec.nc -netcdf_file2=wout_${second}.vmec.nc -quantity=${quantity} -tol=1.0E-20)
         set_tests_properties (vmec_sum_atan_${second}_check_${quantity}_test
                               PROPERTIES
                               DEPENDS "vmec_sum_atan_${first};vmec_sum_atan_${second}")
