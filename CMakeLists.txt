@@ -35,11 +35,4 @@ install (TARGETS xvmec)
 #  Testing                                                                     #
 ################################################################################
 
-#  Build test utilities.
-add_executable (xwout_diff)
-add_dependencies (vmec pull_parvmec)
-
-target_link_libraries (xwout_diff PUBLIC stell)
-target_compile_features (xwout_diff PRIVATE cxx_std_11)
-
 add_subdirectory (Testing)
