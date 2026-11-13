@@ -7,8 +7,9 @@ C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       INTEGER mnmax
       REAL(dp), DIMENSION(mnmax) :: rc, rs, zs, zc, xm, xn
-!>  Zero in a full update of the vacuum solution, which takes the Taylor
-!>  coefficients of the surface.
+!>  Iteration counter which controls when parts of the vacuum calculation
+!>  are performed. The Taylor coefficients of the surface are computed where
+!>  it is zero.
       INTEGER, INTENT(IN) :: ivac_skip
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
