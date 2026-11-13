@@ -11,6 +11,9 @@ C-----------------------------------------------
      1 sinv, cosv, sinui, cosui, sinu1, cosu1, sinv1, cosv1,
      2 cosmni, sinmni
       REAL(rprec), DIMENSION(:,:,:), ALLOCATABLE :: cmns
+!>  Number of parts into which tolicu divides each side of the axis filament
+!>  between two toroidal planes. It is zero until tolicu sets it.
+      INTEGER :: nsub_axis = 0
 
 !MRC 10-15-15
       REAL(rprec), DIMENSION(:), ALLOCATABLE :: bsubu_sur, bsubv_sur
