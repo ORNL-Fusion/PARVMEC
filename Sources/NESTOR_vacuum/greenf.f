@@ -3,6 +3,7 @@
       USE vparams, ONLY: one
       USE parallel_include_module
       USE timer_sub
+      USE greenf_singular, ONLY: singular_defects
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -15,27 +16,44 @@ C-----------------------------------------------
       INTEGER, DIMENSION(2) :: ilow, ihigh
       INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
 !>  Offset of the nodes on the kink of u.
-      INTEGER  :: kua
+      INTEGER                :: kua
 !>  Index in v of a node on or beside the kink of v.
-      INTEGER  :: kva
+      INTEGER                :: kva
 !>  Index in v of the source point, from zero.
-      INTEGER  :: kv0
+      INTEGER                :: kv0
 !>  Index in v, before it wraps, of a node beside the kink of v.
-      INTEGER  :: kvm
+      INTEGER                :: kvm
+!>  Node one step of u above the source point.
+      INTEGER                :: iup
+!>  Node one step of u below the source point.
+      INTEGER                :: ium
+!>  Node one step of v above the source point.
+      INTEGER                :: ivp
+!>  Node one step of v below the source point.
+      INTEGER                :: ivm
       REAL(dp), DIMENSION(:), ALLOCATABLE ::
      1    ftemp, gsave, htemp, ga1, ga2, dsave
       REAL(dp):: xip, yip, xper, yper,
      1    sxsave, sysave, tgreenon, tgreenoff
 !>  Step of v: that of the grid, or the spacing of the images for nv = 1.
-      REAL(dp) :: hv
+      REAL(dp)               :: hv
 !>  Value of ga1 on the nodes of the kink of u.
-      REAL(dp) :: su
+      REAL(dp)               :: su
 !>  Value of ga1*ga2 on the nodes of the kink of u.
-      REAL(dp) :: du
+      REAL(dp)               :: du
 !>  Value of ga1 on the nodes of the kink of v.
-      REAL(dp) :: sv
+      REAL(dp)               :: sv
 !>  Value of ga1*ga2 on the nodes of the kink of v.
-      REAL(dp) :: dv
+      REAL(dp)               :: dv
+!>  Defects of the sum of the Green's function less ga1 at the source point,
+!>  for the weights 1, u - u' and v - v'.
+      REAL(dp), DIMENSION(3) :: wg
+!>  Defects of the sum of its normal derivative less ga1*ga2 likewise.
+      REAL(dp), DIMENSION(3) :: wk
+!>  Rate of the toroidal angle in v.
+      REAL(dp)               :: dphi
+!>  Area of a grid cell in u and v.
+      REAL(dp)               :: area
 C-----------------------------------------------
 !
 !     ON ENTRANCE, IP IS THE INDEX OF THE PRIMED MESH POINT (lies in 1st field period)
@@ -167,6 +185,55 @@ C-----------------------------------------------
                IF (kp .eq. nvper) THEN
                   delgrp = delgrp/nvper
                   delgr = delgr/nvper
+               END IF
+            END IF
+
+!  The sum skips the source point, where the remainders tend to a
+!  direction-dependent limit and rise linearly; its defects for the weights
+!  1, u - u' and v - v' go onto the source node and its neighbours. For
+!  nv = 1 the v step is the image spacing in the toroidal angle, along which
+!  the modes do not vary.
+            IF (kp .EQ. 1) THEN
+               dphi = onp
+               IF (nv .EQ. 1) THEN
+                  dphi = one
+               END IF
+               CALL singular_defects(rtay(:,:,ip), ztay(:,:,ip),
+     &                               (/ xip, yip, z1b(ip) /),
+     &                               alvp*kv0, dphi,
+     &                               (/ sxsave, sysave, snz(ip) /),
+     &                               (/ guu_b(ip), guv_b(ip),
+     &                                  gvv_b(ip) /),
+     &                               (/ auu(ip), auv(ip), avv(ip) /),
+     &                               (/ alu, hv /), wg, wk)
+               area = alu*hv
+               iup = ip + nv
+               IF (iup .GT. nuv) THEN
+                  iup = iup - nuv
+               END IF
+               ium = ip - nv
+               IF (ium .LT. 1) THEN
+                  ium = ium + nuv
+               END IF
+               delgr(ip) = delgr(ip) + wg(1)/area
+               delgrp(ip) = delgrp(ip) + wk(1)/area
+               delgr(iup) = delgr(iup) + wg(2)/(2*alu*area)
+               delgr(ium) = delgr(ium) - wg(2)/(2*alu*area)
+               delgrp(iup) = delgrp(iup) + wk(2)/(2*alu*area)
+               delgrp(ium) = delgrp(ium) - wk(2)/(2*alu*area)
+               IF (nv .GT. 1) THEN
+                  ivp = ip + 1
+                  IF (kv0 .EQ. nv - 1) THEN
+                     ivp = ivp - nv
+                  END IF
+                  ivm = ip - 1
+                  IF (kv0 .EQ. 0) THEN
+                     ivm = ivm + nv
+                  END IF
+                  delgr(ivp) = delgr(ivp) + wg(3)/(2*hv*area)
+                  delgr(ivm) = delgr(ivm) - wg(3)/(2*hv*area)
+                  delgrp(ivp) = delgrp(ivp) + wk(3)/(2*hv*area)
+                  delgrp(ivm) = delgrp(ivm) - wk(3)/(2*hv*area)
                END IF
             END IF
 
