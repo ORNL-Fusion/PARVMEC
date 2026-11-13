@@ -72,6 +72,19 @@ C-----------------------------------------------
       mnpd = mf1*nf1
       nfper = nfp
 
+!  With a single toroidal plane the vacuum solution integrates in v over
+!  images around the whole torus, so the torus is its one field period: v is
+!  the toroidal angle in the metric, the normal and the normalization of the
+!  integrals.
+      IF (lfreeb .and. nv .eq. 1 .and. nfp .ne. 1) THEN
+         nfper = 1
+         IF (grank .eq. 0) THEN
+            WRITE (6, '(a,i0,a)')
+     &         ' Warning: NZETA = 1 with NFP = ', nfp,
+     &         '. The vacuum solution uses one field period.'
+         END IF
+      END IF
+
 !
 !     INDEXING FOR PACKED-ARRAY STRUCTURE OF XC, GC 
 !
