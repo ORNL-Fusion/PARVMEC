@@ -88,6 +88,12 @@ C-----------------------------------------------
       CALL second0(toff)
       timer_vac(tsurf) = timer_vac(tsurf) + (toff-ton)
 
+!  For nv = 1, resolve the cross section with the toroidal images of greenf
+!  at each full update.
+      IF (nv .EQ. 1 .AND. ivac_skip .EQ. 0) THEN
+         CALL image_count
+      END IF
+
       ton = toff
       CALL bextern (plascur, wint, lscreen)
       CALL second0(toff)
