@@ -4,6 +4,8 @@
       USE timer_sub
       USE analytic, ONLY: analyt
       USE greens_function, ONLY: greenf
+      USE fouri_mod
+
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
