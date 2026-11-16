@@ -1,0 +1,45 @@
+&INDATA
+
+! VMEC execution parameters.
+MGRID_FILE = 'mgrid_test.nc',
+LFORBAL = F,
+LFREEB = T,
+DELT = 0.7,
+TCON0 = 2.0,
+NFP = 1,
+NS_ARRAY = 25,
+FTOL_ARRAY = 1.0E-14,
+NITER = 20000,
+NSTEP = 200,
+NTOR = 3,
+MPOL = 6,
+NTHETA = 32,
+NZETA = 12,
+NVACSKIP = 3,
+LASYM = F,
+
+! Coil currents. (TF, VF)
+EXTCUR = 5.0E6, -7.0E4,
+
+! Fitting parameters.
+GAMMA = 0.0,
+PHIEDGE = 0.2827,
+BLOAT = 1.0,
+
+! Initial position.
+RAXIS_CC(0) = 1.0,
+ZAXIS_CS(0) = 0.0,
+RBC(0,0) = 1.0,
+RBC(0,1) = 0.3,
+ZBS(0,0) = 0.0,
+ZBS(0,1) = 0.3,
+
+! Plasma current parameters. Uniform current density.
+NCURR = 1,
+CURTOR = 1.5E5,
+AC = 1.0,
+
+! Plasma pressure parameters.
+PRES_SCALE = 0.0,
+/
+&END
