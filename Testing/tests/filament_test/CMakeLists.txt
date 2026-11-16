@@ -28,7 +28,7 @@ foreach (check rmin_surf:5.0E-3 rmax_surf:5.0E-3 iotaf:2.0E-3)
     list (GET check 0 quantity)
     list (GET check 1 tolerance)
     add_test (NAME    vmec_filament_check_${quantity}_test
-              COMMAND $<TARGET_PROPERTY:xvmec,BINARY_DIR>/xwout_diff -wout_file1=wout_test_axisymmetric.vmec.nc -wout_file2=wout_test_planes.vmec.nc -quantity=${quantity} -tol=${tolerance})
+              COMMAND $<TARGET_PROPERTY:xnetcdf_diff,BINARY_DIR>/xnetcdf_diff -netcdf_file1=wout_test_axisymmetric.vmec.nc -netcdf_file2=wout_test_planes.vmec.nc -quantity=${quantity} -tol=${tolerance})
     set_tests_properties (vmec_filament_check_${quantity}_test
                           PROPERTIES
                           DEPENDS "vmec_filament_test_axisymmetric;vmec_filament_test_planes")
