@@ -79,11 +79,13 @@ C-----------------------------------------------
       IF (lfreeb .and. nv .eq. 1 .and. nfp .ne. 1) THEN
          nfper = 1
          IF (grank .eq. 0) THEN
-            WRITE (6, '(a,i0,a)')
+            WRITE (6, 1000)
      &         ' Warning: NZETA = 1 with NFP = ', nfp,
      &         '. The vacuum solution uses one field period.'
          END IF
       END IF
+
+1000  FORMAT((a,i0,a))
 
 !
 !     INDEXING FOR PACKED-ARRAY STRUCTURE OF XC, GC 
