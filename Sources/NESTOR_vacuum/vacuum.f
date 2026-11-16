@@ -8,6 +8,7 @@
       USE vmec_main, ONLY: nznt, irst
       USE parallel_include_module
       USE timer_sub
+      USE greenf_singular, ONLY: defect_fade
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
@@ -53,7 +54,8 @@ C-----------------------------------------------
      &     z1b(nuv), zub(nuv3), zvb(nuv3), auu(nuv3), auv(nuv3),
      &     avv(nuv3), snr(nuv3), snv(nuv3), snz(nuv3), drv(nuv3),
      &     guu_b(nuv3), guv_b(nuv3), gvv_b(nuv3), rzb2(nuv),
-     &     rcosuv(nuv), rsinuv(nuv), stat=i)
+     &     rcosuv(nuv), rsinuv(nuv), rtay(0:4,0:4,nuv3),
+     &     ztay(0:4,0:4,nuv3), stat=i)
       IF (i .NE. 0) STOP 'Allocation error in vacuum'
 
 !
@@ -82,7 +84,7 @@ C-----------------------------------------------
 !
       CALL second0(ton)
       IF (.NOT. ALLOCATED(tanu)) CALL precal (wint)
-      CALL surface (rmnc, rmns, zmns, zmnc, xm, xn, mnmax)
+      CALL surface(rmnc, rmns, zmns, zmnc, xm, xn, mnmax, ivac_skip)
       CALL second0(toff)
       timer_vac(tsurf) = timer_vac(tsurf) + (toff-ton)
 
@@ -94,6 +96,9 @@ C-----------------------------------------------
 !     Determine scalar magnetic potential POTVAC
 !
       CALL second0(ton)
+      IF (ivac_skip .EQ. 0) THEN
+         CALL defect_fade
+      END IF
       CALL scalpot (potvac, amatrix, ivac_skip)
       CALL second0(toff)
       timer_vac(tscal) = timer_vac(tscal) + (toff-ton)
@@ -228,7 +233,7 @@ C-----------------------------------------------
       IF (ALLOCATED(bexu))
      &    DEALLOCATE (bexu, bexv, bexn, bexni, r1b, rub, rvb, z1b, zub,
      &    zvb, auu, auv, avv, snr, snv, snz, drv, guu_b, guv_b, gvv_b,
-     &    rzb2, rcosuv, rsinuv, stat=i)
+     &    rzb2, rcosuv, rsinuv, rtay, ztay, stat=i)
       IF (i .NE. 0) STOP 'Deallocation error in vacuum'
 
       DEALLOCATE (amatrix, potu, potv, stat=i)

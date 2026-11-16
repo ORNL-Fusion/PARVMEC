@@ -3,6 +3,8 @@
       USE parallel_include_module
       USE timer_sub
       USE analytic, ONLY: analyt
+      USE fouri_mod
+
       IMPLICIT NONE
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
