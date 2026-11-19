@@ -119,7 +119,8 @@ C-----------------------------------------------
             END DO
          ELSE IF (iter2        .EQ. iter1 .AND.
      &            ivac         .LE. 0     .AND.
-     &            ictrl_prec2d .EQ. 0) THEN
+     &            ictrl_prec2d .EQ. 0     .AND.
+     &            lactive) THEN
 #if defined(MPI_OPT)
             ALLOCATE(bcastbuf(2*nznt))
             bcastbuf(1:nznt)=prcon(:,ns,0)
@@ -283,8 +284,7 @@ C-----------------------------------------------
 #endif
 
             IF (vlactive) THEN
-               IF (ictrl_prec2d .NE. 3 .OR.
-     &             l_edge) THEN
+               IF (ictrl_prec2d .NE. 3 .OR. l_edge) THEN
                   CALL vacuum_par (rmnc, rmns, zmns, zmnc, xm, xn,
      &                             ctor, rbtor, pwint_ns, ns, ivacskip,
      &                             ivac, mnmax, ier_flag, lscreen)
@@ -292,9 +292,11 @@ C-----------------------------------------------
                ELSE
                   bsqvac = bsqvac0; ier_flag = 0
                END IF
+            ELSE IF (ictrl_prec2d .NE. 3 .OR. l_edge) THEN
+               ivac = ivac + 1
             END IF
 
-            IF (vnranks .LT. nranks) THEN
+            IF (vnranks .LT. nranks .and. lactive) THEN
 #if defined(MPI_OPT)
                CALL MPI_Bcast(bsqvac,SIZE(bsqvac),MPI_REAL8,0,
      &                        NS_COMM,MPI_ERR)
@@ -336,16 +338,14 @@ C-----------------------------------------------
                dbsq(l) = ABS(pgcon(l,ns)-bsqsav(l,3))
             END DO
 
-            IF (ivac .EQ. 1) THEN
-               IF (vlactive) THEN
-                  bsqsav(:nznt,1) = pbzmn_o(:,ns)
-                  bsqsav(:nznt,2) = bsqvac(:nznt)
+            IF (ivac .EQ. 1 .and. lactive) THEN
+               bsqsav(:nznt,1) = pbzmn_o(:,ns)
+               bsqsav(:nznt,2) = bsqvac(:nznt)
 #if defined(MPI_OPT)
-                  CALL MPI_Bcast(bsqsav(:,1),nznt,MPI_REAL8,
-     &                           nranks-1,NS_COMM,MPI_ERR)
+               CALL MPI_Bcast(bsqsav(:,1),nznt,MPI_REAL8,
+     &                        nranks-1,NS_COMM,MPI_ERR)
 #endif
-               END IF
-            ELSE IF (ictrl_prec2d .NE. 3) THEN
+            ELSE IF (ictrl_prec2d .NE. 3 .and. lactive) THEN
 #if defined(MPI_OPT)
                CALL MPI_Bcast(bsqsav(:,1),nznt,MPI_REAL8,
      &                        0,NS_COMM,MPI_ERR)
