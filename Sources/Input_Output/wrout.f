@@ -237,7 +237,7 @@
 #endif
      6   stat=istat)
 
-      IF (lfreeb) THEN        !MRC 10-15-15
+      IF (lfreeb .and. ivac .gt. 0) THEN        !MRC 10-15-15
          ALLOCATE (bsubua_sur(nzeta*ntheta2), bsubva_sur(nzeta*ntheta2))
          ALLOCATE (bsupua_sur(nzeta*ntheta2), bsupva_sur(nzeta*ntheta2))
 
@@ -368,7 +368,7 @@
       CALL cdf_define(nwout, vn_extcur, extcur(1:nextcur),
      1                dimname=currg)
       CALL cdf_define(nwout, vn_mgmode, mgrid_mode)
-      IF (lfreeb) THEN
+      IF (lfreeb .and. ivac .gt. 0) THEN
          CALL cdf_define(nwout, vn_maxpot, mnpd)
          CALL cdf_define(nwout, vn_flp, nobser)
          CALL cdf_define(nwout, vn_nobd, nobd)
@@ -510,7 +510,7 @@
       CALL cdf_define(nwout, vn_wdot, wdot(1:nstore_seq),
      1                dimname=(/'time'/))
 
-      IF (lfreeb) THEN
+      IF (lfreeb .and. ivac .gt. 0) THEN
          CALL cdf_define(nwout, vn_potsin, potvac(1:mnpd),
      1                   dimname=mnpotdim)
          CALL cdf_setatt(nwout, vn_potsin, ln_potsin)
@@ -555,7 +555,7 @@
       CALL cdf_define(nwout, vn_currvmnc, currvmnc, dimname=r3dim)
       CALL cdf_setatt(nwout, vn_currvmnc, ln_currvmnc)
 
-      IF (lfreeb) THEN
+      IF (lfreeb .and. ivac .gt. 0) THEN
          CALL cdf_define(nwout, vn_bsubumnc_sur, bsubumnc_sur,                 &
      &                   dimname=mn2dim)
          CALL cdf_setatt(nwout, vn_bsubumnc_sur, ln_bsubumnc_sur)
@@ -573,7 +573,7 @@
 !     ELIMINATE THESE EVENTUALLY: DON'T NEED THEM - CAN COMPUTE FROM GSQRT
       CALL cdf_define(nwout, vn_bsupumnc, bsupumnc, dimname=r3dim)
       CALL cdf_define(nwout, vn_bsupvmnc, bsupvmnc, dimname=r3dim)
-!     IF (lfreeb) THEN
+!     IF (lfreeb .and. ivac .gt. 0) THEN
 !         CALL cdf_define(nwout, vn_rbc, rbc,
 !    1                dimname=(/'n_mode','m_mode'/))
 !         CALL cdf_setatt(nwout, vn_rbc, ln_rbc, units='m')
@@ -618,7 +618,7 @@
       CALL cdf_define(nwout, vn_currvmns, currvmns, dimname=r3dim)
       CALL cdf_setatt(nwout, vn_currvmns, ln_currvmns)
 
-      IF (lfreeb) THEN
+      IF (lfreeb .and. ivac .gt. 0) THEN
          CALL cdf_define(nwout, vn_bsubumns_sur, bsubumns_sur,                 &
      &                   dimname=mn2dim)
          CALL cdf_setatt(nwout, vn_bsubumns_sur, ln_bsubumns_sur)
@@ -700,7 +700,7 @@
          CALL cdf_write(nwout, vn_extcur, extcur(1:nextcur))
          CALL cdf_write(nwout, vn_mgmode, mgrid_mode)
       ENDIF
-      IF (lfreeb) THEN
+      IF (lfreeb .and. ivac .gt. 0) THEN
          CALL cdf_write(nwout, vn_flp, nobser)
          CALL cdf_write(nwout, vn_maxpot, mnpd)
          CALL cdf_write(nwout, vn_nobd, nobd)
@@ -719,7 +719,7 @@
       CALL cdf_write(nwout, vn_pmod_nyq, xm_nyq0)
       CALL cdf_write(nwout, vn_tmod_nyq, xn_nyq0)
 
-      IF (lfreeb) THEN
+      IF (lfreeb .and. ivac .gt. 0) THEN
          CALL cdf_write(nwout, vn_potsin, potvac(1:mnpd))
          IF (lasym)                                                            &
      &      CALL cdf_write(nwout, vn_potcos, potvac(1+mnpd:2*mnpd))
@@ -940,7 +940,7 @@
 #endif
      8                    )
 
-         IF (lfreeb) THEN     !MRC  10-15-15
+         IF (lfreeb .and. ivac .gt. 0) THEN     !MRC  10-15-15
             CALL symoutput_sur(bsubu_sur, bsubv_sur,                           &
      &                         bsupu_sur, bsupv_sur,                           &
      &                         bsubua_sur, bsubva_sur,                         &
@@ -1019,7 +1019,7 @@
 #endif
       END DO RADIUS2
 
-      IF (lfreeb) THEN    !MRC    10-15-15
+      IF (lfreeb .and. ivac .gt. 0) THEN    !MRC    10-15-15
          bsubumnc_sur = 0
          bsubvmnc_sur = 0
          bsupumnc_sur = 0
@@ -1148,7 +1148,7 @@
       sigmns(:,1)   = 0;  taumns(:,1)   = 0
 #endif
 
-      IF (lfreeb) THEN        !MRC  10-15-15
+      IF (lfreeb .and. ivac .gt. 0) THEN        !MRC  10-15-15
          bsubumns_sur = 0
          bsubvmns_sur = 0
          bsupumns_sur = 0
@@ -1267,7 +1267,7 @@
       CALL cdf_write(nwout, vn_bsupumnc, bsupumnc)
       CALL cdf_write(nwout, vn_bsupvmnc, bsupvmnc)
 
-      IF (lfreeb) THEN        !MRC    10-15-15
+      IF (lfreeb .and. ivac .gt. 0) THEN        !MRC    10-15-15
          CALL cdf_write(nwout, vn_bsubumnc_sur, bsubumnc_sur)
          CALL cdf_write(nwout, vn_bsubvmnc_sur, bsubvmnc_sur)
          CALL cdf_write(nwout, vn_bsupumnc_sur, bsupumnc_sur)
@@ -1619,7 +1619,7 @@
          CALL cdf_write(nwout, vn_bsupumns, bsupumns)
          CALL cdf_write(nwout, vn_bsupvmns, bsupvmns)
 
-         IF (lfreeb) THEN     !MRC    10-15-15
+         IF (lfreeb .and. ivac .gt. 0) THEN     !MRC    10-15-15
             CALL cdf_write(nwout, vn_bsubumns_sur, bsubumns_sur)
             CALL cdf_write(nwout, vn_bsubvmns_sur, bsubvmns_sur)
             CALL cdf_write(nwout, vn_bsupumns_sur, bsupumns_sur)
