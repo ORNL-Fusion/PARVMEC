@@ -1,6 +1,6 @@
       SUBROUTINE fileout_par(iseq, ictrl_flag, ier_flag, lscreen)
       USE vmec_main, ONLY: ns, ntheta1, ntheta2, nzeta, bdamp, 
-     &                     lfreeb
+     &                     lfreeb, ivac
       USE parallel_include_module
       USE xstuff, ONLY: pxc, pgc, pxsave, pscalxc
       USE xstuff, ONLY: xc, gc, xsave, scalxc
@@ -27,7 +27,7 @@ C-----------------------------------------------
 
       loutput = (IAND(ictrl_flag, output_flag) .ne. 0) !SAL 070719
 
-      IF (lfreeb .AND. vlactive .AND. loutput) THEN !SAL070719
+      IF (lfreeb .AND. vlactive .AND. loutput .AND. ivac .GT. 0) THEN !SAL070719
          ALLOCATE(buffer(numjs_vac, 7), tmp(nznt, 7),stat=i)
          IF (i .NE. 0) CALL STOPMPI(440)
          buffer(:,1) = brv(nuv3min:nuv3max)
