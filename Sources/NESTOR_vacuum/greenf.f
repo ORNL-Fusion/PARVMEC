@@ -1,60 +1,122 @@
-      SUBROUTINE greenf (delgr, delgrp, ip)
+!*******************************************************************************
+!>  @file greenf.f
+!>  @brief Contains module @ref greens_function.
+!
+!  Note separating the Doxygen comment block here so detailed description is
+!  found in the Module not the file.
+!
+!>  Defines the difference of the Green's function of the vacuum region and
+!>  its analytic approximation.
+!*******************************************************************************
+      MODULE greens_function
+      USE stel_kinds, ONLY: dp
+
+      IMPLICIT NONE
+
+      CONTAINS
+
+!-------------------------------------------------------------------------------
+!>  @brief Difference of the Green's function and its analytic approximation.
+!>
+!>  The differences are summed over the field periods or, for nv = 1, over
+!>  the images of the source point around the torus, for every point of the
+!>  grid of one field period.
+!>
+!>  @param[out] delgr  Difference of the Green's function and its analytic
+!>                     approximation.
+!>  @param[out] delgrp Difference of the normal derivative of the Green's
+!>                     function and its analytic approximation.
+!>  @param[in]  ip     Index of the source point, which lies in the first
+!>                     field period.
+!-------------------------------------------------------------------------------
+      SUBROUTINE greenf(delgr, delgrp, ip)
       USE vacmod
       USE vparams, ONLY: one
       USE parallel_include_module
       USE timer_sub
+      USE greenf_kink, ONLY: kink_context, kink_setup, kink_grid,
+     &                       kink_image, kink_image_sums
       USE greenf_singular, ONLY: singular_defects
+
       IMPLICIT NONE
-C-----------------------------------------------
-C   D u m m y   A r g u m e n t s
-C-----------------------------------------------
-      INTEGER, INTENT(in) :: ip
-      REAL(dp), DIMENSION(nuv), INTENT(OUT) :: delgr, delgrp
-C-----------------------------------------------
-C   L o c a l   V a r i a b l e s
-C-----------------------------------------------
-      INTEGER, DIMENSION(2) :: ilow, ihigh
-      INTEGER :: ivoff, iskip, iuoff, i, kp, nloop
-!>  Offset of the nodes on the kink of u.
-      INTEGER                :: kua
-!>  Index in v of a node on or beside the kink of v.
-      INTEGER                :: kva
+
+!  Declare Arguments
+      REAL(dp), DIMENSION(nuv), INTENT(OUT) :: delgr
+      REAL(dp), DIMENSION(nuv), INTENT(OUT) :: delgrp
+      INTEGER, INTENT(IN)                   :: ip
+
+!  Local Variables
+!>  First nodes of the two runs of nodes that leave out the source point.
+      INTEGER, DIMENSION(2)                 :: ilow
+!>  Last nodes of those runs.
+      INTEGER, DIMENSION(2)                 :: ihigh
+!>  Offset in tanv of the steps of v from the source point.
+      INTEGER                               :: ivoff
+!>  Index in u of the source point, from zero.
+      INTEGER                               :: iskip
+!>  Offset in tanu of the steps of u from the source point.
+      INTEGER                               :: iuoff
+!>  Index of a node, and status of the allocation.
+      INTEGER                               :: i
+!>  Index of a field period or, for nv = 1, of an image.
+      INTEGER                               :: kp
+!>  Index of a run of nodes.
+      INTEGER                               :: nloop
 !>  Index in v of the source point, from zero.
-      INTEGER                :: kv0
-!>  Index in v, before it wraps, of a node beside the kink of v.
-      INTEGER                :: kvm
+      INTEGER                               :: kv0
 !>  Node one step of u above the source point.
-      INTEGER                :: iup
+      INTEGER                               :: iup
 !>  Node one step of u below the source point.
-      INTEGER                :: ium
+      INTEGER                               :: ium
 !>  Node one step of v above the source point.
-      INTEGER                :: ivp
+      INTEGER                               :: ivp
 !>  Node one step of v below the source point.
-      INTEGER                :: ivm
-      REAL(dp), DIMENSION(:), ALLOCATABLE ::
-     1    ftemp, gsave, htemp, ga1, ga2, dsave
-      REAL(dp):: xip, yip, xper, yper,
-     1    sxsave, sysave, tgreenon, tgreenoff
+      INTEGER                               :: ivm
+!>  Inverse square of the distance from the source point.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: ftemp
+!>  Part of the square of the distance that every field period shares.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: gsave
+!>  Inverse of the distance from the source point.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: htemp
+!>  Quadratic form of the first analytic approximation, then the
+!>  approximation.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: ga1
+!>  Quadratic form of the second analytic approximation, then its ratio to
+!>  that of the first.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: ga2
+!>  Part of the normal derivative that every field period shares.
+      REAL(dp), DIMENSION(:), ALLOCATABLE   :: dsave
+!>  Cartesian x of the source point in the first field period.
+      REAL(dp)                              :: xip
+!>  Cartesian y of the source point in the first field period.
+      REAL(dp)                              :: yip
+!>  Cartesian x of the source point in the field period kp.
+      REAL(dp)                              :: xper
+!>  Cartesian y of the source point in the field period kp.
+      REAL(dp)                              :: yper
+!>  Cartesian x of the normal of the source point in the field period kp.
+      REAL(dp)                              :: sxsave
+!>  Cartesian y of the normal of the source point in the field period kp.
+      REAL(dp)                              :: sysave
+!>  Time at the start of the routine.
+      REAL(dp)                              :: tgreenon
+!>  Time at the end of the routine.
+      REAL(dp)                              :: tgreenoff
 !>  Step of v: that of the grid, or the spacing of the images for nv = 1.
-      REAL(dp)               :: hv
-!>  Value of ga1 on the nodes of the kink of u.
-      REAL(dp)               :: su
-!>  Value of ga1*ga2 on the nodes of the kink of u.
-      REAL(dp)               :: du
-!>  Value of ga1 on the nodes of the kink of v.
-      REAL(dp)               :: sv
-!>  Value of ga1*ga2 on the nodes of the kink of v.
-      REAL(dp)               :: dv
+      REAL(dp)                              :: hv
 !>  Defects of the sum of the Green's function less ga1 at the source point,
 !>  for the weights 1, u - u' and v - v'.
-      REAL(dp), DIMENSION(3) :: wg
+      REAL(dp), DIMENSION(3)                :: wg
 !>  Defects of the sum of its normal derivative less ga1*ga2 likewise.
-      REAL(dp), DIMENSION(3) :: wk
+      REAL(dp), DIMENSION(3)                :: wk
 !>  Rate of the toroidal angle in v.
-      REAL(dp)               :: dphi
+      REAL(dp)                              :: dphi
 !>  Area of a grid cell in u and v.
-      REAL(dp)               :: area
-C-----------------------------------------------
+      REAL(dp)                              :: area
+!>  Quantities of the values about the kinks for this source point.
+      TYPE (kink_context)                   :: kink
+
+!  Start of executable code
 !
 !     ON ENTRANCE, IP IS THE INDEX OF THE PRIMED MESH POINT (lies in 1st field period)
 !
@@ -98,20 +160,17 @@ C-----------------------------------------------
       END DO
 
 !  ga1 and ga1*ga2 vanish with a kink where u - u' or v - v' is pi, where
-!  the Green's function is smooth. The trapezoidal sum across a kink of
-!  slope S is off by h**2*S/6, so the nodes on the kink take h*S/6 in place
-!  of zero, and the node where the u and v kinks cross takes the v value.
-!  For odd nv the v kink lies midway between two nodes, and each of them
-!  takes h*S/24 less.
+!  the Green's function is smooth, so the trapezoidal sums across the kinks
+!  are in error. The nodes about the kinks take the values of greenf_kink in
+!  place of zero: on each line of the grid they make the sums of ga1 and
+!  ga1*ga2 times 1, COS and SIN of the angle equal to the integrals, and the
+!  node where the kinks cross takes what the sum over the grid still misses.
+!  For nv = 1 the lines of v are the sums over the images.
+      CALL kink_setup(ip, kink)
       hv = alv
       IF (nv .eq. 1) THEN
          hv = pi2/nvper
       END IF
-      su = alu/(24*SQRT(guu_b(ip)))
-      du = su*auu(ip)/guu_b(ip)
-      sv = hv/(24*SQRT(gvv_b(ip)))
-      dv = sv*avv(ip)/gvv_b(ip)
-      kua = MOD(iskip + nu/2, nu)*nv
       kv0 = MOD(ip - 1, nv)
 
 !
@@ -153,36 +212,13 @@ C-----------------------------------------------
                END DO
             END DO
 
-!  Values of the nodes on the kinks. For nv = 1 each image has one node on
-!  the u kink, or lies on the v kink, and the sum over the images is the
-!  integral over v.
+!  Values of the nodes about the kinks
             IF (nv .gt. 1) THEN
-               delgr(kua + 1:kua + nv) = delgr(kua + 1:kua + nv) - su
-               delgrp(kua + 1:kua + nv) = delgrp(kua + 1:kua + nv) - du
-               IF (MOD(nv, 2) .eq. 0) THEN
-                  kva = MOD(kv0 + nv/2, nv) + 1
-                  delgr(kua + kva) = delgr(kua + kva) + su
-                  delgrp(kua + kva) = delgrp(kua + kva) + du
-                  delgr(kva:nuv:nv) = delgr(kva:nuv:nv) - sv
-                  delgrp(kva:nuv:nv) = delgrp(kva:nuv:nv) - dv
-               ELSE
-                  DO kvm = kv0 + (nv - 1)/2, kv0 + (nv + 1)/2
-                     kva = MOD(kvm, nv) + 1
-                     delgr(kva:nuv:nv) = delgr(kva:nuv:nv) + sv/4
-                     delgrp(kva:nuv:nv) = delgrp(kva:nuv:nv) + dv/4
-                     delgr(kua + kva) = delgr(kua + kva) - sv/4
-                     delgrp(kua + kva) = delgrp(kua + kva) - dv/4
-                  END DO
-               END IF
+               CALL kink_grid(ga1, ga2, kink, delgr, delgrp)
             ELSE
-               IF (2*(kp - 1) .eq. nvper) THEN
-                  delgr = delgr - sv
-                  delgrp = delgrp - dv
-               ELSE
-                  delgr(kua + 1) = delgr(kua + 1) - su
-                  delgrp(kua + 1) = delgrp(kua + 1) - du
-               END IF
+               CALL kink_image(kp, ga1, ga2, kink, delgr, delgrp)
                IF (kp .eq. nvper) THEN
+                  CALL kink_image_sums(kink, delgr, delgrp)
                   delgrp = delgrp/nvper
                   delgr = delgr/nvper
                END IF
@@ -258,5 +294,6 @@ C-----------------------------------------------
       timer_vac(tgreenf) = timer_vac(tgreenf) + (tgreenoff-tgreenon)
       greenf_time = timer_vac(tgreenf)
 
-      END SUBROUTINE greenf
+      END SUBROUTINE
 
+      END MODULE

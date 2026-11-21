@@ -9,6 +9,7 @@ target_sources(vmec
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fouri.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fourp.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/greenf.f>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/greenf_kink.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/greenf_singular.f90>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/precal.f>
                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/scalpot.f>
