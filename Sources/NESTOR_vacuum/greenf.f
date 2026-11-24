@@ -114,12 +114,11 @@ C-----------------------------------------------
       kua = MOD(iskip + nu/2, nu)*nv
       kv0 = MOD(ip - 1, nv)
 
-!
-!     SUM OVER FIELD-PERIODS (NVPER=NFPER) OR INTEGRATE OVER NV (NVPER=64) IF NV == 1
-!
-!     NOTE THE SURFACE NORMAL SNORM == Xu cross Xv = NP*[SNR, SNV, SNZ]
-!     IS PERIODIC ON EACH FIELD PERIOD
-!
+!  Sum over field periods (nvper = nfper) or integrate over v (nvper images)
+!  if nv == 1.
+
+!  Note the surface normal snorm == Xu cross Xv = np*[snr, snv, snz] is
+!  periodic on each field period.
       DO kp = 1, nvper
          xper = xip*cosper(kp) - yip*sinper(kp)              !x(ip) in field period kp
          yper = yip*cosper(kp) + xip*sinper(kp)              !y(ip) in field period kp
