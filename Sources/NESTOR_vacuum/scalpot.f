@@ -3,6 +3,7 @@
       USE parallel_include_module
       USE timer_sub
       USE analytic, ONLY: analyt
+      USE greens_function, ONLY: greenf
       USE fouri_mod
 
       IMPLICIT NONE
