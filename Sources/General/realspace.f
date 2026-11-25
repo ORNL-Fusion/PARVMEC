@@ -30,4 +30,16 @@
       REAL(dp), DIMENSION(:,:), ALLOCATABLE :: prcon0, pzcon0
       REAL(dp), DIMENSION(:,:), ALLOCATABLE :: psqrts
 
+!  Add variables for odd prefactor (oddpf_)
+! _h       On the half-grid
+! _f       On the full grid
+! _ds_h    Derivative wrt s, on the half grid
+      REAL(dp), DIMENSION(:), ALLOCATABLE :: oddpf_h
+      REAL(dp), DIMENSION(:), ALLOCATABLE :: oddpf_f
+      REAL(dp), DIMENSION(:), ALLOCATABLE :: oddpf_ds_h
+      
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: poddpf_h
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: poddpf_f
+      REAL(dp), DIMENSION(:,:), ALLOCATABLE :: poddpf_ds_h
+
       END MODULE realspace

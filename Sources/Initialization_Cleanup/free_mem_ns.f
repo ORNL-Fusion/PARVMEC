@@ -29,6 +29,10 @@ C-----------------------------------------------
       IF (ALLOCATED(pxsave))     DEALLOCATE (pxsave)
       IF (ALLOCATED(pgc))        DEALLOCATE (pgc)
       IF (ALLOCATED(pcol_scale)) DEALLOCATE(pcol_scale)
+      
+      IF (ALLOCATED(poddpf_f))  DEALLOCATE(poddpf_f)
+      IF (ALLOCATED(poddpf_h))  DEALLOCATE(poddpf_h)
+      IF (ALLOCATED(poddpf_ds_h))  DEALLOCATE(poddpf_ds_h)
 
       END SUBROUTINE free_mem_ns_par
 
@@ -55,6 +59,7 @@ C-----------------------------------------------
 
       IF (ALLOCATED(phip)) THEN
          DEALLOCATE(phip, chip, shalf, sqrts, wint, stat=istat1)
+         DEALLOCATE(oddpf_f, oddpf_h, oddpf_ds_h, stat=istat1)
       END IF
 
       IF (ALLOCATED(ireflect)) THEN
